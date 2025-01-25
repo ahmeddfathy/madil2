@@ -1,124 +1,143 @@
 <x-app-layout>
-  <x-slot name="header">
-    <div class="flex justify-between items-center">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        {{ __('Manage Products') }}
-      </h2>
-      <a href="{{ route('admin.products.create') }}"
-        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-        Add New Product
-      </a>
-    </div>
-  </x-slot>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{asset('assets/css/admin/products.css')}}">
 
-  <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <!-- Filters -->
-      <div class="mb-6 bg-white rounded-lg shadow-sm p-4">
-        <form action="{{ route('admin.products.index') }}" method="GET" class="flex flex-wrap gap-4">
-          <div>
-            <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
-            <select name="category" id="category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-              <option value="">All Categories</option>
-              @foreach($categories as $category)
-              <option value="{{ $category->id }}" @selected(request('category')==$category->id)>
-                {{ $category->name }}
-              </option>
-              @endforeach
-            </select>
-          </div>
 
-          <div class="flex-1">
-            <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
-            <input type="text" name="search" id="search"
-              value="{{ request('search') }}"
-              placeholder="Search products..."
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-          </div>
-
-          <div class="flex items-end">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-              Filter
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-        <div class="p-6">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Product
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Category
-                </th>
-                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Price
-                </th>
-                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Stock
-                </th>
-                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Sales
-                </th>
-                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              @foreach($products as $product)
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
-                    <x-product-image :product="$product" size="16" />
-                    <div class="ml-4">
-                      <div class="text-sm font-medium text-gray-900">
-                        {{ $product->name }}
-                      </div>
-                      <p class="text-sm text-gray-500">{{ $product->category->name }}</p>
-                    </div>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ $product->category->name }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                  {{ number_format($product->price / 100, 2) }} SAR
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-right">
-                  <span class="@if($product->stock <= 5) text-red-600 font-medium @else text-gray-500 @endif">
-                    {{ $product->stock }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                  {{ $product->order_items_count ?? 0 }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <a href="{{ route('admin.products.edit', $product) }}"
-                    class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
-                  <form action="{{ route('admin.products.destroy', $product) }}"
-                    method="POST"
-                    class="inline-block"
-                    onsubmit="return confirm('Are you sure you want to delete this product?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
-                  </form>
-                </td>
-              </tr>
-              @endforeach
-            </tbody>
-          </table>
-
-          <div class="mt-6">
-            {{ $products->links() }}
-          </div>
+    <div class="container-fluid py-4">
+        <!-- Header Section -->
+        <div class="row mb-4 align-items-center">
+            <div class="col-md-6">
+                <h2 class="mb-0 text-dark">Products Management</h2>
+                <p class="text-muted">Manage your store products</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="{{ route('admin.products.create') }}" class="btn btn-primary btn-action">
+                    <i class="fas fa-plus me-2"></i>Add New Product
+                </a>
+            </div>
         </div>
-      </div>
+
+        <!-- Search & Filter Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form action="{{ route('admin.products.index') }}" method="GET" class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" name="search" class="form-control search-box"
+                            placeholder="Search products..." value="{{ request('search') }}">
+                    </div>
+                    <div class="col-md-3">
+                        <select name="category" class="form-select search-box">
+                            <option value="">All Categories</option>
+                            @foreach($categories as $category)
+                            <option value="{{ $category->id }}"
+                                {{ request('category') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="sort" class="form-select search-box">
+                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
+                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+                            <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Price High to Low</option>
+                            <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Price Low to High</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100 btn-action">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="row g-4">
+            @forelse($products as $product)
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="product-card">
+                    <!-- Product Image -->
+                    <div class="product-image-container">
+                        @if($product->primary_image)
+                        <img src="{{ Storage::url($product->primary_image->image_path) }}"
+                            alt="{{ $product->name }}"
+                            class="product-image" />
+                        @else
+                        <div class="d-flex align-items-center justify-content-center h-100">
+                            <i class="fas fa-image text-muted" style="font-size: 2rem;"></i>
+                        </div>
+                        @endif
+
+                        <span class="stock-badge {{ $product->stock > 10 ? 'in-stock' : ($product->stock > 0 ? 'low-stock' : 'out-of-stock') }}">
+                            {{ $product->stock > 0 ? $product->stock . ' in stock' : 'Out of stock' }}
+                        </span>
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="product-details">
+                        <span class="category-badge">
+                            {{ $product->category->name }}
+                        </span>
+                        <h5 class="product-title">{{ $product->name }}</h5>
+                        <p class="product-description">
+                            {{ Str::limit($product->description, 100) }}
+                        </p>
+                        <div class="product-price">
+                            {{ number_format($product->price / 100, 2) }} SAR
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between gap-2">
+                            <!-- View Button -->
+                            <a href="{{ route('admin.products.show', $product) }}"
+                                class="btn btn-outline-info btn-action flex-grow-1">
+                                <i class="fas fa-eye"></i>
+                                <span>View</span>
+                            </a>
+
+                            <!-- Edit Button -->
+                            <a href="{{ route('admin.products.edit', $product) }}"
+                                class="btn btn-outline-primary btn-action flex-grow-1">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit</span>
+                            </a>
+
+                            <!-- Delete Button -->
+                            <form action="{{ route('admin.products.destroy', $product) }}"
+                                method="POST"
+                                class="flex-grow-1">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="btn btn-outline-danger btn-action w-100"
+                                    onclick="return confirm('Are you sure you want to delete this product?');">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span>Delete</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @empty
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-box-open me-2"></i>No products found
+                </div>
+            </div>
+            @endforelse
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center mt-4">
+            {{ $products->links() }}
+        </div>
     </div>
-  </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </x-app-layout>

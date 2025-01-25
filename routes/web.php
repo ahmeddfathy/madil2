@@ -26,7 +26,11 @@ use App\Http\Controllers\Admin\{
 
 // Public Routes
 Route::get('/', function () {
-    return view('welcome');
+    $products = \App\Models\Product::with('images')
+        ->latest()
+        ->take(3)
+        ->get();
+    return view('index', compact('products'));
 });
 
 // Auth Routes
@@ -122,3 +126,6 @@ Route::middleware([
             });
         });
 });
+
+Route::post('/appointments', [AppointmentController::class, 'store'])
+    ->name('appointments.store');

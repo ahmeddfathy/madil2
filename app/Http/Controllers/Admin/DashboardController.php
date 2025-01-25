@@ -4,90 +4,125 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
-use App\Models\Appointment;
+use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-  public function index()
-  {
-    $totalOrders = Order::count();
-    $totalRevenue = Order::where('status', '!=', Order::STATUS_CANCELLED)
-      ->sum('total_amount');
-    $totalProducts = Product::count();
-    $lowStockProducts = Product::where('stock', '<', 5)->count();
+    public function index()
+    {
+        try {
+            // الإحصائيات الأساسية
+            $stats = [
+                'orders' => Order::count(),
+                'users' => User::count(),
+                'products' => Product::count(),
+                'revenue' => Order::where('payment_status', Order::PAYMENT_STATUS_PAID)
+                    ->sum('total_amount') ?? 0,
+            ];
 
-    $recentOrders = Order::with('user')
-      ->latest()
-      ->take(5)
-      ->get();
+            // جلب بيانات المبيعات
+            $salesData = Order::where('payment_status', Order::PAYMENT_STATUS_PAID)
+                ->where('created_at', '>=', now()->subMonths(6))
+                ->select(
+                    DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
+                    DB::raw('SUM(total_amount) as total'),
+                    DB::raw('COUNT(*) as count')
+                )
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get();
 
-    return view('admin.dashboard', compact(
-      'totalOrders',
-      'totalRevenue',
-      'totalProducts',
-      'lowStockProducts',
-      'recentOrders'
-    ));
-  }
+            // تجهيز بيانات الرسم البياني
+            $chartLabels = [];
+            $chartData = [];
+            $monthlyGrowth = [];
 
-  protected function getStartDate(string $period): Carbon
-  {
-    return match ($period) {
-      'week' => Carbon::now()->subWeek(),
-      'month' => Carbon::now()->startOfMonth(),
-      'year' => Carbon::now()->startOfYear(),
-      default => Carbon::now()->startOfMonth(),
-    };
-  }
+            foreach ($salesData as $index => $data) {
+                $chartLabels[] = Carbon::createFromFormat('Y-m', $data->month)->format('M Y');
+                $chartData[] = round($data->total / 100, 2);
 
-  protected function getSalesStatistics(Carbon $startDate): array
-  {
-    $totalSales = Order::where('created_at', '>=', $startDate)
-      ->where('status', '!=', Order::STATUS_CANCELLED)
-      ->sum('total_amount');
+                if ($index > 0) {
+                    $previousTotal = $salesData[$index - 1]->total;
+                    $currentTotal = $data->total;
+                    $growth = $previousTotal > 0
+                        ? round((($currentTotal - $previousTotal) / $previousTotal) * 100, 1)
+                        : 0;
+                    $monthlyGrowth[] = $growth;
+                } else {
+                    $monthlyGrowth[] = 0;
+                }
+            }
 
-    $orderCount = Order::where('created_at', '>=', $startDate)
-      ->where('status', '!=', Order::STATUS_CANCELLED)
-      ->count();
+            // إذا لم تكن هناك بيانات، نضيف قيم افتراضية
+            if (empty($chartLabels)) {
+                $chartLabels = [now()->format('M Y')];
+                $chartData = [0];
+                $monthlyGrowth = [0];
+            }
 
-    $dailySales = Order::where('created_at', '>=', $startDate)
-      ->where('status', '!=', Order::STATUS_CANCELLED)
-      ->select(
-        DB::raw('DATE(created_at) as date'),
-        DB::raw('SUM(total_amount) as total')
-      )
-      ->groupBy('date')
-      ->get()
-      ->pluck('total', 'date')
-      ->toArray();
+            // أحدث الطلبات
+            $recentOrders = Order::with('user')
+                ->latest()
+                ->take(5)
+                ->get();
 
-    return [
-      'total_sales' => $totalSales,
-      'order_count' => $orderCount,
-      'daily_sales' => $dailySales,
-    ];
-  }
+            // إحصائيات حالات الطلبات
+            $orderStats = Order::select('order_status', DB::raw('count(*) as total'))
+                ->whereNotNull('order_status')  // تأكد من أن الحالة غير فارغة
+                ->groupBy('order_status')
+                ->get()
+                ->mapWithKeys(function ($item) {
+                    return [$item->order_status => $item->total];
+                })
+                ->toArray();
 
-  protected function getTopProducts(Carbon $startDate): object
-  {
-    return OrderItem::select(
-      'product_id',
-      DB::raw('SUM(quantity) as total_quantity'),
-      DB::raw('SUM(subtotal) as total_sales')
-    )
-      ->with('product')
-      ->whereHas('order', function ($query) use ($startDate) {
-        $query->where('created_at', '>=', $startDate)
-          ->where('status', '!=', Order::STATUS_CANCELLED);
-      })
-      ->groupBy('product_id')
-      ->orderByDesc('total_quantity')
-      ->take(5)
-      ->get();
-  }
+            // إضافة الحالات الافتراضية إذا لم تكن موجودة
+            $defaultStatuses = [
+                Order::ORDER_STATUS_PENDING => 0,
+                Order::ORDER_STATUS_PROCESSING => 0,
+                Order::ORDER_STATUS_COMPLETED => 0,
+                Order::ORDER_STATUS_CANCELLED => 0
+            ];
+
+            $orderStats = array_merge($defaultStatuses, $orderStats);
+
+            // المنتجات الأكثر مبيعاً
+            $topProducts = Product::withCount(['orderItems as sales_count' => function ($query) {
+                $query->whereHas('order', function ($q) {
+                    $q->where('payment_status', Order::PAYMENT_STATUS_PAID);
+                });
+            }])
+                ->orderByDesc('sales_count')
+                ->take(5)
+                ->get();
+
+            return view('admin.dashboard', compact(
+                'stats',
+                'chartLabels',
+                'chartData',
+                'monthlyGrowth',
+                'recentOrders',
+                'orderStats',
+                'topProducts'
+            ));
+        } catch (\Exception $e) {
+            // في حالة حدوث خطأ، نعيد القيم الافتراضية
+            return view('admin.dashboard', [
+                'stats' => [
+                    'orders' => 0,
+                    'users' => 0,
+                    'products' => 0,
+                    'revenue' => 0
+                ],
+                'chartLabels' => [now()->format('M Y')],
+                'chartData' => [0],
+                'monthlyGrowth' => [0],
+                'recentOrders' => collect([]),
+                'orderStats' => $defaultStatuses
+            ])->withErrors('Error loading dashboard data: ' . $e->getMessage());
+        }
+    }
 }

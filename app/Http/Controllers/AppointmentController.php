@@ -107,7 +107,7 @@ class AppointmentController extends Controller
 
     public function cancel(Appointment $appointment)
     {
-        // التحقق من أن الموعد يخص المستخدم الحالي
+        // التحقق البسيط من الملكية
         if ($appointment->user_id !== Auth::id()) {
             abort(403);
         }
