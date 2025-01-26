@@ -5,7 +5,7 @@ $categories = $categories ?? collect();
     <link rel="stylesheet" href="{{ asset('assets/css/customer/products.css') }}">
 
     <!-- Hero Section -->
-    <div class="relative">
+    <div class="relative hero-section">
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
             <img src="https://th.bing.com/th/id/R.d72b7f0dcfe17ebeadb3f808a66ea531?rik=zc1M%2bgBTc1vJHw&pid=ImgRaw&r=0"
@@ -77,17 +77,22 @@ $categories = $categories ?? collect();
 
                         <!-- Price Range -->
                         <div>
-                            <label for="min_price">السعر الأدنى</label>
-                            <input type="number" name="min_price" id="min_price"
-                                value="{{ request('min_price') }}"
-                                class="mt-1" min="0" step="0.01">
-                        </div>
-
-                        <div>
-                            <label for="max_price">السعر الأقصى</label>
-                            <input type="number" name="max_price" id="max_price"
-                                value="{{ request('max_price') }}"
-                                class="mt-1" min="0" step="0.01">
+                            <label for="price_range">نطاق السعر</label>
+                            <div class="flex items-center space-x-4 rtl:space-x-reverse mt-1">
+                                <input type="range" name="min_price" id="min_price"
+                                    value="{{ request('min_price', 0) }}"
+                                    min="0" max="1000" step="10"
+                                    class="price-range-input"
+                                    oninput="this.nextElementSibling.value = this.value">
+                                <output name="min_price_output" class="price-range-output">{{ request('min_price', 0) }}</output>
+                                <span class="mx-2">إلى</span>
+                                <input type="range" name="max_price" id="max_price"
+                                    value="{{ request('max_price', 1000) }}"
+                                    min="0" max="1000" step="10"
+                                    class="price-range-input"
+                                    oninput="this.previousElementSibling.value = this.value">
+                                <output name="max_price_output" class="price-range-output">{{ request('max_price', 1000) }}</output>
+                            </div>
                         </div>
 
                         <!-- Sort -->
