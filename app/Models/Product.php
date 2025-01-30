@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -37,7 +38,14 @@ class Product extends Model
   protected $filterableFields = [
     'category_id',
     'price',
-    'stock'
+    'stock',
+    'featured'
+  ];
+
+  protected $appends = [
+    'image_url',
+    'formatted_price',
+    'all_images'
   ];
 
   public function category(): BelongsTo
@@ -48,6 +56,16 @@ class Product extends Model
   public function images(): HasMany
   {
     return $this->hasMany(ProductImage::class);
+  }
+
+  public function colors(): HasMany
+  {
+    return $this->hasMany(ProductColor::class);
+  }
+
+  public function sizes(): HasMany
+  {
+    return $this->hasMany(ProductSize::class);
   }
 
   public function orderItems(): HasMany
@@ -68,6 +86,11 @@ class Product extends Model
     return $query;
   }
 
+  public function scopeFeatured(Builder $query): Builder
+  {
+    return $query->where('featured', true);
+  }
+
   public function scopeInStock(Builder $query): Builder
   {
     return $query->where('stock', '>', 0);
@@ -77,5 +100,32 @@ class Product extends Model
   {
     return $this->images->where('is_primary', true)->first()
       ?? $this->images->first();
+  }
+
+  public function getImageUrlAttribute()
+  {
+    if ($image = $this->primary_image) {
+      return Storage::url($image->image_path);
+    }
+    return asset('images/placeholder.jpg');
+  }
+
+  public function getAllImagesAttribute()
+  {
+    return $this->images->map(function($image) {
+      return Storage::url($image->image_path);
+    })->toArray();
+  }
+
+  public function getFormattedPriceAttribute()
+  {
+    return number_format($this->price, 2);
+  }
+
+  public function toArray()
+  {
+    $array = parent::toArray();
+    $array['category_name'] = $this->category->name ?? null;
+    return $array;
   }
 }

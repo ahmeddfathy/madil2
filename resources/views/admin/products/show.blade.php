@@ -100,7 +100,67 @@
               </div>
             </div>
 
-            @if($product->orderItems->count() > 0)
+            <!-- Colors Section -->
+            @if($product->colors && $product->colors->isNotEmpty())
+            <div class="info-section mt-4">
+              <h5 class="section-title">
+                <i class="fas fa-palette me-2"></i>
+                Available Colors
+                <span class="badge bg-primary ms-2">{{ $product->colors->count() }}</span>
+              </h5>
+              <div class="colors-grid">
+                @foreach($product->colors as $color)
+                <div class="color-item {{ $color->is_available ? 'available' : 'unavailable' }}"
+                     data-bs-toggle="tooltip"
+                     title="{{ $color->is_available ? 'Available' : 'Not Available' }}">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="color-preview" style="background-color: {{ $color->color }}"></span>
+                  <span class="color-name">{{ $color->color }}</span>
+                  </div>
+                  <span class="color-status">
+                    @if($color->is_available)
+                      <i class="fas fa-check text-success"></i>
+                    @else
+                      <i class="fas fa-times text-danger"></i>
+                    @endif
+                  </span>
+                </div>
+                @endforeach
+              </div>
+            </div>
+            @endif
+
+            <!-- Sizes Section -->
+            @if($product->sizes && $product->sizes->isNotEmpty())
+            <div class="info-section mt-4">
+              <h5 class="section-title">
+                <i class="fas fa-ruler me-2"></i>
+                Available Sizes
+                <span class="badge bg-primary ms-2">{{ $product->sizes->count() }}</span>
+              </h5>
+              <div class="sizes-grid">
+                @foreach($product->sizes as $size)
+                <div class="size-item {{ $size->is_available ? 'available' : 'unavailable' }}"
+                     data-bs-toggle="tooltip"
+                     title="{{ $size->is_available ? 'Available' : 'Not Available' }}">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="fas fa-tshirt"></i>
+                  <span class="size-name">{{ $size->size }}</span>
+                  </div>
+                  <span class="size-status">
+                    @if($size->is_available)
+                      <i class="fas fa-check text-success"></i>
+                    @else
+                      <i class="fas fa-times text-danger"></i>
+                    @endif
+                  </span>
+                </div>
+                @endforeach
+              </div>
+            </div>
+            @endif
+
+            @if($product->orderItems && $product->orderItems->isNotEmpty())
             <div class="info-section mt-4">
               <h5 class="section-title">Sales Statistics</h5>
               <div class="details-grid">
@@ -215,10 +275,16 @@
     }
 
     .section-title {
+      display: flex;
+      align-items: center;
       font-size: 1.1rem;
       font-weight: 600;
       color: var(--text-dark);
       margin-bottom: 1rem;
+    }
+
+    .section-title i {
+      color: var(--primary);
     }
 
     .details-grid {
@@ -249,6 +315,68 @@
         grid-template-columns: 1fr;
       }
     }
+
+    .colors-grid,
+    .sizes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .color-item,
+    .size-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      border-radius: 8px;
+      background: #f8f9fa;
+      transition: all 0.3s ease;
+      border: 1px solid #e9ecef;
+    }
+
+    .color-item:hover,
+    .size-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .color-item.available,
+    .size-item.available {
+      border-left: 3px solid #28a745;
+    }
+
+    .color-item.unavailable,
+    .size-item.unavailable {
+      border-left: 3px solid #dc3545;
+      opacity: 0.7;
+    }
+
+    .color-preview {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #dee2e6;
+    }
+
+    .color-name,
+    .size-name {
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+
+    .badge {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .text-success {
+      color: #28a745;
+    }
+
+    .text-danger {
+      color: #dc3545;
+    }
   </style>
 
   <script>
@@ -266,5 +394,13 @@
         }
       });
     }
+
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      });
+    });
   </script>
 </x-app-layout>

@@ -33,6 +33,13 @@ Route::get('/', function () {
     return view('index', compact('products'));
 });
 
+// Products Routes (Public)
+Route::prefix('products')->name('products.')->group(function () {
+    Route::get('/', [ProductController::class, 'index'])->name('index');
+    Route::get('/filter', [ProductController::class, 'filter'])->name('filter');
+    Route::get('/{product}/details', [ProductController::class, 'getProductDetails'])->name('details');
+});
+
 // Auth Routes
 Route::middleware([
     'auth:sanctum',
@@ -57,13 +64,15 @@ Route::middleware([
         // Products
         Route::get('/products', [ProductController::class, 'index'])->name('products.index');
         Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+        Route::post('/products/filter', [ProductController::class, 'filter'])->name('products.filter');
 
         // Cart
         Route::prefix('cart')->name('cart.')->group(function () {
             Route::get('/', [CartController::class, 'index'])->name('index');
-            Route::post('/{product}', [CartController::class, 'add'])->name('add');
-            Route::patch('/{product}', [CartController::class, 'update'])->name('update');
-            Route::delete('/{product}', [CartController::class, 'remove'])->name('remove');
+            Route::post('/add', [ProductController::class, 'addToCart'])->name('add');
+            Route::get('/items', [ProductController::class, 'getCartItems'])->name('items');
+            Route::patch('/update/{cartItem}', [CartController::class, 'updateQuantity'])->name('update');
+            Route::delete('/remove/{cartItem}', [CartController::class, 'removeItem'])->name('remove');
             Route::post('/clear', [CartController::class, 'clear'])->name('clear');
         });
 
@@ -129,3 +138,9 @@ Route::middleware([
 
 Route::post('/appointments', [AppointmentController::class, 'store'])
     ->name('appointments.store');
+
+// Cart Routes
+Route::post('/cart/add', [ProductController::class, 'addToCart'])->name('cart.add');
+Route::get('/cart/items', [ProductController::class, 'getCartItems'])->name('cart.items');
+Route::patch('/cart/items/{cartItem}', [ProductController::class, 'updateCartItem'])->name('cart.update-item');
+Route::delete('/cart/items/{cartItem}', [ProductController::class, 'removeCartItem'])->name('cart.remove-item');

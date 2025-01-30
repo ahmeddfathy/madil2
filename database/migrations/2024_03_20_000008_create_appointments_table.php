@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('status')->default('pending');
             $table->text('notes')->nullable();
             $table->string('phone');
+            $table->enum('location', ['store', 'client_location'])->default('store');
+            $table->text('address')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

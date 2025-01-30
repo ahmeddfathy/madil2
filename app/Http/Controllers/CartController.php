@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Cart;
+use App\Models\CartItem;
 
 class CartController extends Controller
 {
@@ -145,5 +146,114 @@ class CartController extends Controller
 
       Session::forget('cart');
     }
+  }
+
+  public function addToCart(Request $request, Product $product)
+  {
+    $cart = Cart::firstOrCreate([
+      'user_id' => auth()->id()
+    ]);
+
+    $cartItem = CartItem::updateOrCreate(
+      [
+        'cart_id' => $cart->id,
+        'product_id' => $product->id
+      ],
+      [
+        'quantity' => $request->quantity ?? 1
+      ]
+    );
+
+    return response()->json([
+      'message' => 'Product added to cart successfully',
+      'cart_item' => $cartItem
+    ]);
+  }
+
+  public function getItems()
+  {
+    $cart = Cart::where('user_id', auth()->id())->first();
+
+    if (!$cart) {
+      return response()->json([
+        'items' => [],
+        'total' => 0
+      ]);
+    }
+
+    $items = $cart->items->map(function($item) {
+      return [
+        'id' => $item->id,
+        'name' => $item->product->name,
+        'price' => $item->product->price,
+        'quantity' => $item->quantity,
+        'image' => $item->product->images->first()->url ?? null,
+      ];
+    });
+
+    $total = $items->sum(function($item) {
+      return $item['price'] * $item['quantity'];
+    });
+
+    return response()->json([
+      'items' => $items,
+      'total' => $total
+    ]);
+  }
+
+  public function updateQuantity(Request $request, CartItem $cartItem)
+  {
+    $request->validate([
+      'quantity' => 'required|integer|min:1'
+    ]);
+
+    // Verify cart ownership
+    if (Auth::check() && $cartItem->cart->user_id !== Auth::id()) {
+      return response()->json([
+        'success' => false,
+        'message' => 'غير مصرح بهذا الإجراء'
+      ], 403);
+    }
+
+    $cartItem->quantity = $request->quantity;
+    $cartItem->subtotal = $cartItem->quantity * $cartItem->unit_price;
+    $cartItem->save();
+
+    // Update cart total
+    $cart = $cartItem->cart;
+    $cart->total_amount = $cart->items()->sum('subtotal');
+    $cart->save();
+
+    return response()->json([
+      'success' => true,
+      'message' => 'تم تحديث الكمية بنجاح',
+      'cart_count' => $cart->items()->sum('quantity'),
+      'cart_total' => number_format($cart->total_amount, 2)
+    ]);
+  }
+
+  public function removeItem(CartItem $cartItem)
+  {
+    // Verify cart ownership
+    if (Auth::check() && $cartItem->cart->user_id !== Auth::id()) {
+      return response()->json([
+        'success' => false,
+        'message' => 'غير مصرح بهذا الإجراء'
+      ], 403);
+    }
+
+    $cart = $cartItem->cart;
+    $cartItem->delete();
+
+    // Update cart total
+    $cart->total_amount = $cart->items()->sum('subtotal');
+    $cart->save();
+
+    return response()->json([
+      'success' => true,
+      'message' => 'تم حذف المنتج من السلة',
+      'cart_count' => $cart->items()->sum('quantity'),
+      'cart_total' => number_format($cart->total_amount, 2)
+    ]);
   }
 }

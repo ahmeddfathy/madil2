@@ -80,6 +80,64 @@
                                     @enderror
                                 </div>
 
+                                <!-- Colors Section -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Product Colors</label>
+                                    <div class="mt-2 space-y-4">
+                                        <div class="color-inputs-container">
+                                            <div class="flex items-center space-x-4 mb-4">
+                                                <input type="text" name="colors[]" placeholder="Enter color name"
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm">
+                                                <label class="inline-flex items-center">
+                                                    <input type="checkbox" name="color_available[]" value="1" checked
+                                                        class="text-blue-600 border-gray-300 rounded">
+                                                    <span class="ml-2 text-sm text-gray-600">Available</span>
+                                                </label>
+                                                <button type="button" onclick="this.parentElement.remove()"
+                                                    class="text-red-600 hover:text-red-800 hidden">
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <button type="button" onclick="addColorInput()"
+                                            class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            + Add Another Color
+                                        </button>
+                                    </div>
+                                    @error('colors.*')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Sizes Section -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Product Sizes</label>
+                                    <div class="mt-2 space-y-4">
+                                        <div class="size-inputs-container">
+                                            <div class="flex items-center space-x-4 mb-4">
+                                                <input type="text" name="sizes[]" placeholder="Enter size"
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm">
+                                                <label class="inline-flex items-center">
+                                                    <input type="checkbox" name="size_available[]" value="1" checked
+                                                        class="text-blue-600 border-gray-300 rounded">
+                                                    <span class="ml-2 text-sm text-gray-600">Available</span>
+                                                </label>
+                                                <button type="button" onclick="this.parentElement.remove()"
+                                                    class="text-red-600 hover:text-red-800 hidden">
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <button type="button" onclick="addSizeInput()"
+                                            class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            + Add Another Size
+                                        </button>
+                                    </div>
+                                    @error('sizes.*')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Product Images</label>
                                     <div class="mt-2 space-y-4">
@@ -142,6 +200,48 @@
             `;
             container.appendChild(newUpload);
             imageUploadCount++;
+        }
+
+        // Add color input function
+        function addColorInput() {
+            const container = document.querySelector('.color-inputs-container');
+            const newInput = document.createElement('div');
+            newInput.className = 'flex items-center space-x-4 mb-4';
+            newInput.innerHTML = `
+                <input type="text" name="colors[]" placeholder="Enter color name"
+                    class="block w-full rounded-md border-gray-300 shadow-sm">
+                <label class="inline-flex items-center">
+                    <input type="checkbox" name="color_available[]" value="1" checked
+                        class="text-blue-600 border-gray-300 rounded">
+                    <span class="ml-2 text-sm text-gray-600">Available</span>
+                </label>
+                <button type="button" onclick="this.parentElement.remove()"
+                    class="text-red-600 hover:text-red-800">
+                    Remove
+                </button>
+            `;
+            container.appendChild(newInput);
+        }
+
+        // Add size input function
+        function addSizeInput() {
+            const container = document.querySelector('.size-inputs-container');
+            const newInput = document.createElement('div');
+            newInput.className = 'flex items-center space-x-4 mb-4';
+            newInput.innerHTML = `
+                <input type="text" name="sizes[]" placeholder="Enter size"
+                    class="block w-full rounded-md border-gray-300 shadow-sm">
+                <label class="inline-flex items-center">
+                    <input type="checkbox" name="size_available[]" value="1" checked
+                        class="text-blue-600 border-gray-300 rounded">
+                    <span class="ml-2 text-sm text-gray-600">Available</span>
+                </label>
+                <button type="button" onclick="this.parentElement.remove()"
+                    class="text-red-600 hover:text-red-800">
+                    Remove
+                </button>
+            `;
+            container.appendChild(newInput);
         }
     </script>
     @endpush

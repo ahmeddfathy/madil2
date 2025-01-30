@@ -21,6 +21,10 @@ class Appointment extends Model
     const SERVICE_ALTERATION = 'alteration';
     const SERVICE_REPAIR = 'repair';
 
+    // إضافة ثوابت للموقع
+    const LOCATION_STORE = 'store';
+    const LOCATION_CLIENT = 'client_location';
+
     protected $fillable = [
         'user_id',
         'service_type',
@@ -28,7 +32,10 @@ class Appointment extends Model
         'appointment_time',
         'status',
         'notes',
-        'phone'
+        'phone',
+        'location', // إضافة حقل الموقع
+        'address',   // إضافة حقل العنوان
+        'cart_item_id'  // إضافة هذا الحقل
     ];
 
     protected $casts = [
@@ -49,5 +56,31 @@ class Appointment extends Model
     public function getFormattedTimeAttribute()
     {
         return $this->appointment_time->format('g:i A');
+    }
+    public function isInStore(): bool
+    {
+        return $this->location === self::LOCATION_STORE;
+    }
+
+    public function isAtClientLocation(): bool
+    {
+        return $this->location === self::LOCATION_CLIENT;
+    }
+
+    public function getLocationTextAttribute(): string
+    {
+        return $this->location === self::LOCATION_STORE
+            ? 'في المحل'
+            : 'موقع العميل';
+    }
+
+    public function cartItem()
+    {
+        return $this->belongsTo(CartItem::class);
+    }
+
+    public function order()
+    {
+        return $this->hasOne(Order::class);
     }
 }

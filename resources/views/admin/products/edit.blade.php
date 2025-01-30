@@ -139,6 +139,77 @@
               </div>
             </div>
 
+            <!-- Colors and Sizes Section -->
+            <div class="mt-6 border-t border-gray-200 pt-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Colors Management -->
+                <div>
+                  <h3 class="text-lg font-medium text-gray-900 mb-4">Product Colors</h3>
+                  <div class="space-y-4">
+                    <div id="colors-container">
+                      @forelse($product->colors ?? [] as $color)
+                      <div class="flex items-center space-x-4 mb-4">
+                        <input type="text" name="colors[]" value="{{ $color->color }}"
+                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                          placeholder="Enter color name">
+                        <input type="hidden" name="color_ids[]" value="{{ $color->id }}">
+                        <label class="inline-flex items-center">
+                          <input type="checkbox" name="color_available[]" value="1"
+                            @checked($color->is_available)
+                            class="text-blue-600 border-gray-300 rounded">
+                          <span class="ml-2 text-sm text-gray-600">Available</span>
+                        </label>
+                        <button type="button" onclick="this.parentElement.remove()"
+                          class="text-red-600 hover:text-red-800">
+                          Remove
+                        </button>
+                      </div>
+                      @empty
+                      <!-- No colors yet -->
+                      @endforelse
+                    </div>
+                    <button type="button" onclick="addColor()"
+                      class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                      + Add New Color
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Sizes Management -->
+                <div>
+                  <h3 class="text-lg font-medium text-gray-900 mb-4">Product Sizes</h3>
+                  <div class="space-y-4">
+                    <div id="sizes-container">
+                      @forelse($product->sizes ?? [] as $size)
+                      <div class="flex items-center space-x-4 mb-4">
+                        <input type="text" name="sizes[]" value="{{ $size->size }}"
+                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                          placeholder="Enter size">
+                        <input type="hidden" name="size_ids[]" value="{{ $size->id }}">
+                        <label class="inline-flex items-center">
+                          <input type="checkbox" name="size_available[]" value="1"
+                            @checked($size->is_available)
+                            class="text-blue-600 border-gray-300 rounded">
+                          <span class="ml-2 text-sm text-gray-600">Available</span>
+                        </label>
+                        <button type="button" onclick="this.parentElement.remove()"
+                          class="text-red-600 hover:text-red-800">
+                          Remove
+                        </button>
+                      </div>
+                      @empty
+                      <!-- No sizes yet -->
+                      @endforelse
+                    </div>
+                    <button type="button" onclick="addSize()"
+                      class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                      + Add New Size
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="mt-6 border-t border-gray-200 pt-6">
               <button type="submit"
                 class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
@@ -174,6 +245,50 @@
             `;
       container.appendChild(newUpload);
       imageUploadCount++;
+    }
+
+    function addColor() {
+      const container = document.getElementById('colors-container');
+      const newColor = document.createElement('div');
+      newColor.className = 'flex items-center space-x-4 mb-4';
+      newColor.innerHTML = `
+            <input type="text" name="colors[]"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                placeholder="Enter color name">
+            <input type="hidden" name="color_ids[]" value="">
+            <label class="inline-flex items-center">
+                <input type="checkbox" name="color_available[]" value="1" checked
+                    class="text-blue-600 border-gray-300 rounded">
+                <span class="ml-2 text-sm text-gray-600">Available</span>
+            </label>
+            <button type="button" onclick="this.parentElement.remove()"
+                class="text-red-600 hover:text-red-800">
+                Remove
+            </button>
+        `;
+      container.appendChild(newColor);
+    }
+
+    function addSize() {
+      const container = document.getElementById('sizes-container');
+      const newSize = document.createElement('div');
+      newSize.className = 'flex items-center space-x-4 mb-4';
+      newSize.innerHTML = `
+            <input type="text" name="sizes[]"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                placeholder="Enter size">
+            <input type="hidden" name="size_ids[]" value="">
+            <label class="inline-flex items-center">
+                <input type="checkbox" name="size_available[]" value="1" checked
+                    class="text-blue-600 border-gray-300 rounded">
+                <span class="ml-2 text-sm text-gray-600">Available</span>
+            </label>
+            <button type="button" onclick="this.parentElement.remove()"
+                class="text-red-600 hover:text-red-800">
+                Remove
+            </button>
+        `;
+      container.appendChild(newSize);
     }
   </script>
   @endpush

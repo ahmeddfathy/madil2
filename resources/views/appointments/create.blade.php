@@ -64,6 +64,29 @@
                                 @enderror
                             </div>
 
+                            <div>
+                                <label for="location" class="block text-sm font-medium text-gray-700">الموقع</label>
+                                <select name="location" id="location"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                                    onchange="toggleAddressField()">
+                                    <option value="">اختر الموقع</option>
+                                    <option value="store" @selected(old('location')==='store')>في المحل</option>
+                                    <option value="client_location" @selected(old('location')==='client_location')>موقع العميل</option>
+                                </select>
+                                @error('location')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div id="addressField" class="sm:col-span-2" style="display: none;">
+                                <label for="address" class="block text-sm font-medium text-gray-700">العنوان</label>
+                                <textarea name="address" id="address" rows="3"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">{{ old('address') }}</textarea>
+                                @error('address')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <div class="sm:col-span-2">
                                 <label for="notes" class="block text-sm font-medium text-gray-700">Notes</label>
                                 <textarea name="notes" id="notes" rows="3"
@@ -85,4 +108,15 @@
             </div>
         </div>
     </div>
+
+    <script>
+    function toggleAddressField() {
+        const location = document.getElementById('location').value;
+        const addressField = document.getElementById('addressField');
+        addressField.style.display = location === 'client_location' ? 'block' : 'none';
+    }
+
+    // تشغيل الدالة عند تحميل الصفحة للتعامل مع القيم المحفوظة
+    document.addEventListener('DOMContentLoaded', toggleAddressField);
+    </script>
 </x-app-layout>
