@@ -54,8 +54,8 @@
                       3
                   </span>
               </a>
-              <a href="login.html" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
-              <a href="signup.html" class="btn btn-primary">إنشاء حساب</a>
+              <a href="/login" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
+              <a href="/register" class="btn btn-primary">إنشاء حساب</a>
           </div>
       </div>
   </div>

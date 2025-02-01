@@ -49,11 +49,6 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function appointment()
-    {
-        return $this->belongsTo(Appointment::class);
-    }
-
     // Helper methods for status checks
     public function isPending(): bool
     {

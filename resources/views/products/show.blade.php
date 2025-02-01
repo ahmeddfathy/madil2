@@ -206,6 +206,21 @@
                         </div>
                     @endif
 
+                    <!-- Custom Measurements Option -->
+                    <div class="custom-measurements-section mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="needsAppointment">
+                            <label class="form-check-label" for="needsAppointment">
+                                <i class="fas fa-tape me-2"></i>
+                                أحتاج إلى أخذ المقاسات
+                            </label>
+                        </div>
+                        <small class="text-muted d-block mt-2">
+                            <i class="fas fa-info-circle me-1"></i>
+                            اختر هذا الخيار إذا كنت تريد تحديد موعد لأخذ المقاسات الخاصة بك
+                        </small>
+                    </div>
+
                     <!-- Quantity Selector -->
                     <div class="quantity-selector mb-4">
                         <h5 class="section-title">
@@ -224,6 +239,9 @@
                         <i class="fas fa-shopping-cart me-2"></i>
                         أضف إلى السلة
                     </button>
+
+                    <!-- Error Messages -->
+                    <div class="alert alert-danger d-none" id="errorMessage"></div>
                 </div>
             </div>
         </div>
@@ -259,7 +277,7 @@
         </div>
     </footer>
 
-    <!-- إضافة Modal لحجز الموعد -->
+    <!-- Modal for Appointment -->
     <div class="modal fade" id="appointmentModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -268,7 +286,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="appointmentForm" action="{{ route('appointments.store') }}" method="POST">
+                    <form id="appointmentForm">
                         @csrf
                         <input type="hidden" name="service_type" value="new_abaya">
                         <input type="hidden" name="cart_item_id" id="cart_item_id">
@@ -292,7 +310,7 @@
                             </select>
                         </div>
 
-                        <div class="mb-3" id="addressField" style="display: none;">
+                        <div class="mb-3 d-none" id="addressField">
                             <label for="address" class="form-label">العنوان</label>
                             <textarea class="form-control" id="address" name="address" rows="3"></textarea>
                         </div>
@@ -308,7 +326,13 @@
                             <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100">تأكيد الحجز</button>
+                        <!-- Error Messages Container -->
+                        <div id="appointmentErrors" class="alert alert-danger d-none"></div>
+
+                        <button type="submit" class="btn btn-primary w-100" id="submitAppointment">
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            تأكيد الحجز
+                        </button>
                     </form>
                 </div>
             </div>
@@ -332,40 +356,41 @@
         }
 
         function selectColor(element) {
-            if (!element.classList.contains('available')) {
-                showAlert('هذا اللون غير متوفر حالياً');
-                return;
-            }
+            if (!element.classList.contains('available')) return;
 
+            // Remove active class from all colors
             document.querySelectorAll('.color-item').forEach(item => {
-                item.classList.remove('selected');
+                item.classList.remove('active');
             });
-            element.classList.add('selected');
+
+            // Add active class to selected color
+            element.classList.add('active');
             selectedColor = element.dataset.color;
         }
 
         function selectSize(element) {
-            if (!element.classList.contains('available')) {
-                showAlert('هذا المقاس غير متوفر حالياً');
-                return;
-            }
+            if (!element.classList.contains('available')) return;
 
+            // Remove active class from all sizes
             document.querySelectorAll('.size-item').forEach(item => {
-                item.classList.remove('selected');
+                item.classList.remove('active');
             });
-            element.classList.add('selected');
+
+            // Add active class to selected size
+            element.classList.add('active');
             selectedSize = element.dataset.size;
+
+            // If size is selected, uncheck needs appointment
+            document.getElementById('needsAppointment').checked = false;
         }
 
         function updatePageQuantity(change) {
-            const input = document.getElementById('quantity');
-            const currentValue = parseInt(input.value) || 1;
-            const maxStock = parseInt(input.getAttribute('max'));
+            const quantityInput = document.getElementById('quantity');
+            let newQuantity = parseInt(quantityInput.value) + change;
 
-            let newValue = currentValue + change;
-            newValue = Math.max(1, Math.min(newValue, maxStock));
-
-            input.value = newValue;
+            if (newQuantity >= 1 && newQuantity <= {{ $product->stock }}) {
+                quantityInput.value = newQuantity;
+            }
         }
 
         function showAppointmentModal(cartItemId) {
@@ -377,49 +402,41 @@
         function toggleAddress() {
             const location = document.getElementById('location').value;
             const addressField = document.getElementById('addressField');
-            addressField.style.display = location === 'client_location' ? 'block' : 'none';
+
+            if (location === 'client_location') {
+                addressField.classList.remove('d-none');
+                document.getElementById('address').setAttribute('required', 'required');
+            } else {
+                addressField.classList.add('d-none');
+                document.getElementById('address').removeAttribute('required');
+            }
         }
 
         function addToCart() {
-            const quantity = parseInt(document.getElementById('quantity').value);
-            let validationPassed = true;
-            let errorMessage = '';
+            const needsAppointment = document.getElementById('needsAppointment').checked;
+            const quantity = document.getElementById('quantity').value;
+            const errorMessage = document.getElementById('errorMessage');
 
-            // Validate quantity
-            if (isNaN(quantity) || quantity < 1) {
-                validationPassed = false;
-                errorMessage = 'الرجاء اختيار كمية صحيحة';
-            }
-
-            // Validate color selection if colors exist
-            const hasColors = document.querySelector('.colors-section') !== null;
-            if (hasColors && !selectedColor) {
-                validationPassed = false;
-                errorMessage = 'الرجاء اختيار اللون';
-            }
-
-            // Validate size selection if sizes exist
-            const hasSizes = document.querySelector('.sizes-section') !== null;
-            if (hasSizes && !selectedSize) {
-                validationPassed = false;
-                errorMessage = 'الرجاء اختيار المقاس';
-            }
-
-            // Show error message and return if validation fails
-            if (!validationPassed) {
-                showAlert(errorMessage);
+            // Validate selection
+            if (!needsAppointment && {{ $product->sizes->count() }} > 0 && !selectedSize) {
+                errorMessage.textContent = 'يرجى اختيار المقاس أو تحديد موعد لأخذ المقاسات';
+                errorMessage.classList.remove('d-none');
                 return;
             }
 
-            // Proceed with adding to cart if validation passes
+            // Hide any previous error
+            errorMessage.classList.add('d-none');
+
+            // Prepare data for API call
             const data = {
                 product_id: {{ $product->id }},
                 quantity: quantity,
                 color: selectedColor,
                 size: selectedSize,
-                _token: document.querySelector('meta[name="csrf-token"]').content
+                needs_appointment: needsAppointment
             };
 
+            // Make API call
             fetch('/cart/add', {
                 method: 'POST',
                 headers: {
@@ -431,22 +448,115 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    loadCartItems();
-                    showAlert(data.message);
+                    // Update cart count
+                    document.querySelector('.cart-count').textContent = data.cart_count;
 
-                    // عرض نافذة حجز الموعد
-                    if (data.show_appointment) {
-                        showAppointmentModal(data.cart_item_id);
+                    // Show success message
+                    const successAlert = document.createElement('div');
+                    successAlert.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3';
+                    successAlert.textContent = data.message;
+                    document.body.appendChild(successAlert);
+
+                    // Remove alert after 3 seconds
+                    setTimeout(() => successAlert.remove(), 3000);
+
+                    // If appointment is needed, show modal
+                    if (data.show_modal) {
+                        document.getElementById('cart_item_id').value = data.cart_item_id;
+                        const appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+                        appointmentModal.show();
                     }
                 } else {
-                    showAlert(data.message || 'حدث خطأ أثناء إضافة المنتج إلى السلة');
+                    errorMessage.textContent = data.message;
+                    errorMessage.classList.remove('d-none');
+                }
+            })
+            .catch(error => {
+                errorMessage.textContent = 'حدث خطأ أثناء إضافة المنتج إلى السلة';
+                errorMessage.classList.remove('d-none');
+            });
+        }
+
+        // Add event listener to needs appointment checkbox
+        document.getElementById('needsAppointment').addEventListener('change', function(e) {
+            if (e.target.checked) {
+                // Clear size selection when appointment is needed
+                document.querySelectorAll('.size-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                selectedSize = null;
+            }
+        });
+
+        // Add event listener to appointment form submission
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Show loading state
+            const submitBtn = document.getElementById('submitAppointment');
+            const spinner = submitBtn.querySelector('.spinner-border');
+            submitBtn.disabled = true;
+            spinner.classList.remove('d-none');
+
+            // Clear previous errors
+            const errorDiv = document.getElementById('appointmentErrors');
+            errorDiv.classList.add('d-none');
+            errorDiv.textContent = '';
+
+            const formData = new FormData(this);
+
+            fetch('{{ route("appointments.store") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Hide modal
+                    const appointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
+                    appointmentModal.hide();
+
+                    // Show success message
+                    const successAlert = document.createElement('div');
+                    successAlert.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3';
+                    successAlert.textContent = data.message;
+                    document.body.appendChild(successAlert);
+
+                    // Redirect to appointment details after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = data.appointment.url;
+                    }, 2000);
+                } else {
+                    // Show error message
+                    errorDiv.textContent = data.message;
+                    if (data.errors) {
+                        const errorList = document.createElement('ul');
+                        Object.values(data.errors).forEach(error => {
+                            const li = document.createElement('li');
+                            li.textContent = error[0];
+                            errorList.appendChild(li);
+                        });
+                        errorDiv.appendChild(errorList);
+                    }
+                    errorDiv.classList.remove('d-none');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                showAlert('حدث خطأ أثناء إضافة المنتج إلى السلة');
+                errorDiv.textContent = 'حدث خطأ أثناء حجز الموعد. الرجاء المحاولة مرة أخرى.';
+                errorDiv.classList.remove('d-none');
+            })
+            .finally(() => {
+                // Reset loading state
+                submitBtn.disabled = false;
+                spinner.classList.add('d-none');
             });
-        }
+        });
 
         // Cart Functions
         function openCart() {
@@ -595,3 +705,4 @@
 
 </body>
 </html>
+

@@ -21,7 +21,7 @@ class AppointmentController extends Controller
 
         // Filter by date
         if ($request->date) {
-            $query->whereDate('date', $request->date);
+            $query->whereDate('appointment_date', $request->date);
         }
 
         // Search by customer
@@ -32,8 +32,7 @@ class AppointmentController extends Controller
             });
         }
 
-        $appointments = $query->paginate(10)
-            ->withQueryString();
+        $appointments = $query->paginate(10);
 
         return view('admin.appointments.index', compact('appointments'));
     }

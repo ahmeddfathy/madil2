@@ -197,9 +197,24 @@ class ProductController extends Controller
             'quantity' => 'required|integer|min:1',
             'color' => 'nullable|string',
             'size' => 'nullable|string',
+            'needs_appointment' => 'required|boolean'
         ]);
 
         $product = Product::findOrFail($request->product_id);
+
+        // Check if appointment is needed
+        $needs_appointment = $request->needs_appointment;
+
+        // Validate if appointment is required
+        if (!$needs_appointment) {
+            // If not requesting appointment, size must be selected for products with sizes
+            if ($product->sizes()->count() > 0 && !$request->size) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'يرجى اختيار المقاس أو تحديد موعد لأخذ المقاسات'
+                ], 422);
+            }
+        }
 
         // Get or create cart
         $cart = null;
@@ -223,6 +238,7 @@ class ProductController extends Controller
         // Check if product already exists in cart
         $cartItem = CartItem::where('cart_id', $cart->id)
             ->where('product_id', $product->id)
+            ->where('needs_appointment', $needs_appointment)
             ->first();
 
         if ($cartItem) {
@@ -238,6 +254,9 @@ class ProductController extends Controller
                 'quantity' => $request->quantity,
                 'unit_price' => $product->price,
                 'subtotal' => $request->quantity * $product->price,
+                'color' => $request->color,
+                'size' => $request->size,
+                'needs_appointment' => $needs_appointment
             ]);
         }
 
@@ -250,10 +269,11 @@ class ProductController extends Controller
             'message' => 'تمت إضافة المنتج إلى سلة التسوق',
             'cart_count' => $cart->items()->sum('quantity'),
             'cart_total' => number_format($cart->total_amount, 2),
-            'show_appointment' => true,
+            'show_appointment' => $needs_appointment,
             'product_name' => $product->name,
             'product_id' => $product->id,
-            'cart_item_id' => $cartItem->id
+            'cart_item_id' => $cartItem->id,
+            'show_modal' => $needs_appointment
         ]);
     }
 

@@ -63,18 +63,22 @@
             </div>
           </dl>
 
-          @if($appointment->status === 'pending')
-          <div class="mt-6 flex space-x-3">
-            <form action="{{ route('appointments.cancel', $appointment) }}" method="POST" class="inline">
-              @csrf
-              @method('DELETE')
-              <button type="submit" onclick="return confirm('Are you sure you want to cancel this appointment?')"
-                class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">
-                Cancel Appointment
-              </button>
-            </form>
+          <div class="mt-6 flex space-x-4">
+            @if($appointment->status === 'pending')
+              <a href="{{ route('checkout.index') }}"
+                class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                متابعة إلى الدفع
+              </a>
+              <form action="{{ route('appointments.cancel', $appointment) }}" method="POST" class="inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit"
+                  class="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700">
+                  إلغاء الموعد
+                </button>
+              </form>
+            @endif
           </div>
-          @endif
         </div>
       </div>
     </div>

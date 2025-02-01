@@ -1,12 +1,17 @@
 <x-app-layout>
+  <x-slot name="styles">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/css/customer/orders.css') }}">
+  </x-slot>
+
   <x-slot name="header">
     <div class="flex justify-between items-center">
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        {{ __('Order Details') }} #{{ $order->id }}
+        {{ __('تفاصيل الطلب') }} #{{ $order->id }}
       </h2>
       <a href="{{ route('orders.index') }}"
         class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-        Back to Orders
+        العودة للطلبات
       </a>
     </div>
   </x-slot>

@@ -1,48 +1,87 @@
-<x-guest-layout>
-    <x-authentication-card>
-        <x-slot name="logo">
-            <x-authentication-card-logo />
-        </x-slot>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول | المتجر الحديث</title>
+    <!-- Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/signup.css') }}">
+</head>
+<body>
+    <div class="signup-container">
+        <!-- Decorative Elements -->
+        <div class="decorative-circle circle-1"></div>
+        <div class="decorative-circle circle-2"></div>
+
+        <!-- Login Form -->
+        <div class="signup-form-container">
+            <div class="wave-decoration"></div>
+            <div class="form-card">
+                <h1 class="signup-title">تسجيل الدخول</h1>
+                <p class="text-muted mb-4">أدخل بيانات حسابك</p>
 
         <x-validation-errors class="mb-4" />
 
         @session('status')
-            <div class="mb-4 font-medium text-sm text-green-600">
+                    <div class="alert alert-success">
                 {{ $value }}
             </div>
         @endsession
 
-        <form method="POST" action="{{ route('login') }}">
+                <form method="POST" action="{{ route('login') }}" class="signup-form">
             @csrf
 
-            <div>
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                    <div class="form-group">
+                        <label class="form-label">البريد الإلكتروني</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                            <input type="email" class="form-control" name="email" :value="old('email')" placeholder="example@domain.com" required autofocus>
+                        </div>
             </div>
 
-            <div class="mt-4">
-                <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
+                    <div class="form-group">
+                        <label class="form-label">كلمة المرور</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" class="form-control" name="password" placeholder="********" required>
+                        </div>
             </div>
 
-            <div class="block mt-4">
-                <label for="remember_me" class="flex items-center">
-                    <x-checkbox id="remember_me" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="remember" id="remember_me">
+                        <label class="form-check-label" for="remember_me">
+                            تذكرني
                 </label>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
+                    <button type="submit" class="btn-signup">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        تسجيل الدخول
+                    </button>
+
                 @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
+                        <div class="text-center mt-3">
+                            <a href="{{ route('password.request') }}" class="forgot-password">
+                                نسيت كلمة المرور؟
                     </a>
+                        </div>
                 @endif
 
-                <x-button class="ms-4">
-                    {{ __('Log in') }}
-                </x-button>
+                    <p class="login-link mt-4">
+                        ليس لديك حساب؟ <a href="{{ route('register') }}">إنشاء حساب جديد</a>
+                    </p>
+                </form>
             </div>
-        </form>
-    </x-authentication-card>
-</x-guest-layout>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

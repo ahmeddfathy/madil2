@@ -77,8 +77,8 @@
                   <div class="text-sm text-gray-900">{{ ucfirst($appointment->service_type) }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ $appointment->date->format('F j, Y') }}</div>
-                  <div class="text-sm text-gray-500">{{ $appointment->time }}</div>
+                  <div class="text-sm text-gray-900">{{ $appointment->formatted_date }}</div>
+                  <div class="text-sm text-gray-500">{{ $appointment->formatted_time }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full

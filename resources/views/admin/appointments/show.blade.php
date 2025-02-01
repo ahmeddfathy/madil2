@@ -94,12 +94,16 @@
 
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">Date</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $appointment->date->format('F j, Y') }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $appointment->formatted_date }}
+                                    </dd>
                                 </div>
 
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">Time</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $appointment->time }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $appointment->formatted_time }}
+                                    </dd>
                                 </div>
 
                                 @if($appointment->notes)
@@ -111,7 +115,9 @@
 
                                 <div class="sm:col-span-2">
                                     <dt class="text-sm font-medium text-gray-500">Created</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $appointment->created_at->format('F j, Y g:i A') }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $appointment->created_at ? $appointment->created_at->format('F j, Y g:i A') : 'Not available' }}
+                                    </dd>
                                 </div>
                             </dl>
                         </div>
