@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use App\Notifications\OrderCreated;
 
 class OrderController extends Controller
 {
@@ -85,6 +86,9 @@ class OrderController extends Controller
 
             // Clear cart after successful order
             Session::forget('cart');
+
+            // Send order confirmation notification
+            Auth::user()->notify(new OrderCreated($order));
 
             return redirect()->route('orders.show', $order)
                 ->with('success', 'Order placed successfully.');

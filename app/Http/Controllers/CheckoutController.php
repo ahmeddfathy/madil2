@@ -13,6 +13,7 @@ use App\Models\Appointment;
 use App\Models\CartItem;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use App\Notifications\OrderCreated;
 
 class CheckoutController extends Controller
 {
@@ -192,6 +193,18 @@ class CheckoutController extends Controller
                 $cart->items()->delete();
                 $cart->delete();
 
+                try {
+                    // إرسال إشعار تأكيد الطلب مع التقاط أي أخطاء
+                    Auth::user()->notify(new OrderCreated($order));
+                } catch (\Exception $e) {
+                    Log::error('Failed to send order notification', [
+                        'order_id' => $order->id,
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                    // نستمر في العملية حتى لو فشل إرسال الإشعار
+                }
+
                 Log::info('Checkout completed successfully', [
                     'order_id' => $order->id
                 ]);
@@ -217,12 +230,11 @@ class CheckoutController extends Controller
                 ->withErrors(['error' => $e->getMessage()]);
 
         } catch (\Exception $e) {
-            Log::error('Unexpected error during checkout', [
+            Log::error('Checkout error', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'user_id' => Auth::id(),
-                'request_data' => $request->all()
+                'trace' => $e->getTraceAsString()
             ]);
+
             return back()
                 ->withInput()
                 ->withErrors(['error' => 'حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى أو الاتصال بالدعم الفني.']);
