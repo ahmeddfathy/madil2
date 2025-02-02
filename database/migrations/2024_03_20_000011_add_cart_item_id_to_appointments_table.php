@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('appointments', function (Blueprint $table) {
-            $table->foreignId('cart_item_id')->nullable()->after('user_id')->constrained('cart_items')->onDelete('set null');
-
-
+            $table->foreignId('cart_item_id')->nullable()->after('user_id')
+                  ->constrained('cart_items')
+                  ->onDelete('set null');
         });
     }
 
@@ -19,7 +19,7 @@ return new class extends Migration
     {
         Schema::table('appointments', function (Blueprint $table) {
             $table->dropForeign(['cart_item_id']);
-            $table->dropColumn(['cart_item_id']);
+            $table->dropColumn('cart_item_id');
         });
     }
 };

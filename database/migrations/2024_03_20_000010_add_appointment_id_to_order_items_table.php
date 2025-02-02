@@ -8,8 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->foreignId('appointment_id')->nullable()->after('user_id')
+        Schema::table('order_items', function (Blueprint $table) {
+            $table->foreignId('appointment_id')->nullable()->after('order_id')
                   ->constrained('appointments')
                   ->onDelete('set null');
         });
@@ -17,10 +17,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
+        Schema::table('order_items', function (Blueprint $table) {
             $table->dropForeign(['appointment_id']);
             $table->dropColumn('appointment_id');
         });
     }
 };
-
