@@ -1,109 +1,227 @@
-<x-app-layout>
-  <x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-      {{ __('Manage Appointments') }}
-    </h2>
-  </x-slot>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المواعيد</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/css/admin/appointments.css') }}">
+</head>
+<body class="bg-light">
 
-  <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <!-- Filters -->
-      <div class="mb-6 bg-white rounded-lg shadow-sm p-4">
-        <form action="{{ route('admin.appointments.index') }}" method="GET" class="flex flex-wrap gap-4">
-          <div>
-            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-            <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-              <option value="">All Statuses</option>
-              <option value="pending" @selected(request('status')==='pending' )>Pending</option>
-              <option value="approved" @selected(request('status')==='approved' )>Approved</option>
-              <option value="completed" @selected(request('status')==='completed' )>Completed</option>
-              <option value="cancelled" @selected(request('status')==='cancelled' )>Cancelled</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
-            <input type="date" name="date" id="date"
-              value="{{ request('date') }}"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-          </div>
-
-          <div class="flex-1">
-            <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
-            <input type="text" name="search" id="search"
-              value="{{ request('search') }}"
-              placeholder="Search by customer name or email..."
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-          </div>
-
-          <div class="flex items-end">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-              Filter
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-        <div class="p-6">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Customer
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Service
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date & Time
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              @foreach($appointments as $appointment)
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ $appointment->user->name }}</div>
-                  <div class="text-sm text-gray-500">{{ $appointment->user->email }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ ucfirst($appointment->service_type) }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ $appointment->formatted_date }}</div>
-                  <div class="text-sm text-gray-500">{{ $appointment->formatted_time }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full
-                                            @if($appointment->status === 'completed') bg-green-100 text-green-800
-                                            @elseif($appointment->status === 'cancelled') bg-red-100 text-red-800
-                                            @elseif($appointment->status === 'approved') bg-blue-100 text-blue-800
-                                            @else bg-yellow-100 text-yellow-800
-                                            @endif">
-                    {{ ucfirst($appointment->status) }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <a href="{{ route('admin.appointments.show', $appointment) }}"
-                    class="text-blue-600 hover:text-blue-900">View</a>
-                </td>
-              </tr>
-              @endforeach
-            </tbody>
-          </table>
-
-          <div class="mt-6">
-            {{ $appointments->links() }}
-          </div>
+<div class="appointments-container">
+    <div class="container-fluid py-4">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="page-header">
+                <h1 class="page-title mb-0">
+                    <i class="fas fa-calendar-check"></i>
+                    إدارة المواعيد
+                </h1>
+                <p class="text-muted mt-2 mb-0">قم بإدارة وتتبع جميع المواعيد من مكان واحد</p>
+            </div>
         </div>
-      </div>
+
+        <!-- Filters Card -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-filter text-primary me-2"></i>
+                    تصفية المواعيد
+                </h5>
+                <form action="{{ route('admin.appointments.index') }}" method="GET" class="row g-3">
+                    <!-- Status Filter -->
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">
+                            <i class="fas fa-tag me-1 text-primary"></i>
+                            الحالة
+                        </label>
+                        <select name="status" id="status" class="form-select shadow-sm">
+                            <option value="">كل الحالات</option>
+                            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>قيد الانتظار</option>
+                            <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>تم الموافقة</option>
+                            <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>مكتمل</option>
+                            <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>ملغي</option>
+                        </select>
+                    </div>
+
+                    <!-- Date Filter -->
+                    <div class="col-md-3">
+                        <label for="date" class="form-label">
+                            <i class="fas fa-calendar me-1 text-primary"></i>
+                            التاريخ
+                        </label>
+                        <input type="date" class="form-control shadow-sm" id="date" name="date" value="{{ request('date') }}">
+                    </div>
+
+                    <!-- Search Filter -->
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">
+                            <i class="fas fa-search me-1 text-primary"></i>
+                            بحث
+                        </label>
+                        <input type="text" class="form-control shadow-sm" id="search" name="search"
+                               placeholder="ابحث باسم العميل أو البريد الإلكتروني..."
+                               value="{{ request('search') }}">
+                    </div>
+
+                    <!-- Filter Button -->
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100 shadow">
+                            <i class="fas fa-filter me-2"></i>
+                            تصفية
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Appointments Table -->
+        <div class="card border-0 shadow">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="border-0 py-3 ps-4">العميل</th>
+                                <th class="border-0 py-3">الخدمة</th>
+                                <th class="border-0 py-3">التاريخ والوقت</th>
+                                <th class="border-0 py-3">الحالة</th>
+                                <th class="border-0 py-3 pe-4">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($appointments as $appointment)
+                            <tr class="align-middle">
+                                <td class="ps-4">
+                                    <div class="customer-info">
+                                        <div class="name fw-bold text-dark">
+                                            <i class="fas fa-user-circle me-1 text-primary"></i>
+                                            {{ $appointment->user->name }}
+                                        </div>
+                                        <div class="email text-muted">
+                                            <i class="fas fa-envelope me-1"></i>
+                                            {{ $appointment->user->email }}
+                                        </div>
+                                        <div class="phone text-muted mt-1">
+                                            <i class="fas fa-phone me-1"></i>
+                                            {{ $appointment->user->phone ?? 'غير محدد' }}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="service-info">
+                                        <span class="service-badge mb-2">
+                                            <i class="fas fa-briefcase me-1"></i>
+                                            {{ $appointment->service_type }}
+                                        </span>
+                                        @if($appointment->price)
+                                        <div class="service-price text-muted mt-2">
+                                            <i class="fas fa-tag me-1"></i>
+                                            {{ number_format($appointment->price, 2) }} ريال
+                                        </div>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="datetime-info">
+                                        <div class="date fw-bold text-dark">
+                                            <i class="far fa-calendar me-1"></i>
+                                            {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d M, Y') }}
+                                        </div>
+                                        <div class="time text-muted">
+                                            <i class="far fa-clock me-1"></i>
+                                            {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') }}
+                                        </div>
+                                        @if($appointment->duration)
+                                        <div class="duration text-muted mt-1">
+                                            <i class="fas fa-hourglass-half me-1"></i>
+                                            {{ $appointment->duration }} دقيقة
+                                        </div>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="status-info">
+                                        <span class="status-badge {{ $appointment->status }}">
+                                            <i class="fas fa-circle status-icon"></i>
+                                            @switch($appointment->status)
+                                                @case('pending')
+                                                    قيد الانتظار
+                                                    @break
+                                                @case('approved')
+                                                    تم الموافقة
+                                                    @break
+                                                @case('completed')
+                                                    مكتمل
+                                                    @break
+                                                @case('cancelled')
+                                                    ملغي
+                                                    @break
+                                                @default
+                                                    {{ $appointment->status }}
+                                            @endswitch
+                                        </span>
+                                        @if($appointment->payment_status)
+                                        <div class="payment-status mt-2">
+                                            <span class="badge {{ $appointment->payment_status == 'paid' ? 'bg-success' : 'bg-warning' }}">
+                                                <i class="fas {{ $appointment->payment_status == 'paid' ? 'fa-check-circle' : 'fa-clock' }} me-1"></i>
+                                                {{ $appointment->payment_status == 'paid' ? 'تم الدفع' : 'في انتظار الدفع' }}
+                                            </span>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="pe-4">
+                                    <div class="d-flex flex-column gap-2">
+                                        <a href="{{ route('admin.appointments.show', $appointment) }}"
+                                           class="btn btn-sm btn-light-primary">
+                                            <i class="fas fa-eye me-1"></i>
+                                            عرض التفاصيل
+                                        </a>
+                                        @if($appointment->status == 'pending')
+                                        <form action="{{ route('admin.appointments.updateStatus', $appointment) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="status" value="approved">
+                                            <button type="submit" class="btn btn-sm btn-light-success w-100">
+                                                <i class="fas fa-check me-1"></i>
+                                                قبول
+                                            </button>
+                                        </form>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="empty-state">
+                                        <i class="fas fa-calendar-xmark text-muted mb-3"></i>
+                                        <h4 class="text-dark mb-1">لا توجد مواعيد</h4>
+                                        <p class="text-muted mb-0">لم يتم العثور على أي مواعيد تطابق معايير البحث</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                @if($appointments->hasPages())
+                <div class="pagination-container px-4">
+                    {{ $appointments->links() }}
+                </div>
+                @endif
+            </div>
+        </div>
     </div>
-  </div>
-</x-app-layout>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

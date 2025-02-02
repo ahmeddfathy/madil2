@@ -1,31 +1,42 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Appointment Details') }}
-            </h2>
-            <a href="{{ route('admin.appointments.index') }}"
-                class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-                Back to Appointments
-            </a>
-        </div>
-    </x-slot>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Details</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/admin/appointments.css') }}">
+</head>
+<body class="bg-light">
+    <div class="appointments-container py-4">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="page-title">
+                    <i class="fas fa-calendar-alt"></i> Appointment Details
+                </h1>
+                <a href="{{ route('admin.appointments.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Appointments
+                </a>
+            </div>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Update Status -->
-            <div class="mb-8 bg-white overflow-hidden shadow-sm rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Update Status</h3>
+            <div class="card appointment-details-card mb-4">
+                <div class="card-header">
+                    <h3><i class="fas fa-edit"></i> Update Status</h3>
+                </div>
+                <div class="card-body">
                     <form action="{{ route('admin.appointments.update-status', $appointment) }}" method="POST">
                         @csrf
                         @method('PATCH')
 
-                        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                            <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                <select name="status" id="status"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Status</label>
+                                <select name="status" id="status" class="form-select">
                                     <option value="pending" @selected($appointment->status === 'pending')>Pending</option>
                                     <option value="approved" @selected($appointment->status === 'approved')>Approved</option>
                                     <option value="completed" @selected($appointment->status === 'completed')>Completed</option>
@@ -33,97 +44,108 @@
                                 </select>
                             </div>
 
-                            <div class="sm:col-span-2">
-                                <label for="notes" class="block text-sm font-medium text-gray-700">Notes</label>
-                                <textarea name="notes" id="notes" rows="3"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">{{ old('notes', $appointment->notes) }}</textarea>
+                            <div class="col-12">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea name="notes" id="notes" rows="3" class="form-control">{{ old('notes', $appointment->notes) }}</textarea>
                             </div>
-                        </div>
 
-                        <div class="mt-4">
-                            <button type="submit"
-                                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                                Update Status
-                            </button>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Update Status
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- Appointment Details -->
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-                <div class="p-6">
-                    <div class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                        <!-- Customer Information -->
-                        <div class="sm:col-span-2">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Customer Information</h3>
-                            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Name</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $appointment->user->name }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Email</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $appointment->user->email }}</dd>
-                                </div>
-                            </dl>
+            <div class="row g-4">
+                <!-- Customer Information -->
+                <div class="col-md-6">
+                    <div class="card appointment-details-card h-100">
+                        <div class="card-header">
+                            <h3><i class="fas fa-user"></i> Customer Information</h3>
                         </div>
+                        <div class="card-body">
+                            <div class="detail-item mb-3">
+                                <dt><i class="fas fa-user-circle"></i> Name</dt>
+                                <dd>{{ $appointment->user->name }}</dd>
+                            </div>
+                            <div class="detail-item">
+                                <dt><i class="fas fa-envelope"></i> Email</dt>
+                                <dd>{{ $appointment->user->email }}</dd>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        <!-- Appointment Information -->
-                        <div class="sm:col-span-2">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Appointment Information</h3>
-                            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Service Type</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ ucfirst($appointment->service_type) }}</dd>
+                <!-- Appointment Information -->
+                <div class="col-md-6">
+                    <div class="card appointment-details-card h-100">
+                        <div class="card-header">
+                            <h3><i class="fas fa-info-circle"></i> Appointment Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="detail-item">
+                                        <dt><i class="fas fa-concierge-bell"></i> Service Type</dt>
+                                        <dd>{{ ucfirst($appointment->service_type) }}</dd>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Status</dt>
-                                    <dd class="mt-1">
-                                        <span class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full
-                                            @if($appointment->status === 'completed') bg-green-100 text-green-800
-                                            @elseif($appointment->status === 'cancelled') bg-red-100 text-red-800
-                                            @elseif($appointment->status === 'approved') bg-blue-100 text-blue-800
-                                            @else bg-yellow-100 text-yellow-800
-                                            @endif">
-                                            {{ ucfirst($appointment->status) }}
-                                        </span>
-                                    </dd>
+                                <div class="col-md-6">
+                                    <div class="detail-item">
+                                        <dt><i class="fas fa-check-circle"></i> Status</dt>
+                                        <dd>
+                                            <span class="status-badge {{ $appointment->status }}">
+                                                <i class="fas fa-circle status-icon"></i>
+                                                {{ ucfirst($appointment->status) }}
+                                            </span>
+                                        </dd>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Date</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">
-                                        {{ $appointment->formatted_date }}
-                                    </dd>
+                                <div class="col-md-6">
+                                    <div class="detail-item">
+                                        <dt><i class="fas fa-calendar"></i> Date</dt>
+                                        <dd>{{ $appointment->formatted_date }}</dd>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Time</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">
-                                        {{ $appointment->formatted_time }}
-                                    </dd>
+                                <div class="col-md-6">
+                                    <div class="detail-item">
+                                        <dt><i class="fas fa-clock"></i> Time</dt>
+                                        <dd>{{ $appointment->formatted_time }}</dd>
+                                    </div>
                                 </div>
 
                                 @if($appointment->notes)
-                                <div class="sm:col-span-2">
-                                    <dt class="text-sm font-medium text-gray-500">Notes</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 whitespace-pre-wrap">{{ $appointment->notes }}</dd>
+                                <div class="col-12">
+                                    <div class="detail-item">
+                                        <dt><i class="fas fa-sticky-note"></i> Notes</dt>
+                                        <dd class="notes-text">{{ $appointment->notes }}</dd>
+                                    </div>
                                 </div>
                                 @endif
 
-                                <div class="sm:col-span-2">
-                                    <dt class="text-sm font-medium text-gray-500">Created</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">
-                                        {{ $appointment->created_at ? $appointment->created_at->format('F j, Y g:i A') : 'Not available' }}
-                                    </dd>
+                                <div class="col-12">
+                                    <div class="detail-item">
+                                        <dt><i class="fas fa-calendar-plus"></i> Created</dt>
+                                        <dd>
+                                            {{ $appointment->created_at ? $appointment->created_at->format('F j, Y g:i A') : 'Not available' }}
+                                        </dd>
+                                    </div>
                                 </div>
-                            </dl>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

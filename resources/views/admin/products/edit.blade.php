@@ -1,295 +1,315 @@
-<x-app-layout>
-  <x-slot name="header">
-    <div class="flex justify-between items-center">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        {{ __('Edit Product') }}: {{ $product->name }}
-      </h2>
-      <a href="{{ route('admin.products.index') }}"
-        class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-        Back to Products
-      </a>
-    </div>
-  </x-slot>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل المنتج - {{ $product->name }}</title>
 
-  <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-        <div class="p-6">
-          <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">
+    <!-- Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/css/admin/products.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/admin/product-forms.css') }}">
+</head>
+<body>
+    <div class="container py-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">تعديل المنتج: {{ $product->name }}</h1>
+            <div>
+                <a href="{{ route('admin.products.show', $product) }}" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-eye"></i>
+                    عرض المنتج
+                </a>
+                <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-right"></i>
+                    عودة للمنتجات
+                </a>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <!-- Basic Information -->
-              <div class="space-y-6">
-                <div>
-                  <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
-                  <input type="text" name="name" id="name"
-                    value="{{ old('name', $product->name) }}"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                  @error('name')
-                  <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                  @enderror
-                </div>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Basic Information -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">اسم المنتج</label>
+                                <input type="text" name="name" class="form-control"
+                                       value="{{ old('name', $product->name) }}">
+                                @error('name')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                <div>
-                  <label for="category_id" class="block text-sm font-medium text-gray-700">Category</label>
-                  <select name="category_id" id="category_id"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                    <option value="">Select Category</option>
-                    @foreach($categories as $category)
-                    <option value="{{ $category->id }}"
-                      @selected(old('category_id', $product->category_id) == $category->id)>
-                      {{ $category->name }}
-                    </option>
-                    @endforeach
-                  </select>
-                  @error('category_id')
-                  <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                  @enderror
-                </div>
+                            <div class="mb-3">
+                                <label class="form-label">التصنيف</label>
+                                <select name="category_id" class="form-control">
+                                    <option value="">اختر التصنيف</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}"
+                                            @selected(old('category_id', $product->category_id) == $category->id)>
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('category_id')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                <div>
-                  <label for="price" class="block text-sm font-medium text-gray-700">Price (SAR)</label>
-                  <input type="number" name="price" id="price"
-                    value="{{ old('price', $product->price / 100) }}"
-                    step="0.01"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                  @error('price')
-                  <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                  @enderror
-                </div>
+                            <div class="mb-3">
+                                <label class="form-label">السعر (ريال)</label>
+                                <input type="number" name="price" class="form-control" step="0.01"
+                                       value="{{ old('price', $product->price / 100) }}">
+                                @error('price')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                <div>
-                  <label for="stock" class="block text-sm font-medium text-gray-700">Stock</label>
-                  <input type="number" name="stock" id="stock"
-                    value="{{ old('stock', $product->stock) }}"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                  @error('stock')
-                  <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                  @enderror
-                </div>
-              </div>
-
-              <!-- Description and Images -->
-              <div class="space-y-6">
-                <div>
-                  <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                  <textarea name="description" id="description" rows="4"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">{{ old('description', $product->description) }}</textarea>
-                  @error('description')
-                  <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                  @enderror
-                </div>
-
-                <!-- Current Images -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Current Images</label>
-                  <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    @foreach($product->images as $image)
-                    <div class="relative group">
-                      <img src="{{ Storage::url($image->image_path) }}"
-                        alt="{{ $product->name }}"
-                        class="w-full h-32 object-cover rounded-lg">
-                      <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                        <div class="text-white space-y-2">
-                          <label class="flex items-center justify-center cursor-pointer">
-                            <input type="radio" name="is_primary" value="{{ $image->id }}"
-                              @checked($image->is_primary)
-                            class="text-blue-600 border-gray-300 rounded">
-                            <span class="ml-2">Primary</span>
-                          </label>
-                          <label class="flex items-center justify-center cursor-pointer">
-                            <input type="checkbox" name="remove_images[]" value="{{ $image->id }}"
-                              class="text-red-600 border-gray-300 rounded">
-                            <span class="ml-2">Remove</span>
-                          </label>
+                            <div class="mb-3">
+                                <label class="form-label">المخزون</label>
+                                <input type="number" name="stock" class="form-control"
+                                       value="{{ old('stock', $product->stock) }}">
+                                @error('stock')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
-                      </div>
-                    </div>
-                    @endforeach
-                  </div>
-                </div>
 
-                <!-- New Images -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Add New Images</label>
-                  <div class="mt-2 space-y-4">
-                    <div class="image-upload-container">
-                      <div class="flex items-center space-x-4 mb-4">
-                        <input type="file" name="new_images[]" accept="image/*"
-                          class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                        <div>
-                          <label class="inline-flex items-center">
-                            <input type="radio" name="is_primary_new[0]" value="1" class="text-blue-600 border-gray-300 rounded">
-                            <span class="ml-2 text-sm text-gray-600">Primary Image</span>
-                          </label>
+                        <!-- Description and Images -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">الوصف</label>
+                                <textarea name="description" class="form-control" rows="4">{{ old('description', $product->description) }}</textarea>
+                                @error('description')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Current Images -->
+                            <div class="mb-3">
+                                <label class="form-label">الصور الحالية</label>
+                                <div class="row g-2 mb-2">
+                                    @foreach($product->images as $image)
+                                    <div class="col-auto">
+                                        <div class="position-relative">
+                                            <img src="{{ Storage::url($image->image_path) }}"
+                                                 alt="صورة المنتج"
+                                                 class="rounded"
+                                                 style="width: 80px; height: 80px; object-fit: cover;">
+                                            <div class="position-absolute top-0 end-0 p-1">
+                                                <div class="form-check">
+                                                    <input type="radio" name="is_primary" value="{{ $image->id }}"
+                                                           class="form-check-input" @checked($image->is_primary)>
+                                                </div>
+                                            </div>
+                                            <div class="position-absolute bottom-0 start-0 p-1">
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="remove_images[]" value="{{ $image->id }}"
+                                                           class="form-check-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                <div class="small text-muted">
+                                    * حدد الصور للحذف
+                                    <br>
+                                    * اختر الصورة الرئيسية
+                                </div>
+                            </div>
+
+                            <!-- New Images -->
+                            <div class="mb-3">
+                                <label class="form-label">إضافة صور جديدة</label>
+                                <div id="newImagesContainer">
+                                    <div class="mb-2">
+                                        <div class="input-group">
+                                            <input type="file" name="new_images[]" class="form-control" accept="image/*">
+                                            <div class="input-group-text">
+                                                <label class="mb-0">
+                                                    <input type="radio" name="is_primary_new[0]" value="1" class="me-1">
+                                                    صورة رئيسية
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addNewImageInput()">
+                                    <i class="fas fa-plus"></i>
+                                    إضافة صورة
+                                </button>
+                            </div>
                         </div>
-                      </div>
                     </div>
-                    <button type="button" onclick="addImageUpload()"
-                      class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                      + Add Another Image
-                    </button>
-                  </div>
-                  @error('new_images.*')
-                  <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                  @enderror
-                </div>
-              </div>
-            </div>
 
-            <!-- Colors and Sizes Section -->
-            <div class="mt-6 border-t border-gray-200 pt-6">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Colors Management -->
-                <div>
-                  <h3 class="text-lg font-medium text-gray-900 mb-4">Product Colors</h3>
-                  <div class="space-y-4">
-                    <div id="colors-container">
-                      @forelse($product->colors ?? [] as $color)
-                      <div class="flex items-center space-x-4 mb-4">
-                        <input type="text" name="colors[]" value="{{ $color->color }}"
-                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                          placeholder="Enter color name">
-                        <input type="hidden" name="color_ids[]" value="{{ $color->id }}">
-                        <label class="inline-flex items-center">
-                          <input type="checkbox" name="color_available[]" value="1"
-                            @checked($color->is_available)
-                            class="text-blue-600 border-gray-300 rounded">
-                          <span class="ml-2 text-sm text-gray-600">Available</span>
-                        </label>
-                        <button type="button" onclick="this.parentElement.remove()"
-                          class="text-red-600 hover:text-red-800">
-                          Remove
-                        </button>
-                      </div>
-                      @empty
-                      <!-- No colors yet -->
-                      @endforelse
+                    <!-- Variants -->
+                    <div class="row mt-4">
+                        <!-- Colors -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3">الألوان المتاحة</h5>
+                            <div id="colorsContainer">
+                                @forelse($product->colors as $color)
+                                <div class="input-group mb-2">
+                                    <input type="text" name="colors[]" class="form-control"
+                                           value="{{ $color->color }}" placeholder="اسم اللون">
+                                    <input type="hidden" name="color_ids[]" value="{{ $color->id }}">
+                                    <div class="input-group-text">
+                                        <label class="mb-0">
+                                            <input type="checkbox" name="color_available[]" value="1"
+                                                   @checked($color->is_available) class="me-1">
+                                            متوفر
+                                        </label>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-danger"
+                                            onclick="this.closest('.input-group').remove()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                @empty
+                                <div class="input-group mb-2">
+                                    <input type="text" name="colors[]" class="form-control" placeholder="اسم اللون">
+                                    <div class="input-group-text">
+                                        <label class="mb-0">
+                                            <input type="checkbox" name="color_available[]" value="1" checked class="me-1">
+                                            متوفر
+                                        </label>
+                                    </div>
+                                </div>
+                                @endforelse
+                            </div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addColorInput()">
+                                <i class="fas fa-plus"></i>
+                                إضافة لون
+                            </button>
+                        </div>
+
+                        <!-- Sizes -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3">المقاسات المتاحة</h5>
+                            <div id="sizesContainer">
+                                @forelse($product->sizes as $size)
+                                <div class="input-group mb-2">
+                                    <input type="text" name="sizes[]" class="form-control"
+                                           value="{{ $size->size }}" placeholder="المقاس">
+                                    <input type="hidden" name="size_ids[]" value="{{ $size->id }}">
+                                    <div class="input-group-text">
+                                        <label class="mb-0">
+                                            <input type="checkbox" name="size_available[]" value="1"
+                                                   @checked($size->is_available) class="me-1">
+                                            متوفر
+                                        </label>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-danger"
+                                            onclick="this.closest('.input-group').remove()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                @empty
+                                <div class="input-group mb-2">
+                                    <input type="text" name="sizes[]" class="form-control" placeholder="المقاس">
+                                    <div class="input-group-text">
+                                        <label class="mb-0">
+                                            <input type="checkbox" name="size_available[]" value="1" checked class="me-1">
+                                            متوفر
+                                        </label>
+                                    </div>
+                                </div>
+                                @endforelse
+                            </div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addSizeInput()">
+                                <i class="fas fa-plus"></i>
+                                إضافة مقاس
+                            </button>
+                        </div>
                     </div>
-                    <button type="button" onclick="addColor()"
-                      class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                      + Add New Color
-                    </button>
-                  </div>
                 </div>
 
-                <!-- Sizes Management -->
-                <div>
-                  <h3 class="text-lg font-medium text-gray-900 mb-4">Product Sizes</h3>
-                  <div class="space-y-4">
-                    <div id="sizes-container">
-                      @forelse($product->sizes ?? [] as $size)
-                      <div class="flex items-center space-x-4 mb-4">
-                        <input type="text" name="sizes[]" value="{{ $size->size }}"
-                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                          placeholder="Enter size">
-                        <input type="hidden" name="size_ids[]" value="{{ $size->id }}">
-                        <label class="inline-flex items-center">
-                          <input type="checkbox" name="size_available[]" value="1"
-                            @checked($size->is_available)
-                            class="text-blue-600 border-gray-300 rounded">
-                          <span class="ml-2 text-sm text-gray-600">Available</span>
-                        </label>
-                        <button type="button" onclick="this.parentElement.remove()"
-                          class="text-red-600 hover:text-red-800">
-                          Remove
-                        </button>
-                      </div>
-                      @empty
-                      <!-- No sizes yet -->
-                      @endforelse
-                    </div>
-                    <button type="button" onclick="addSize()"
-                      class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                      + Add New Size
+                <!-- Submit Button -->
+                <div class="card-footer bg-white">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        حفظ التغييرات
                     </button>
-                  </div>
                 </div>
-              </div>
             </div>
-
-            <div class="mt-6 border-t border-gray-200 pt-6">
-              <button type="submit"
-                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                Update Product
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+        </form>
     </div>
-  </div>
 
-  @push('scripts')
-  <script>
-    let imageUploadCount = 1;
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let newImageCount = 1;
 
-    function addImageUpload() {
-      const container = document.querySelector('.image-upload-container');
-      const newUpload = document.createElement('div');
-      newUpload.className = 'flex items-center space-x-4 mb-4';
-      newUpload.innerHTML = `
-                <input type="file" name="new_images[]" accept="image/*"
-                       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                <div>
-                    <label class="inline-flex items-center">
-                        <input type="radio" name="is_primary_new[${imageUploadCount}]" value="1" class="text-blue-600 border-gray-300 rounded">
-                        <span class="ml-2 text-sm text-gray-600">Primary Image</span>
+        function addNewImageInput() {
+            const container = document.getElementById('newImagesContainer');
+            const div = document.createElement('div');
+            div.className = 'mb-2';
+            div.innerHTML = `
+                <div class="input-group">
+                    <input type="file" name="new_images[]" class="form-control" accept="image/*">
+                    <div class="input-group-text">
+                        <label class="mb-0">
+                            <input type="radio" name="is_primary_new[${newImageCount}]" value="1" class="me-1">
+                            صورة رئيسية
+                        </label>
+                    </div>
+                    <button type="button" class="btn btn-outline-danger" onclick="this.closest('.mb-2').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(div);
+            newImageCount++;
+        }
+
+        function addColorInput() {
+            const container = document.getElementById('colorsContainer');
+            const div = document.createElement('div');
+            div.className = 'input-group mb-2';
+            div.innerHTML = `
+                <input type="text" name="colors[]" class="form-control" placeholder="اسم اللون">
+                <input type="hidden" name="color_ids[]" value="">
+                <div class="input-group-text">
+                    <label class="mb-0">
+                        <input type="checkbox" name="color_available[]" value="1" checked class="me-1">
+                        متوفر
                     </label>
                 </div>
-                <button type="button" onclick="this.parentElement.remove()" class="text-red-600 hover:text-red-800">
-                    Remove
+                <button type="button" class="btn btn-outline-danger" onclick="this.closest('.input-group').remove()">
+                    <i class="fas fa-times"></i>
                 </button>
             `;
-      container.appendChild(newUpload);
-      imageUploadCount++;
-    }
+            container.appendChild(div);
+        }
 
-    function addColor() {
-      const container = document.getElementById('colors-container');
-      const newColor = document.createElement('div');
-      newColor.className = 'flex items-center space-x-4 mb-4';
-      newColor.innerHTML = `
-            <input type="text" name="colors[]"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                placeholder="Enter color name">
-            <input type="hidden" name="color_ids[]" value="">
-            <label class="inline-flex items-center">
-                <input type="checkbox" name="color_available[]" value="1" checked
-                    class="text-blue-600 border-gray-300 rounded">
-                <span class="ml-2 text-sm text-gray-600">Available</span>
-            </label>
-            <button type="button" onclick="this.parentElement.remove()"
-                class="text-red-600 hover:text-red-800">
-                Remove
-            </button>
-        `;
-      container.appendChild(newColor);
-    }
-
-    function addSize() {
-      const container = document.getElementById('sizes-container');
-      const newSize = document.createElement('div');
-      newSize.className = 'flex items-center space-x-4 mb-4';
-      newSize.innerHTML = `
-            <input type="text" name="sizes[]"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                placeholder="Enter size">
-            <input type="hidden" name="size_ids[]" value="">
-            <label class="inline-flex items-center">
-                <input type="checkbox" name="size_available[]" value="1" checked
-                    class="text-blue-600 border-gray-300 rounded">
-                <span class="ml-2 text-sm text-gray-600">Available</span>
-            </label>
-            <button type="button" onclick="this.parentElement.remove()"
-                class="text-red-600 hover:text-red-800">
-                Remove
-            </button>
-        `;
-      container.appendChild(newSize);
-    }
-  </script>
-  @endpush
-</x-app-layout>
+        function addSizeInput() {
+            const container = document.getElementById('sizesContainer');
+            const div = document.createElement('div');
+            div.className = 'input-group mb-2';
+            div.innerHTML = `
+                <input type="text" name="sizes[]" class="form-control" placeholder="المقاس">
+                <input type="hidden" name="size_ids[]" value="">
+                <div class="input-group-text">
+                    <label class="mb-0">
+                        <input type="checkbox" name="size_available[]" value="1" checked class="me-1">
+                        متوفر
+                    </label>
+                </div>
+                <button type="button" class="btn btn-outline-danger" onclick="this.closest('.input-group').remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(div);
+        }
+    </script>
+</body>
+</html>
