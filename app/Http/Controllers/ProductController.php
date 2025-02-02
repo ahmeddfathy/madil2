@@ -111,53 +111,67 @@ class ProductController extends Controller
 
     public function filter(Request $request)
     {
-        $query = Product::with(['category', 'images', 'colors', 'sizes']);
+        try {
+            $query = Product::with(['category', 'images', 'colors', 'sizes']);
 
-        // Filter by categories
-        if ($request->has('categories') && !empty($request->categories)) {
-            $query->whereIn('category_id', $request->categories);
+            // Filter by categories
+            if ($request->has('categories') && !empty($request->categories)) {
+                $query->whereIn('category_id', $request->categories);
+            }
+
+            // Filter by price range
+            if ($request->has('minPrice') && is_numeric($request->minPrice)) {
+                $query->where('price', '>=', (float) $request->minPrice);
+            }
+            if ($request->has('maxPrice') && is_numeric($request->maxPrice)) {
+                $query->where('price', '<=', (float) $request->maxPrice);
+            }
+
+            // Apply sorting
+            if ($request->has('sort')) {
+                match ($request->sort) {
+                    'price-low' => $query->orderBy('price', 'asc'),
+                    'price-high' => $query->orderBy('price', 'desc'),
+                    'newest' => $query->latest(),
+                    default => $query->latest()
+                };
+            } else {
+                $query->latest();
+            }
+
+            $products = $query->paginate($request->per_page ?? 12);
+
+            return response()->json([
+                'success' => true,
+                'products' => collect($products->items())->map(function($product) {
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'category' => $product->category->name,
+                        'price' => number_format($product->price, 2),
+                        'image_url' => $product->images->first() ?
+                            asset('storage/' . $product->images->first()->image_path) :
+                            asset('images/placeholder.jpg'),
+                        'rating' => $product->rating ?? 0,
+                        'reviews' => $product->reviews ?? 0,
+                        'stock' => $product->stock,
+                        'description' => Str::limit($product->description, 100)
+                    ];
+                }),
+                'pagination' => [
+                    'current_page' => $products->currentPage(),
+                    'last_page' => $products->lastPage(),
+                    'per_page' => $products->perPage(),
+                    'total' => $products->total()
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء تحديث المنتجات',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Filter by price range
-        if ($request->has('min_price')) {
-            $query->where('price', '>=', $request->min_price);
-        }
-        if ($request->has('max_price')) {
-            $query->where('price', '<=', $request->max_price);
-        }
-
-        // Apply sorting
-        if ($request->has('sort')) {
-            match ($request->sort) {
-                'price-low' => $query->orderBy('price', 'asc'),
-                'price-high' => $query->orderBy('price', 'desc'),
-                'newest' => $query->latest(),
-                'featured' => $query->where('featured', true),
-                default => $query->orderBy('created_at', 'desc')
-            };
-        }
-
-        $products = $query->paginate($request->per_page ?? 12);
-
-        return response()->json([
-            'products' => collect($products->items())->map(function($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'category' => $product->category->name,
-                    'price' => number_format($product->price, 2),
-                    'image_url' => $product->images->first() ? asset('storage/' . $product->images->first()->image_path) : asset('images/placeholder.jpg'),
-                    'rating' => $product->rating ?? 0,
-                    'reviews' => $product->reviews ?? 0
-                ];
-            }),
-            'pagination' => [
-                'current_page' => $products->currentPage(),
-                'last_page' => $products->lastPage(),
-                'per_page' => $products->perPage(),
-                'total' => $products->total()
-            ]
-        ]);
     }
 
     public function getProductDetails(Product $product)

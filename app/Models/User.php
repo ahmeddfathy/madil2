@@ -109,4 +109,36 @@ class User extends Authenticatable
     {
         return $this->notifications()->whereNull('read_at')->get();
     }
+
+    /**
+     * Get the user's phone numbers.
+     */
+    public function phoneNumbers()
+    {
+        return $this->hasMany(PhoneNumber::class);
+    }
+
+    /**
+     * Get the user's default phone number.
+     */
+    public function defaultPhone()
+    {
+        return $this->hasOne(PhoneNumber::class)->where('is_default', true);
+    }
+
+    /**
+     * Get the user's addresses.
+     */
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    /**
+     * Get the user's default address.
+     */
+    public function defaultAddress()
+    {
+        return $this->hasOne(Address::class)->where('is_default', true);
+    }
 }

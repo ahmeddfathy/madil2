@@ -1,0 +1,538 @@
+/* Global Styles */
+:root {
+    --primary-color: #6c5ce7;
+    --secondary-color: #a8a6ff;
+    --background-color: #f0f3ff;
+    --glass-background: rgba(255, 255, 255, 0.25);
+    --glass-background-dark: rgba(255, 255, 255, 0.15);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.18);
+    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    --text-color: #1a1a2e;
+    --text-light: #4a4a6a;
+    --text-muted: #6c6c8a;
+    --heading-color: #16213e;
+}
+
+body {
+    background: linear-gradient(135deg, var(--background-color), #fff);
+    min-height: 100vh;
+    font-family: 'Tajawal', sans-serif;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+/* Glassmorphism Effects */
+.glass-effect {
+    background: var(--glass-background);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 10px;
+    border: var(--glass-border);
+    box-shadow: var(--card-shadow);
+}
+
+/* Navbar Styles */
+.glass-navbar {
+    background: var(--glass-background);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: var(--glass-border);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    color: var(--heading-color);
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.navbar-brand:hover {
+    color: var(--secondary-color);
+}
+
+.nav-link {
+    color: var(--text-color);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: var(--primary-color);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Welcome Section */
+.welcome-section {
+    background: var(--glass-background);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 15px;
+    padding: 2rem;
+    border: var(--glass-border);
+    box-shadow: var(--card-shadow);
+    margin-bottom: 2rem;
+}
+
+.welcome-section h1 {
+    color: var(--heading-color);
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+    letter-spacing: -0.5px;
+}
+
+.welcome-section p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.welcome-section .badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    background: var(--primary-color);
+    color: white;
+    font-weight: 500;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+    background: var(--glass-background);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border: var(--glass-border);
+    box-shadow: var(--card-shadow);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    background: var(--glass-background-dark);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.dashboard-card:hover .card-icon {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.orders .card-icon {
+    color: var(--primary-color);
+}
+
+.appointments .card-icon {
+    color: #00b894;
+}
+
+.cart .card-icon {
+    color: #fd79a8;
+}
+
+.notifications .card-icon {
+    color: #ff9f43;
+}
+
+.card-info {
+    flex-grow: 1;
+}
+
+.card-info h3 {
+    font-size: 1.8rem;
+    margin: 0;
+    font-weight: 800;
+    color: var(--heading-color);
+    letter-spacing: -0.5px;
+}
+
+.card-info p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.card-arrow {
+    position: absolute;
+    left: 1.5rem;
+    opacity: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--glass-background);
+    border: var(--glass-border);
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover .card-arrow {
+    background: var(--primary-color);
+}
+
+.card-arrow i {
+    font-size: 1rem;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover .card-arrow i {
+    color: white;
+    transform: translateX(-3px);
+}
+
+/* Section Cards */
+.section-card {
+    background: var(--glass-background);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 15px;
+    padding: 2rem;
+    border: var(--glass-border);
+    box-shadow: var(--card-shadow);
+    height: 100%;
+}
+
+.section-card h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--heading-color);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.3px;
+}
+
+/* Table Styles */
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 700;
+    color: var(--heading-color);
+    border-bottom: var(--glass-border);
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    letter-spacing: 0.3px;
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 1rem;
+    color: var(--text-color);
+    border-bottom: var(--glass-border);
+    font-weight: 500;
+}
+
+.table tr {
+    transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Appointment Cards */
+.appointments-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.appointment-card {
+    background: var(--glass-background);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    border: var(--glass-border);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.appointment-card:hover {
+    transform: translateY(-5px);
+    background: var(--glass-background-dark);
+    box-shadow: var(--card-shadow);
+}
+
+.appointment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.appointment-body h5 {
+    margin-bottom: 1rem;
+    color: var(--heading-color);
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.3px;
+}
+
+.appointment-body .location {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.appointment-footer {
+    margin-top: 1.5rem;
+    text-align: end;
+}
+
+/* Badges */
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 500;
+}
+
+.badge.bg-warning {
+    background-color: #ffa502 !important;
+    color: #1e1e2d;
+    font-weight: 600;
+}
+
+.badge.bg-success {
+    background-color: #2ed573 !important;
+    color: #fff;
+    font-weight: 600;
+}
+
+.badge.bg-danger {
+    background-color: #ff4757 !important;
+    color: #fff;
+    font-weight: 600;
+}
+
+.badge.bg-info {
+    background-color: #70a1ff !important;
+    color: #fff;
+    font-weight: 600;
+}
+
+.badge.bg-secondary {
+    background-color: #747d8c !important;
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    letter-spacing: 0.3px;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Notification Dropdown */
+.notification-dropdown {
+    width: 320px;
+    padding: 0;
+    max-height: 400px;
+    overflow-y: auto;
+    background: var(--glass-background);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--glass-border);
+    border-radius: 15px;
+    box-shadow: var(--card-shadow);
+}
+
+.notification-dropdown .dropdown-item {
+    padding: 1rem;
+    border-bottom: var(--glass-border);
+    white-space: normal;
+    transition: all 0.3s ease;
+}
+
+.notification-dropdown .dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.notification-dropdown .dropdown-item.unread {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.notification-dropdown .dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.notification-content p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.notification-content small {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Empty States */
+.empty-state {
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.empty-state p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .welcome-section {
+        padding: 1.5rem;
+    }
+
+    .welcome-section h1 {
+        font-size: 1.6rem;
+    }
+
+    .dashboard-card {
+        padding: 1.25rem;
+    }
+
+    .card-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+
+    .card-info h3 {
+        font-size: 1.6rem;
+    }
+
+    .section-card {
+        padding: 1.5rem;
+    }
+
+    .appointments-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .table td, .table th {
+        padding: 0.75rem;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dashboard-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Additional Text Styles */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.text-dark {
+    color: var(--heading-color) !important;
+}

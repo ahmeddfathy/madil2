@@ -16,7 +16,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('home') }}">
+            <a class="navbar-brand" href="/">
                 Madil
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -41,12 +41,7 @@
                 </ul>
                 <div class="nav-buttons">
                     @auth
-                        <a href="{{ route('cart.index') }}" class="btn btn-outline-primary position-relative me-2">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {{ Cart::count() }}
-                            </span>
-                        </a>
+
                         <form method="POST" action="{{ route('logout') }}" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-outline-primary">تسجيل الخروج</button>
@@ -66,14 +61,14 @@
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <div class="hero-content glass-effect">
-                        <h1 class="display-4 mb-4">Our Journey</h1>
-                        <p class="lead mb-4">Discover the story behind Modern Store, where innovation meets elegance in every product we offer.</p>
-                        <a href="#team" class="btn btn-primary btn-lg">Meet Our Team</a>
+                        <h1 class="display-4 mb-4">مرحباً بكم في Madil</h1>
+                        <p class="lead mb-4">نقدم خدمات تفصيل وخياطة عالية الجودة للرجال والنساء في مدينة جدة</p>
+                        <a href="#vision" class="btn btn-primary btn-lg">تعرف علينا</a>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="hero-image glass-effect">
-                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c" alt="Team" class="img-fluid rounded-circle">
+                        <img src="https://images.unsplash.com/photo-1528578950694-9f79b45a3397" alt="خياطة وتفصيل" class="img-fluid rounded-circle">
                     </div>
                 </div>
             </div>
@@ -81,7 +76,7 @@
     </section>
 
     <!-- Vision & Mission Section -->
-    <section class="vision-mission-section">
+    <section id="vision" class="vision-mission-section">
         <div class="curved-top"></div>
         <div class="container">
             <div class="row g-5">
@@ -92,16 +87,8 @@
                             <div class="icon-circle">
                                 <i class="fas fa-eye"></i>
                             </div>
-                            <h2>Our Vision</h2>
-                            <p class="lead">To revolutionize the digital shopping experience by creating the most innovative and user-friendly e-commerce platform that sets new standards in the industry.</p>
-                            <div class="vision-image">
-                                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500" alt="Vision" class="img-fluid">
-                            </div>
-                            <ul class="vision-points">
-                                <li><i class="fas fa-check-circle"></i> Leading Innovation in E-commerce</li>
-                                <li><i class="fas fa-check-circle"></i> Global Market Expansion</li>
-                                <li><i class="fas fa-check-circle"></i> Customer-Centric Approach</li>
-                            </ul>
+                            <h2>رؤيتنا</h2>
+                            <p class="lead">أن نكون المحل الرائد في مجال تفصيل الملابس الرجالية والنسائية في مدينة جدة، وأن نتميز بجودة التصاميم والخامات، مع توفير تجربة متميزة للعملاء تجمع بين الأصالة والابتكار، والانتقال إلى التوسع المستدام في مجال الأزياء والمنتجات المكملة.</p>
                         </div>
                     </div>
                 </div>
@@ -113,16 +100,8 @@
                             <div class="icon-circle">
                                 <i class="fas fa-rocket"></i>
                             </div>
-                            <h2>Our Mission</h2>
-                            <p class="lead">To provide exceptional value to our customers through high-quality products, outstanding service, and innovative shopping solutions.</p>
-                            <div class="mission-image">
-                                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=500" alt="Mission" class="img-fluid">
-                            </div>
-                            <ul class="mission-points">
-                                <li><i class="fas fa-star"></i> Excellence in Service</li>
-                                <li><i class="fas fa-star"></i> Product Quality Assurance</li>
-                                <li><i class="fas fa-star"></i> Customer Satisfaction</li>
-                            </ul>
+                            <h2>رسالتنا</h2>
+                            <p class="lead">تقديم خدمات تفصيل الملابس الرجالية والعباءات النسائية بمستوى عالٍ من الجودة والدقة في التصميم، مع التركيز على تلبية احتياجات مختلف الفئات العمرية وتقديم منتجات مبتكرة ومتميزة، مع تعزيز رضا العملاء من خلال الاستماع لمتطلباتهم والسعي نحو التميز المستمر.</p>
                         </div>
                     </div>
                 </div>
@@ -131,137 +110,96 @@
         <div class="curved-bottom"></div>
     </section>
 
-    <!-- Achievement Timeline Section -->
+    <!-- Timeline Section -->
     <section class="timeline-section">
         <div class="container">
             <div class="section-header text-center mb-5">
-                <h2>Our Journey to Success</h2>
-                <p class="lead">Milestones that shaped our growth</p>
+                <h2>رحلتنا نحو النجاح</h2>
+                <p class="lead">المراحل التي شكلت نمونا</p>
             </div>
             <div class="timeline">
                 <div class="timeline-item left">
                     <div class="timeline-content glass-effect">
                         <div class="timeline-image">
-                            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500" alt="2020">
+                            <img src="{{ asset('images/timeline/2020.jpg') }}" alt="2020" onerror="this.src='https://via.placeholder.com/500x300?text=2020'">
                         </div>
-                        <h3>2020</h3>
-                        <p>Launch of Modern Store with innovative e-commerce solutions</p>
+                        <div class="timeline-text">
+                            <h3>2020</h3>
+                            <p>افتتاح محل Madil للخياطة والتفصيل في جدة</p>
+                        </div>
                     </div>
                 </div>
                 <div class="timeline-item right">
                     <div class="timeline-content glass-effect">
                         <div class="timeline-image">
-                            <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=500" alt="2021">
+                            <img src="{{ asset('images/timeline/2021.jpg') }}" alt="2021" onerror="this.src='https://via.placeholder.com/500x300?text=2021'">
                         </div>
-                        <h3>2021</h3>
-                        <p>Expanded to international markets with global shipping</p>
+                        <div class="timeline-text">
+                            <h3>2021</h3>
+                            <p>توسيع نطاق خدماتنا لتشمل التفصيل النسائي</p>
+                        </div>
                     </div>
                 </div>
                 <div class="timeline-item left">
                     <div class="timeline-content glass-effect">
                         <div class="timeline-image">
-                            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=500" alt="2022">
+                            <img src="{{ asset('images/timeline/2022.jpg') }}" alt="2022" onerror="this.src='https://via.placeholder.com/500x300?text=2022'">
                         </div>
-                        <h3>2022</h3>
-                        <p>Achieved 1 million happy customers worldwide</p>
+                        <div class="timeline-text">
+                            <h3>2022</h3>
+                            <p>إضافة خدمات التعديل والإصلاح للملابس</p>
+                        </div>
                     </div>
                 </div>
                 <div class="timeline-item right">
                     <div class="timeline-content glass-effect">
                         <div class="timeline-image">
-                            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500" alt="2023">
+                            <img src="{{ asset('images/timeline/2023.jpg') }}" alt="2023" onerror="this.src='https://via.placeholder.com/500x300?text=2023'">
                         </div>
-                        <h3>2023</h3>
-                        <p>Launched innovative mobile app and AI-powered recommendations</p>
+                        <div class="timeline-text">
+                            <h3>2023</h3>
+                            <p>إطلاق منصتنا الإلكترونية لحجز المواعيد</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Awards Section -->
-    <section class="awards-section">
-        <div class="curved-top-alt"></div>
-        <div class="container">
-            <div class="section-header text-center mb-5">
-                <h2>Our Achievements</h2>
-                <p class="lead">Recognition of our excellence</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-lg-3 col-md-6">
-                    <div class="award-card glass-effect">
-                        <div class="award-icon">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <h4>Best E-commerce Platform</h4>
-                        <p>2023 Digital Innovation Awards</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="award-card glass-effect">
-                        <div class="award-icon">
-                            <i class="fas fa-medal"></i>
-                        </div>
-                        <h4>Customer Service Excellence</h4>
-                        <p>2023 Retail Awards</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="award-card glass-effect">
-                        <div class="award-icon">
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <h4>Best Mobile Experience</h4>
-                        <p>2023 Mobile Excellence Awards</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="award-card glass-effect">
-                        <div class="award-icon">
-                            <i class="fas fa-award"></i>
-                        </div>
-                        <h4>Innovation in Retail</h4>
-                        <p>2023 Tech Innovation Awards</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="curved-bottom-alt"></div>
-    </section>
 
     <!-- Values Section -->
     <section class="values-section">
         <div class="container">
             <div class="section-header text-center mb-5">
-                <h2>Our Core Values</h2>
-                <p class="lead">The principles that guide everything we do</p>
+                <h2>أهدافنا</h2>
+                <p class="lead">نسعى لتحقيق التميز في كل ما نقدمه</p>
             </div>
             <div class="row g-4">
                 <div class="col-md-4">
                     <div class="value-card glass-effect">
                         <div class="value-icon">
-                            <i class="fas fa-lightbulb"></i>
+                            <i class="fas fa-star"></i>
                         </div>
-                        <h3>Innovation</h3>
-                        <p>We constantly push boundaries to bring you the latest and most innovative products.</p>
+                        <h3>الجودة العالية</h3>
+                        <p>نقدم تصاميم وخدمات تفصيل متميزة تلبي أذواق واحتياجات العملاء في مدينة جدة</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="value-card glass-effect">
                         <div class="value-icon">
-                            <i class="fas fa-heart"></i>
+                            <i class="fas fa-handshake"></i>
                         </div>
-                        <h3>Quality</h3>
-                        <p>Every product in our store meets the highest standards of quality and craftsmanship.</p>
+                        <h3>رضا العملاء</h3>
+                        <p>نسعى لتعزيز رضا العملاء من خلال الاستماع لمتطلباتهم وتقديم خدمة متميزة</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="value-card glass-effect">
                         <div class="value-icon">
-                            <i class="fas fa-users"></i>
+                            <i class="fas fa-expand-arrows-alt"></i>
                         </div>
-                        <h3>Community</h3>
-                        <p>We believe in building lasting relationships with our customers and community.</p>
+                        <h3>التوسع المستمر</h3>
+                        <p>نهدف للتوسع في تقديم منتجات مكملة مثل الأحذية والإكسسوارات لتعزيز تجربة التسوق</p>
                     </div>
                 </div>
             </div>
@@ -272,18 +210,18 @@
     <section id="team" class="team-section">
         <div class="container">
             <div class="section-header text-center mb-5">
-                <h2>Meet Our Team</h2>
-                <p class="lead">The passionate individuals behind Modern Store</p>
+                <h2>فريق العمل</h2>
+                <p class="lead">نخبة من المتخصصين في مجال الخياطة والتفصيل</p>
             </div>
             <div class="row g-4">
                 <div class="col-lg-3 col-md-6">
                     <div class="team-card glass-effect">
                         <div class="team-image">
-                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a" alt="Team Member" class="img-fluid">
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a" alt="عضو الفريق" class="img-fluid">
                         </div>
                         <div class="team-info">
-                            <h4>John Doe</h4>
-                            <p>Founder & CEO</p>
+                            <h4>أحمد محمد</h4>
+                            <p>المؤسس والمدير التنفيذي</p>
                             <div class="team-social">
                                 <a href="#"><i class="fab fa-linkedin"></i></a>
                                 <a href="#"><i class="fab fa-twitter"></i></a>
@@ -294,11 +232,11 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="team-card glass-effect">
                         <div class="team-image">
-                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2" alt="Team Member" class="img-fluid">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2" alt="عضو الفريق" class="img-fluid">
                         </div>
                         <div class="team-info">
-                            <h4>Sarah Johnson</h4>
-                            <p>Creative Director</p>
+                            <h4>سارة عبدالله</h4>
+                            <p>مديرة قسم التصميم</p>
                             <div class="team-social">
                                 <a href="#"><i class="fab fa-linkedin"></i></a>
                                 <a href="#"><i class="fab fa-twitter"></i></a>
@@ -309,11 +247,11 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="team-card glass-effect">
                         <div class="team-image">
-                            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7" alt="Team Member" class="img-fluid">
+                            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7" alt="عضو الفريق" class="img-fluid">
                         </div>
                         <div class="team-info">
-                            <h4>Mike Wilson</h4>
-                            <p>Product Manager</p>
+                            <h4>محمد علي</h4>
+                            <p>رئيس قسم الخياطة الرجالية</p>
                             <div class="team-social">
                                 <a href="#"><i class="fab fa-linkedin"></i></a>
                                 <a href="#"><i class="fab fa-twitter"></i></a>
@@ -324,11 +262,11 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="team-card glass-effect">
                         <div class="team-image">
-                            <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e" alt="Team Member" class="img-fluid">
+                            <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e" alt="عضو الفريق" class="img-fluid">
                         </div>
                         <div class="team-info">
-                            <h4>Emily Chen</h4>
-                            <p>Customer Success</p>
+                            <h4>نورة سعد</h4>
+                            <p>مديرة خدمة العملاء</p>
                             <div class="team-social">
                                 <a href="#"><i class="fab fa-linkedin"></i></a>
                                 <a href="#"><i class="fab fa-twitter"></i></a>
@@ -346,26 +284,26 @@
             <div class="row g-4">
                 <div class="col-md-3 col-6">
                     <div class="stat-card glass-effect text-center">
-                        <div class="stat-number">5K+</div>
-                        <div class="stat-label">Happy Customers</div>
+                        <div class="stat-number">15+</div>
+                        <div class="stat-label">سنوات خبرة</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="stat-card glass-effect text-center">
-                        <div class="stat-number">1K+</div>
-                        <div class="stat-label">Products</div>
+                        <div class="stat-number">1000+</div>
+                        <div class="stat-label">عميل سعيد</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="stat-card glass-effect text-center">
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">Brands</div>
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">تصميم مختلف</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="stat-card glass-effect text-center">
                         <div class="stat-number">24/7</div>
-                        <div class="stat-label">Support</div>
+                        <div class="stat-label">دعم العملاء</div>
                     </div>
                 </div>
             </div>
@@ -378,15 +316,15 @@
             <div class="row">
                 <div class="col-lg-4 mb-4">
                     <h5>عن Madil</h5>
-                    <p>متجرك المفضل للتسوق الإلكتروني، نقدم أفضل المنتجات بأسعار تنافسية مع خدمة عملاء متميزة.</p>
+                    <p>نقدم خدمات التفصيل والخياطة بأعلى جودة وأفضل الأسعار مع الالتزام بالمواعيد</p>
                 </div>
                 <div class="col-lg-4 mb-4">
                     <h5>روابط سريعة</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{{ route('privacy') }}">سياسة الخصوصية</a></li>
-                        <li><a href="{{ route('terms') }}">الشروط والأحكام</a></li>
-                        <li><a href="{{ route('shipping') }}">معلومات الشحن</a></li>
-                        <li><a href="{{ route('faq') }}">الأسئلة الشائعة</a></li>
+                        <li><a href="#">سياسة الخصوصية</a></li>
+                        <li><a href="#">الشروط والأحكام</a></li>
+                        <li><a href="#">خدمات التفصيل</a></li>
+                        <li><a href="#">تواصل معنا</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-4 mb-4">
@@ -395,15 +333,7 @@
                         <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
                         <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-pinterest"></i></a>
-                    </div>
-                    <div class="newsletter mt-3">
-                        <h6>اشترك في نشرتنا البريدية</h6>
-                        <form action="{{ route('newsletter.subscribe') }}" method="POST" class="input-group">
-                            @csrf
-                            <input type="email" name="email" class="form-control" placeholder="أدخل بريدك الإلكتروني" required>
-                            <button type="submit" class="btn btn-primary">اشتراك</button>
-                        </form>
+                        <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
             </div>

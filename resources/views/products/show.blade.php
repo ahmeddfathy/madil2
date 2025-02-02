@@ -248,8 +248,8 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer mt-5 py-4">
-        <div class="container">
+    <footer class="glass-footer mt-5">
+        <div class="container py-4">
             <div class="row">
                 <div class="col-lg-4 mb-4">
                     <h5>عن Madil</h5>
@@ -275,62 +275,93 @@
                 </div>
             </div>
         </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <p class="mb-0">&copy; {{ date('Y') }} Madil. جميع الحقوق محفوظة</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <!-- Modal for Appointment -->
     <div class="modal fade" id="appointmentModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
+                    <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal" aria-label="Close"></button>
                     <h5 class="modal-title">حجز موعد للمقاسات</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="appointmentForm">
+                    <form id="appointmentForm" class="appointment-form">
                         @csrf
                         <input type="hidden" name="service_type" value="new_abaya">
                         <input type="hidden" name="cart_item_id" id="cart_item_id">
 
-                        <div class="mb-3">
-                            <label for="appointment_date" class="form-label">تاريخ الموعد</label>
-                            <input type="date" class="form-control" id="appointment_date" name="appointment_date"
-                                   min="{{ date('Y-m-d') }}" required>
+                        <div class="mb-4">
+                            <label for="appointment_date" class="form-label fw-bold">تاريخ الموعد</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                <input type="date" class="form-control form-control-lg" id="appointment_date"
+                                       name="appointment_date" min="{{ date('Y-m-d') }}" required>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="appointment_time" class="form-label">وقت الموعد</label>
-                            <input type="time" class="form-control" id="appointment_time" name="appointment_time" required>
+                        <div class="mb-4">
+                            <label for="appointment_time" class="form-label fw-bold">وقت الموعد</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                                <input type="time" class="form-control form-control-lg" id="appointment_time"
+                                       name="appointment_time" required>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="location" class="form-label">الموقع</label>
-                            <select class="form-control" id="location" name="location" required onchange="toggleAddress()">
-                                <option value="store">في المحل</option>
-                                <option value="client_location">موقع العميل</option>
-                            </select>
+                        <div class="mb-4">
+                            <label for="location" class="form-label fw-bold">الموقع</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                <select class="form-select form-select-lg" id="location" name="location"
+                                        required onchange="toggleAddress()">
+                                    <option value="store">في المحل</option>
+                                    <option value="client_location">موقع العميل</option>
+                                </select>
+                            </div>
                         </div>
 
-                        <div class="mb-3 d-none" id="addressField">
-                            <label for="address" class="form-label">العنوان</label>
-                            <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+                        <div class="mb-4 d-none" id="addressField">
+                            <label for="address" class="form-label fw-bold">العنوان</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-home"></i></span>
+                                <textarea class="form-control" id="address" name="address"
+                                          rows="3" placeholder="يرجى إدخال العنوان بالتفصيل"></textarea>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">رقم الهاتف</label>
-                            <input type="tel" class="form-control" id="phone" name="phone"
-                                   value="{{ Auth::user()->phone ?? '' }}" required>
+                        <div class="mb-4">
+                            <label for="phone" class="form-label fw-bold">رقم الهاتف</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input type="tel" class="form-control form-control-lg" id="phone"
+                                       name="phone" value="{{ Auth::user()->phone ?? '' }}"
+                                       placeholder="01xxxxxxxxx" required>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="notes" class="form-label">ملاحظات</label>
-                            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                        <div class="mb-4">
+                            <label for="notes" class="form-label fw-bold">ملاحظات</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-comment"></i></span>
+                                <textarea class="form-control" id="notes" name="notes" rows="3"
+                                          placeholder="أي ملاحظات إضافية؟"></textarea>
+                            </div>
                         </div>
 
-                        <!-- Error Messages Container -->
                         <div id="appointmentErrors" class="alert alert-danger d-none"></div>
 
-                        <button type="submit" class="btn btn-primary w-100" id="submitAppointment">
-                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        <button type="submit" class="btn btn-primary btn-lg w-100" id="submitAppointment">
+                            <span class="spinner-border spinner-border-sm d-none me-2" role="status" aria-hidden="true"></span>
                             تأكيد الحجز
                         </button>
                     </form>
@@ -338,6 +369,198 @@
             </div>
         </div>
     </div>
+
+    <style>
+    .modal-content {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        background-color: #ffffff;
+    }
+
+    .modal-header {
+        border-radius: 15px 15px 0 0;
+        padding: 1.5rem;
+        background-color: #1a73e8;
+        display: flex;
+        flex-direction: row-reverse;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+        opacity: 0.8;
+        padding: 0.75rem;
+        margin: 0;
+    }
+
+    .modal-header .btn-close:hover {
+        opacity: 1;
+    }
+
+    .modal-header .modal-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .modal-body {
+        padding: 2rem;
+        background-color: #ffffff;
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        color: #1a73e8;
+        font-size: 1.1rem;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+        color: #333333;
+        font-size: 1.1rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #1a73e8;
+        box-shadow: 0 0 0 0.25rem rgba(26,115,232,.25);
+    }
+
+    .form-control::placeholder {
+        color: #757575;
+    }
+
+    .btn-primary {
+        background-color: #1a73e8;
+        border-color: #1a73e8;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .btn-primary:hover {
+        background-color: #1557b0;
+        border-color: #1557b0;
+    }
+
+    .appointment-form label {
+        color: #333333;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+
+    .alert {
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border: none;
+    }
+
+    .alert-danger {
+        background-color: #fdeded;
+        color: #5f2120;
+        border-left: 4px solid #ef5350;
+    }
+
+    .form-label {
+        color: #333333 !important;
+    }
+
+    .form-select {
+        background-position: left 0.75rem center !important;
+        padding-left: 2.25rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .input-group .form-select {
+        border-radius: 0 0.375rem 0.375rem 0;
+    }
+
+    .cart-sidebar {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100vh;
+        background: #fff;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        z-index: 1050;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+    }
+
+    @media (min-width: 768px) {
+        .cart-sidebar {
+            width: 400px;
+        }
+    }
+
+    .cart-sidebar.active {
+        right: 0;
+    }
+
+    body.cart-open {
+        overflow: hidden;
+    }
+
+    .cart-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+    }
+
+    .cart-overlay.active {
+        display: block;
+    }
+
+    .cart-header {
+        padding: 1rem;
+        background: #ffffff;
+        border-bottom: 1px solid #e0e0e0;
+        color: #333333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .cart-header h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .close-cart {
+        background: none;
+        border: none;
+        color: #666666;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s ease;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+    .close-cart:hover {
+        color: #333333;
+        background-color: #f5f5f5;
+    }
+
+    .close-cart i {
+        font-size: 1.25rem;
+    }
+    </style>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -419,8 +642,7 @@
 
             // Validate selection
             if (!needsAppointment && {{ $product->sizes->count() }} > 0 && !selectedSize) {
-                errorMessage.textContent = 'يرجى اختيار المقاس أو تحديد موعد لأخذ المقاسات';
-                errorMessage.classList.remove('d-none');
+                showNotification('يرجى اختيار المقاس أو تحديد موعد لأخذ المقاسات', 'error');
                 return;
             }
 
@@ -436,6 +658,12 @@
                 needs_appointment: needsAppointment
             };
 
+            // Show loading state
+            const addToCartBtn = document.querySelector('.btn-primary[onclick="addToCart()"]');
+            const originalBtnText = addToCartBtn.innerHTML;
+            addToCartBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>جاري الإضافة...';
+            addToCartBtn.disabled = true;
+
             // Make API call
             fetch('/cart/add', {
                 method: 'POST',
@@ -448,17 +676,21 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Update cart count
+                    // Update cart count and show success message
                     document.querySelector('.cart-count').textContent = data.cart_count;
+                    showNotification(data.message, 'success');
 
-                    // Show success message
-                    const successAlert = document.createElement('div');
-                    successAlert.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3';
-                    successAlert.textContent = data.message;
-                    document.body.appendChild(successAlert);
+                    // Update cart items
+                    loadCartItems();
 
-                    // Remove alert after 3 seconds
-                    setTimeout(() => successAlert.remove(), 3000);
+                    // Reset selections
+                    selectedColor = null;
+                    selectedSize = null;
+                    document.querySelectorAll('.color-item, .size-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    document.getElementById('quantity').value = 1;
+                    document.getElementById('needsAppointment').checked = false;
 
                     // If appointment is needed, show modal
                     if (data.show_modal) {
@@ -467,14 +699,210 @@
                         appointmentModal.show();
                     }
                 } else {
-                    errorMessage.textContent = data.message;
-                    errorMessage.classList.remove('d-none');
+                    showNotification(data.message, 'error');
                 }
             })
             .catch(error => {
-                errorMessage.textContent = 'حدث خطأ أثناء إضافة المنتج إلى السلة';
-                errorMessage.classList.remove('d-none');
+                console.error('Error:', error);
+                showNotification('حدث خطأ أثناء إضافة المنتج إلى السلة', 'error');
+            })
+            .finally(() => {
+                // Reset button state
+                addToCartBtn.innerHTML = originalBtnText;
+                addToCartBtn.disabled = false;
             });
+        }
+
+        // Add notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} notification-toast position-fixed top-0 start-50 translate-middle-x mt-3`;
+            notification.style.zIndex = '9999';
+            notification.innerHTML = message;
+            document.body.appendChild(notification);
+
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Update cart display function
+        function updateCartDisplay(data) {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const cartCount = document.querySelector('.cart-count');
+
+            // Animate count change
+            const currentCount = parseInt(cartCount.textContent);
+            const newCount = data.count;
+            if (currentCount !== newCount) {
+                cartCount.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    cartCount.textContent = newCount;
+                    cartCount.style.transform = 'scale(1)';
+                }, 200);
+            }
+
+            cartTotal.textContent = data.total + ' ج.م';
+
+            // Clear current items with fade out effect
+            cartItems.style.opacity = '0';
+            setTimeout(() => {
+            cartItems.innerHTML = '';
+
+            if (data.items.length === 0) {
+                cartItems.innerHTML = `
+                        <div class="cart-empty text-center p-4">
+                            <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                            <p class="mb-3">السلة فارغة</p>
+                            <a href="/products" class="btn btn-primary">تصفح المنتجات</a>
+                    </div>
+                `;
+                } else {
+            data.items.forEach(item => {
+                        const itemElement = document.createElement('div');
+                        itemElement.className = 'cart-item';
+                        itemElement.dataset.itemId = item.id;
+                        itemElement.innerHTML = `
+                            <div class="cart-item-inner p-3 border-bottom">
+                                <button class="remove-btn btn btn-link text-danger" onclick="confirmDelete(${item.id})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="d-flex gap-3">
+                                    <img src="${item.image}" alt="${item.name}" class="cart-item-image" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <div class="cart-item-details flex-grow-1">
+                                        <h5 class="cart-item-title mb-2">${item.name}</h5>
+                                        <div class="cart-item-price mb-2">${item.price} ج.م</div>
+                                        <div class="quantity-controls d-flex align-items-center gap-2">
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="updateCartQuantity(${item.id}, -1)">-</button>
+                                            <input type="number" value="${item.quantity}" min="1"
+                                        onchange="updateCartQuantity(${item.id}, 0, this.value)"
+                                                class="form-control form-control-sm quantity-input" style="width: 60px;">
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="updateCartQuantity(${item.id}, 1)">+</button>
+                                </div>
+                                        <div class="cart-item-subtotal mt-2 text-primary">
+                                    الإجمالي: ${item.subtotal} ج.م
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                        cartItems.appendChild(itemElement);
+            });
+                }
+                // Fade in new items
+                cartItems.style.opacity = '1';
+            }, 300);
+        }
+
+        // Update cart quantity with animation
+        function updateCartQuantity(itemId, change, newValue = null) {
+            const quantityInput = document.querySelector(`[data-item-id="${itemId}"] .quantity-input`);
+            const originalValue = parseInt(quantityInput.value);
+            let quantity;
+
+            if (newValue !== null) {
+                quantity = parseInt(newValue);
+            } else {
+                quantity = originalValue + change;
+            }
+
+            if (quantity < 1) return;
+
+            // Show loading state
+            const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+            itemElement.style.opacity = '0.5';
+
+            fetch(`/cart/items/${itemId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ quantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadCartItems();
+                } else {
+                    // Revert to original value if update failed
+                    quantityInput.value = originalValue;
+                    showNotification(data.message || 'Failed to update quantity', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Revert to original value
+                quantityInput.value = originalValue;
+                showNotification('حدث خطأ أثناء تحديث الكمية', 'error');
+            })
+            .finally(() => {
+                itemElement.style.opacity = '1';
+            });
+        }
+
+        // Remove cart item with animation
+        function removeCartItem(itemId) {
+            const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+            itemElement.style.transform = 'translateX(100%)';
+            itemElement.style.opacity = '0';
+
+            fetch(`/cart/items/${itemId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    setTimeout(() => {
+                        loadCartItems();
+                    }, 300);
+                    showNotification(data.message, 'success');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('حدث خطأ أثناء حذف المنتج', 'error');
+                // Reset item state if delete failed
+                itemElement.style.transform = 'none';
+                itemElement.style.opacity = '1';
+            });
+        }
+
+        // Initialize cart functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCartItems();
+
+            // Setup event listeners
+            document.getElementById('closeCart').addEventListener('click', closeCart);
+            document.getElementById('cartToggle').addEventListener('click', openCart);
+        });
+
+        // Cart Functions
+        function openCart() {
+            document.getElementById('cartSidebar').classList.add('active');
+            document.querySelector('.cart-overlay').classList.add('active');
+            document.body.classList.add('cart-open');
+        }
+
+        function closeCart() {
+            document.getElementById('cartSidebar').classList.remove('active');
+            document.querySelector('.cart-overlay').classList.remove('active');
+            document.body.classList.remove('cart-open');
+        }
+
+        function loadCartItems() {
+            fetch('/cart/items')
+                .then(response => response.json())
+                .then(data => {
+                    updateCartDisplay(data);
+                })
+                .catch(error => console.error('Error:', error));
         }
 
         // Add event listener to needs appointment checkbox
@@ -522,14 +950,11 @@
                     appointmentModal.hide();
 
                     // Show success message
-                    const successAlert = document.createElement('div');
-                    successAlert.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3';
-                    successAlert.textContent = data.message;
-                    document.body.appendChild(successAlert);
+                    showNotification(data.message, 'success');
 
                     // Redirect to appointment details after 2 seconds
                     setTimeout(() => {
-                        window.location.href = data.appointment.url;
+                        window.location.href = data.redirect_url || '/appointments';
                     }, 2000);
                 } else {
                     // Show error message
@@ -558,148 +983,21 @@
             });
         });
 
-        // Cart Functions
-        function openCart() {
-            document.getElementById('cartSidebar').classList.add('active');
-        }
-
-        function closeCart() {
-            document.getElementById('cartSidebar').classList.remove('active');
-        }
-
-        function loadCartItems() {
-            fetch('/cart/items')
-                .then(response => response.json())
-                .then(data => {
-                    updateCartDisplay(data);
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function updateCartDisplay(data) {
-            const cartItems = document.getElementById('cartItems');
-            const cartTotal = document.getElementById('cartTotal');
-            const cartCount = document.querySelector('.cart-count');
-
-            cartCount.textContent = data.count;
-            cartTotal.textContent = data.total + ' ج.م';
-
-            cartItems.innerHTML = '';
-
-            if (data.items.length === 0) {
-                cartItems.innerHTML = `
-                    <div class="cart-empty">
-                        <i class="fas fa-shopping-cart"></i>
-                        <p>السلة فارغة</p>
-                        <a href="/products" class="btn btn-primary mt-3">تصفح المنتجات</a>
-                    </div>
-                `;
-                return;
-            }
-
-            data.items.forEach(item => {
-                cartItems.innerHTML += `
-                    <div class="cart-item" data-item-id="${item.id}">
-                        <button class="remove-btn" onclick="confirmDelete(${item.id})">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <div class="d-flex gap-3">
-                            <img src="${item.image}" alt="${item.name}" class="cart-item-image">
-                            <div class="cart-item-details">
-                                <h5 class="cart-item-title">${item.name}</h5>
-                                <div class="cart-item-price">${item.price} ج.م</div>
-                                <div class="quantity-controls">
-                                    <button onclick="updateCartQuantity(${item.id}, -1)">-</button>
-                                    <input type="number" value="${item.quantity}"
-                                        min="1"
-                                        onchange="updateCartQuantity(${item.id}, 0, this.value)"
-                                        class="quantity-input">
-                                    <button onclick="updateCartQuantity(${item.id}, 1)">+</button>
-                                </div>
-                                <div class="cart-item-subtotal">
-                                    الإجمالي: ${item.subtotal} ج.م
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function updateCartQuantity(itemId, change, newValue = null) {
-            let quantity;
-            if (newValue !== null) {
-                quantity = parseInt(newValue);
-            } else {
-                const input = document.querySelector(`[data-item-id="${itemId}"] .quantity-input`);
-                quantity = parseInt(input.value) + change;
-            }
-
-            if (quantity < 1) return;
-
-            fetch(`/cart/items/${itemId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ quantity })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    loadCartItems();
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert('حدث خطأ أثناء تحديث الكمية');
-            });
-        }
-
-        function confirmDelete(itemId) {
-            if (confirm('هل أنت متأكد من حذف هذا المنتج من السلة؟')) {
-                removeCartItem(itemId);
-            }
-        }
-
-        function removeCartItem(itemId) {
-            fetch(`/cart/items/${itemId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
-                    itemElement.style.animation = 'slideOut 0.3s ease-out forwards';
-                    setTimeout(() => {
-                        loadCartItems();
-                    }, 300);
-                    showAlert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert('حدث خطأ أثناء حذف المنتج');
-            });
-        }
-
-        // Initialize cart functionality
+        // Initialize appointment date restrictions
         document.addEventListener('DOMContentLoaded', function() {
-            loadCartItems();
+            const appointmentDate = document.getElementById('appointment_date');
+            const today = new Date();
+            const maxDate = new Date();
+            maxDate.setDate(today.getDate() + 30); // Allow booking up to 30 days in advance
 
-            // Setup event listeners
-            document.getElementById('closeCart').addEventListener('click', closeCart);
-            document.getElementById('cartToggle').addEventListener('click', openCart);
+            appointmentDate.min = today.toISOString().split('T')[0];
+            appointmentDate.max = maxDate.toISOString().split('T')[0];
+
+            // Set default time range
+            const appointmentTime = document.getElementById('appointment_time');
+            appointmentTime.min = '09:00';
+            appointmentTime.max = '21:00';
         });
-
-        // Replace the showAlert function with a simpler alert
-        function showAlert(message) {
-            alert(message);
-        }
     </script>
 
 

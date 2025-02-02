@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 // Controllers
 use App\Http\Controllers\{
@@ -11,7 +12,9 @@ use App\Http\Controllers\{
     CheckoutController,
     ProfileController,
     NotificationController,
-    DashboardController
+    DashboardController,
+    PhoneController,
+    AddressController
 };
 
 // Admin Controllers
@@ -31,7 +34,22 @@ Route::get('/', function () {
         ->take(3)
         ->get();
     return view('index', compact('products'));
-});
+})->name('home');
+
+// Static Pages Routes
+
+    // About Page
+    Route::get('/about', function () {
+        return view('about');
+    })->name('about');
+
+
+
+// Newsletter Subscription
+Route::post('/newsletter/subscribe', function (Request $request) {
+    // هنا يمكن إضافة منطق معالجة الاشتراك في النشرة البريدية
+    return back()->with('success', 'تم الاشتراك في النشرة البريدية بنجاح');
+})->name('newsletter.subscribe');
 
 // Products Routes (Public)
 Route::prefix('products')->name('products.')->group(function () {
@@ -65,6 +83,18 @@ Route::middleware([
         Route::get('/products', [ProductController::class, 'index'])->name('products.index');
         Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
         Route::post('/products/filter', [ProductController::class, 'filter'])->name('products.filter');
+
+        // Phones
+        Route::post('/phones', [PhoneController::class, 'store']);
+        Route::get('/phones/{id}', [PhoneController::class, 'show']);
+        Route::put('/phones/{id}', [PhoneController::class, 'update']);
+        Route::delete('/phones/{id}', [PhoneController::class, 'destroy']);
+
+        // Addresses
+        Route::post('/addresses', [AddressController::class, 'store']);
+        Route::get('/addresses/{id}', [AddressController::class, 'show']);
+        Route::put('/addresses/{id}', [AddressController::class, 'update']);
+        Route::delete('/addresses/{id}', [AddressController::class, 'destroy']);
 
         // Cart
         Route::prefix('cart')->name('cart.')->group(function () {

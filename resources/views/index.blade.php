@@ -98,7 +98,6 @@
         </div>
       </div>
     </section>
-
     <!-- Services Section -->
     <section class="services-section">
       <div class="wave-top"></div>
@@ -114,8 +113,9 @@
               <div class="card-icon">
                 <i class="fas fa-cut"></i>
               </div>
-              <h3>تفصيل عصري</h3>
-              <p>تصاميم عصرية تناسب ذوقك مع أفضل الخامات</p>
+              <img src="https://th.bing.com/th/id/OIP.D7nA3n_V4NUqMLEVWF1M5QHaF8?rs=1&pid=ImgDetMain" alt="تفصيل وخياطة رجالي" class="img-fluid mb-3">
+              <h3>تفصيل وخياطة رجالي</h3>
+              <p>الثياب الرجالية المختلفة والسديريات وجلابيات النوم</p>
               <a href="#" class="card-link">اكتشف المزيد <i class="fas fa-arrow-left"></i></a>
             </div>
           </div>
@@ -124,8 +124,9 @@
               <div class="card-icon">
                 <i class="fas fa-tshirt"></i>
               </div>
-              <h3>خياطة احترافية</h3>
-              <p>دقة في التنفيذ مع ضمان الجودة</p>
+              <img src="https://th.bing.com/th/id/OIP.1yt_Dc_hfr6ts_gIpm6lMQHaJi?rs=1&pid=ImgDetMain" alt="تفصيل نسائي" class="img-fluid mb-3">
+              <h3>تفصيل نسائي</h3>
+              <p>تفصيل العبايات النسائية بأحدث التصاميم العصرية</p>
               <a href="#" class="card-link">اكتشف المزيد <i class="fas fa-arrow-left"></i></a>
             </div>
           </div>
@@ -134,8 +135,8 @@
               <div class="card-icon">
                 <i class="fas fa-ruler"></i>
               </div>
-              <h3>قياسات دقيقة</h3>
-              <p>قياسات احترافية تضمن مقاس مثالي</p>
+<img src="https://th.bing.com/th/id/OIP.8DI5HCPocmh1DLXBecDzLwHaNj?rs=1&pid=ImgDetMain" alt="تعديلات وإصلاحات" class="img-fluid mb-3    ">              <h3>تعديلات وإصلاحات</h3>
+              <p>خدمات التعديل والإصلاح لجميع أنواع الملابس</p>
               <a href="#" class="card-link">اكتشف المزيد <i class="fas fa-arrow-left"></i></a>
             </div>
           </div>
@@ -143,7 +144,6 @@
       </div>
       <div class="wave-bottom"></div>
     </section>
-
     <!-- Features Section -->
     <section class="features-section">
       <div class="wave-top"></div>
@@ -155,7 +155,7 @@
                 <i class="fas fa-clock"></i>
               </div>
               <h4>سرعة في التنفيذ</h4>
-              <p>نلتزم بالمواعيد المحددة</p>
+              <p>نلتزم بالمواعيد المحددة مع جودة عالية في التنفيذ</p>
             </div>
           </div>
           <div class="col-md-3">
@@ -164,7 +164,7 @@
                 <i class="fas fa-medal"></i>
               </div>
               <h4>جودة عالية</h4>
-              <p>نستخدم أفضل الخامات</p>
+              <p>نستخدم أفضل الأقمشة والخامات المستوردة</p>
             </div>
           </div>
           <div class="col-md-3">
@@ -173,7 +173,7 @@
                 <i class="fas fa-hand-holding-usd"></i>
               </div>
               <h4>أسعار منافسة</h4>
-              <p>أسعار تناسب الجميع</p>
+              <p>أسعار مناسبة مع خطط دفع مرنة وعروض مستمرة</p>
             </div>
           </div>
           <div class="col-md-3">
@@ -182,7 +182,7 @@
                 <i class="fas fa-headset"></i>
               </div>
               <h4>دعم متواصل</h4>
-              <p>نتواجد دائماً لخدمتكم</p>
+              <p>خدمة عملاء على مدار الساعة لتلبية احتياجاتكم</p>
             </div>
           </div>
         </div>
