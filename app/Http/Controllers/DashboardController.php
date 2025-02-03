@@ -60,7 +60,7 @@ class DashboardController extends Controller
             ->latest()
             ->take(5)
             ->get()
-            ->map(function($order) {
+      ->map(function ($order) {
                 $order->status_color = $this->getStatusColor($order->order_status);
                 $order->status_text = $this->getStatusText($order->order_status);
                 return $order;
@@ -81,7 +81,7 @@ class DashboardController extends Controller
             ->orderBy('appointment_time')
             ->take(5)
             ->get()
-            ->map(function($appointment) {
+      ->map(function ($appointment) {
                 $appointment->status_color = $this->getStatusColor($appointment->status);
                 $appointment->status_text = $this->getStatusText($appointment->status);
                 return $appointment;
@@ -118,7 +118,7 @@ class DashboardController extends Controller
             ->latest()
             ->take(5)
             ->get()
-            ->map(function($order) {
+      ->map(function ($order) {
                 $order->status_color = $this->getStatusColor($order->order_status);
                 $order->status_text = $this->getStatusText($order->order_status);
                 return $order;
@@ -131,7 +131,7 @@ class DashboardController extends Controller
             ->orderBy('appointment_time')
             ->take(4)
             ->get()
-            ->map(function($appointment) {
+      ->map(function ($appointment) {
                 $appointment->status_color = $this->getStatusColor($appointment->status);
                 $appointment->status_text = $this->getStatusText($appointment->status);
                 return $appointment;
@@ -142,7 +142,7 @@ class DashboardController extends Controller
             ->latest()
             ->take(5)
             ->get()
-            ->map(function($notification) {
+      ->map(function ($notification) {
                 $notification->icon = $this->getNotificationIcon($notification->type);
                 return $notification;
             });
@@ -151,7 +151,7 @@ class DashboardController extends Controller
         $addresses = $user->addresses()
             ->latest()
             ->get()
-            ->map(function($address) {
+      ->map(function ($address) {
                 return [
                     'id' => $address->id,
                     'full_address' => $this->formatAddress($address),
@@ -171,7 +171,7 @@ class DashboardController extends Controller
         $phones = $user->phoneNumbers()
             ->latest()
             ->get()
-            ->map(function($phone) {
+      ->map(function ($phone) {
                 return [
                     'id' => $phone->id,
                     'phone' => $this->formatPhoneNumber($phone->phone),
@@ -195,7 +195,7 @@ class DashboardController extends Controller
 
     private function getStatusColor($status): string
     {
-        return match($status) {
+    return match ($status) {
             'pending' => 'warning',
             'processing' => 'info',
             'completed' => 'success',
@@ -207,7 +207,7 @@ class DashboardController extends Controller
 
     private function getStatusText($status): string
     {
-        return match($status) {
+    return match ($status) {
             'pending' => 'قيد الانتظار',
             'processing' => 'قيد المعالجة',
             'completed' => 'مكتمل',
@@ -219,7 +219,7 @@ class DashboardController extends Controller
 
     private function getNotificationIcon($type): string
     {
-        return match($type) {
+    return match ($type) {
             'App\Notifications\OrderStatusChanged' => 'fa-shopping-bag',
             'App\Notifications\AppointmentConfirmed' => 'fa-calendar-check',
             'App\Notifications\AppointmentCancelled' => 'fa-calendar-times',
@@ -256,7 +256,7 @@ class DashboardController extends Controller
 
     private function getAddressTypeColor(string $type): string
     {
-        return match($type) {
+    return match ($type) {
             'home' => 'success',
             'work' => 'info',
             'other' => 'secondary',
@@ -266,7 +266,7 @@ class DashboardController extends Controller
 
     private function getPhoneTypeColor(string $type): string
     {
-        return match($type) {
+    return match ($type) {
             'mobile' => 'success',
             'home' => 'info',
             'work' => 'warning',

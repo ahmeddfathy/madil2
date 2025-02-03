@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -203,12 +204,13 @@
     </style>
     @yield('styles')
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="{{ asset('images/logo.png') }}" alt="Madil" height="40">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="Madil" height="100">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -229,42 +231,46 @@
                     <a href="/cart" class="btn btn-link position-relative me-3">
                         <i class="fas fa-shopping-cart fa-lg"></i>
                         @if($stats['cart_items_count'] > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {{ $stats['cart_items_count'] }}
-                            </span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ $stats['cart_items_count'] }}
+                        </span>
                         @endif
                     </a>
                     <div class="dropdown me-3">
                         <button class="btn btn-link position-relative" type="button" data-bs-toggle="dropdown">
                             <i class="fas fa-bell fa-lg"></i>
                             @if($stats['unread_notifications'] > 0)
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    {{ $stats['unread_notifications'] }}
-                                </span>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ $stats['unread_notifications'] }}
+                            </span>
                             @endif
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
                             @forelse($recent_notifications as $notification)
-                                <li>
-                                    <a class="dropdown-item {{ !$notification->read_at ? 'unread' : '' }}" href="#">
-                                        <i class="fas {{ $notification->icon }} me-2"></i>
-                                        <div class="notification-content">
-                                            <p class="mb-1">{{ $notification->data['message'] }}</p>
-                                            <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
-                                        </div>
-                                    </a>
-                                </li>
+                            <li>
+                                <a class="dropdown-item {{ !$notification->read_at ? 'unread' : '' }}" href="#">
+                                    <i class="fas {{ $notification->icon }} me-2"></i>
+                                    <div class="notification-content">
+                                        <p class="mb-1">{{ $notification->data['message'] }}</p>
+                                        <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                                    </div>
+                                </a>
+                            </li>
                             @empty
-                                <li><div class="dropdown-item text-center">لا توجد إشعارات</div></li>
+                            <li>
+                                <div class="dropdown-item text-center">لا توجد إشعارات</div>
+                            </li>
                             @endforelse
                             @if(count($recent_notifications) > 0)
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-center" href="/notifications">عرض كل الإشعارات</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-center" href="/notifications">عرض كل الإشعارات</a></li>
                             @endif
                         </ul>
                     </div>
                     <a href="{{ route('logout') }}" class="btn btn-outline-primary"
-                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="fas fa-sign-out-alt ms-1"></i>تسجيل الخروج
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -284,11 +290,11 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <a href="/">
-                <img src="{{ asset('images/logo.png') }}" alt="Madil" height="40">
+                <!-- <img src="{{ asset('images/logo.png') }}" alt="Madil" height="40"> -->
             </a>
         </div>
         <div class="sidebar-user-info">
-            <img src="{{ asset('images/default-avatar.png') }}" alt="{{ Auth::user()->name }}" class="user-avatar">
+            <!-- <img src="{{ asset('images/default-avatar.png') }}" alt="{{ Auth::user()->name }}" class="user-avatar"> -->
             <h5 class="mb-2">{{ Auth::user()->name }}</h5>
             <span class="badge bg-primary">{{ Auth::user()->role === 'admin' ? 'مدير' : 'عميل' }}</span>
         </div>
@@ -298,6 +304,12 @@
                     <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="/dashboard">
                         <i class="fas fa-home"></i>
                         لوحة التحكم
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('products*') ? 'active' : '' }}" href="/products">
+                        <i class="fas fa-shopping-bag"></i>
+                        المنتجات
                     </a>
                 </li>
                 <li class="nav-item">
@@ -317,7 +329,7 @@
                         <i class="fas fa-shopping-cart"></i>
                         السلة
                         @if($stats['cart_items_count'] > 0)
-                            <span class="badge bg-danger ms-auto">{{ $stats['cart_items_count'] }}</span>
+                        <span class="badge bg-danger ms-auto">{{ $stats['cart_items_count'] }}</span>
                         @endif
                     </a>
                 </li>
@@ -326,19 +338,19 @@
                         <i class="fas fa-bell"></i>
                         الإشعارات
                         @if($stats['unread_notifications'] > 0)
-                            <span class="badge bg-danger ms-auto">{{ $stats['unread_notifications'] }}</span>
+                        <span class="badge bg-danger ms-auto">{{ $stats['unread_notifications'] }}</span>
                         @endif
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('profile*') ? 'active' : '' }}" href="/profile">
+                    <a class="nav-link {{ request()->is('profile*') ? 'active' : '' }}" href="/user/profile">
                         <i class="fas fa-user"></i>
                         الملف الشخصي
                     </a>
                 </li>
                 <li class="nav-item mt-3">
                     <a class="nav-link text-danger" href="{{ route('logout') }}"
-                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="fas fa-sign-out-alt"></i>
                         تسجيل الخروج
                     </a>
@@ -381,4 +393,5 @@
     </script>
     @yield('scripts')
 </body>
+
 </html>

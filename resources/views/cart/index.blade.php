@@ -1,211 +1,361 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Shopping Cart') }}
-            </h2>
-            <a href="{{ route('products.index') }}"
-                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                Continue Shopping
+@extends('layouts.customer')
+
+@section('title', 'سلة التسوق')
+
+@section('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<style>
+  .cart-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .cart-item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
+  }
+
+  .cart-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .cart-item-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .cart-item-details {
+    flex: 1;
+  }
+
+  .cart-item-title {
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+  }
+
+  .cart-item-price {
+    color: var(--bs-primary);
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .cart-item-meta {
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .quantity-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .quantity-btn:hover {
+    background: var(--bs-primary);
+    color: #fff;
+    border-color: var(--bs-primary);
+  }
+
+  .quantity-input {
+    width: 60px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 0.25rem;
+  }
+
+  .cart-summary {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+    position: sticky;
+    top: 20px;
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+
+  .summary-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .summary-label {
+    color: #666;
+  }
+
+  .summary-value {
+    font-weight: 500;
+    color: #333;
+  }
+
+  .total-amount {
+    color: var(--bs-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .empty-cart {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .empty-cart-icon {
+    font-size: 3rem;
+    color: #ccc;
+    margin-bottom: 1rem;
+  }
+
+  .remove-item {
+    color: #dc3545;
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 1.25rem;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+  }
+
+  .remove-item:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  .checkout-btn {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+  }
+
+  .continue-shopping {
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .continue-shopping a {
+    color: var(--bs-primary);
+    text-decoration: none;
+  }
+
+  .continue-shopping a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .cart-item {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .cart-item-image {
+      margin-bottom: 1rem;
+    }
+
+    .quantity-control {
+      justify-content: center;
+      margin: 1rem 0;
+    }
+
+    .cart-summary {
+      margin-top: 2rem;
+      position: static;
+    }
+  }
+</style>
+@endsection
+
+@section('content')
+<div class="container py-4">
+  @if (session('success'))
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ session('success') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  @endif
+
+  @if (session('error'))
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ session('error') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  @endif
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title mb-0">سلة التسوق</h2>
+    <span class="text-muted">{{ $cart_items_count ?? 0 }} منتجات</span>
+  </div>
+
+  <div class="cart-container">
+    @if(isset($cart_items) && count($cart_items) > 0)
+    <div class="row">
+      <div class="col-lg-8">
+        @foreach($cart_items as $item)
+        <div class="cart-item d-flex gap-3">
+          @php
+          // Get any available image for the product, not just primary
+          $productImage = $item->product->images->first();
+          $imagePath = $productImage ? Storage::url($productImage->image_path) : asset('images/no-image.png');
+          @endphp
+          <img src="{{ $imagePath }}" alt="{{ $item->product->name }}" class="cart-item-image">
+          <div class="cart-item-details">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h5 class="cart-item-title">{{ $item->product->name }}</h5>
+                <div class="cart-item-meta">
+                  @if($item->product->category)
+                  <span class="me-2">{{ $item->product->category->name }}</span>
+                  @endif
+                  @if($item->size)
+                  <span class="me-2">المقاس: {{ $item->size }}</span>
+                  @endif
+                  @if($item->color)
+                  <span>اللون: {{ $item->color }}</span>
+                  @endif
+                </div>
+              </div>
+              <form action="{{ route('cart.remove', $item->id) }}" method="POST" class="d-inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="remove-item">
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </form>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <div class="quantity-control">
+                <form action="{{ route('cart.update', $item->id) }}" method="POST" class="d-inline update-quantity-form">
+                  @csrf
+                  @method('PATCH')
+                  <button type="button" class="quantity-btn decrease">
+                    <i class="bi bi-dash"></i>
+                  </button>
+                  <input type="number" name="quantity" value="{{ $item->quantity }}" min="1"
+                    class="quantity-input" readonly>
+                  <button type="button" class="quantity-btn increase">
+                    <i class="bi bi-plus"></i>
+                  </button>
+                </form>
+              </div>
+              <div class="cart-item-price">
+                {{ number_format($item->product->price * $item->quantity / 100, 2) }} ريال
+              </div>
+            </div>
+          </div>
+        </div>
+        @endforeach
+      </div>
+
+      <div class="col-lg-4">
+        <div class="cart-summary">
+          <h4 class="mb-4">ملخص الطلب</h4>
+          <div class="summary-item">
+            <span class="summary-label">إجمالي المنتجات</span>
+            <span class="summary-value">{{ number_format($subtotal / 100, 2) }} ريال</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">الشحن</span>
+            <span class="summary-value">{{ number_format($shipping_cost / 100, 2) }} ريال</span>
+          </div>
+          @if($discount > 0)
+          <div class="summary-item">
+            <span class="summary-label">الخصم</span>
+            <span class="summary-value text-success">- {{ number_format($discount / 100, 2) }} ريال</span>
+          </div>
+          @endif
+          <div class="summary-item">
+            <span class="summary-label">الإجمالي الكلي</span>
+            <span class="total-amount">{{ number_format($total / 100, 2) }} ريال</span>
+          </div>
+          <a href="{{ route('checkout.index') }}" class="btn btn-primary checkout-btn">
+            متابعة الشراء
+          </a>
+          <div class="continue-shopping mt-3">
+            <a href="{{ route('products.index') }}">
+              <i class="bi bi-arrow-right"></i>
+              متابعة التسوق
             </a>
+          </div>
         </div>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if(Auth::check() && isset($cart) && $cart->items->isNotEmpty())
-                <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-                    <div class="p-6">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Product
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Quantity
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Price
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Total
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($cart->items as $item)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <x-product-image :product="$item->product" size="16" />
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ $item->product->name }}
-                                                    </div>
-                                                    <p class="text-sm text-gray-500">{{ $item->product->category->name }}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <form action="{{ route('cart.update', $item->product) }}" method="POST" class="flex items-center justify-center">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="number" name="quantity" value="{{ $item->quantity }}" min="1"
-                                                    class="w-20 text-center rounded-md border-gray-300 shadow-sm"
-                                                    onchange="this.form.submit()">
-                                            </form>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
-                                            {{ number_format($item->unit_price / 100, 2) }} SAR
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-900">
-                                            {{ number_format($item->subtotal / 100, 2) }} SAR
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <form action="{{ route('cart.remove', $item->product) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900">Remove</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="mt-6 border-t border-gray-200 pt-4">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <form action="{{ route('cart.clear') }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit"
-                                            onclick="return confirm('Are you sure you want to clear your cart?')"
-                                            class="text-red-600 hover:text-red-900">
-                                            Clear Cart
-                                        </button>
-                                    </form>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-sm text-gray-500">Total</p>
-                                    <p class="text-2xl font-bold text-gray-900">{{ number_format($cart->total_amount / 100, 2) }} SAR</p>
-                                    <a href="{{ route('checkout.index') }}"
-                                        class="mt-4 inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">
-                                        Proceed to Checkout
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            @elseif(!Auth::check() && !empty($sessionCart))
-                <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-                    <div class="p-6">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Product
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Quantity
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Price
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Total
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($products as $product)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <x-product-image :product="$product" size="16" />
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ $product->name }}
-                                                    </div>
-                                                    <p class="text-sm text-gray-500">{{ $product->category->name }}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <form action="{{ route('cart.update', $product) }}" method="POST" class="flex items-center justify-center">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="number" name="quantity" value="{{ $sessionCart[$product->id] }}" min="1"
-                                                    class="w-20 text-center rounded-md border-gray-300 shadow-sm"
-                                                    onchange="this.form.submit()">
-                                            </form>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
-                                            {{ number_format($product->price, 2) }} SAR
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-900">
-                                            {{ number_format($product->price * $sessionCart[$product->id], 2) }} SAR
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <form action="{{ route('cart.remove', $product) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900">Remove</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="mt-6 border-t border-gray-200 pt-4">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <form action="{{ route('cart.clear') }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit"
-                                            onclick="return confirm('Are you sure you want to clear your cart?')"
-                                            class="text-red-600 hover:text-red-900">
-                                            Clear Cart
-                                        </button>
-                                    </form>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-sm text-gray-500">Total</p>
-                                    <p class="text-2xl font-bold text-gray-900">{{ number_format($total, 2) }} SAR</p>
-                                    <a href="{{ route('checkout.index') }}"
-                                        class="mt-4 inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">
-                                        Proceed to Checkout
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            @else
-                <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-                    <div class="p-6 text-center">
-                        <p class="text-gray-500 mb-4">Your cart is empty</p>
-                        <a href="{{ route('products.index') }}"
-                            class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-                            Start Shopping
-                        </a>
-                    </div>
-                </div>
-            @endif
-        </div>
+      </div>
     </div>
-</x-app-layout>
+    @else
+    <div class="empty-cart">
+      <div class="empty-cart-icon">
+        <i class="bi bi-cart-x"></i>
+      </div>
+      <h3>السلة فارغة</h3>
+      <p>لم تقم بإضافة أي منتجات إلى سلة التسوق بعد</p>
+      <a href="{{ route('products.index') }}" class="btn btn-primary">
+        تصفح المنتجات
+      </a>
+    </div>
+    @endif
+  </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // التحكم في الكمية
+    document.querySelectorAll('.quantity-control').forEach(control => {
+      const input = control.querySelector('.quantity-input');
+      const form = control.querySelector('.update-quantity-form');
+      const decreaseBtn = control.querySelector('.decrease');
+      const increaseBtn = control.querySelector('.increase');
+
+      decreaseBtn.addEventListener('click', () => {
+        const currentValue = parseInt(input.value);
+        if (currentValue > 1) {
+          input.value = currentValue - 1;
+          form.submit();
+        }
+      });
+
+      increaseBtn.addEventListener('click', () => {
+        input.value = parseInt(input.value) + 1;
+        form.submit();
+      });
+    });
+
+    // إخفاء رسائل التنبيه تلقائياً
+    setTimeout(() => {
+      document.querySelectorAll('.alert').forEach(alert => {
+        const bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+      });
+    }, 3000);
+  });
+</script>
+@endsection
