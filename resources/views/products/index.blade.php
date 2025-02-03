@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="{{ asset('assets/css/customer/products.css') }}">
 </head>
 <body>
+<a href="/dashboard" class="fixed-dashboard-btn">
+        <i class="fas fa-tachometer-alt me-2"></i>
+        Dashboard
+    </a>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
       <div class="container">
@@ -1161,6 +1165,44 @@
             .filter-sidebar {
                 position: static;
                 margin-bottom: 2rem;
+            }
+        }
+
+
+    .fixed-dashboard-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: #6c5ce7;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .fixed-dashboard-btn:hover {
+            background: #5849c2;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4);
+        }
+
+        .fixed-dashboard-btn i {
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .fixed-dashboard-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                font-size: 0.9rem;
             }
         }
     </style>

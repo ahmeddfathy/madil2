@@ -22,7 +22,7 @@
         <div class="sidebar shadow-sm" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
-                    مدير مديل
+                    مدير ماديل
                 </div>
             </div>
 

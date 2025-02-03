@@ -139,17 +139,50 @@
                                 </div>
                             </div>
 
-                            <!-- Notes Section -->
-                            @if($appointment->notes)
+                            <!-- Related Orders -->
+                            @if($appointment->orderItems->isNotEmpty())
                             <div class="col-12">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body">
                                         <h5 class="card-title mb-4">
-                                            <i class="fas fa-sticky-note text-primary me-2"></i>
-                                            ملاحظات
+                                            <i class="fas fa-shopping-cart text-primary me-2"></i>
+                                            الطلبات المرتبطة
                                         </h5>
-                                        <div class="notes-text">
-                                            {{ $appointment->notes }}
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>رقم الطلب</th>
+                                                        <th>المنتج</th>
+                                                        <th>السعر</th>
+                                                        <th>الحالة</th>
+                                                        <th>تاريخ الطلب</th>
+                                                        <th>الإجراءات</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($appointment->orderItems as $item)
+                                                    <tr>
+                                                        <td>#{{ $item->order->id }}</td>
+                                                        <td>{{ $item->product->name }}</td>
+                                                        <td>{{ number_format($item->unit_price, 2) }} ريال</td>
+                                                        <td>
+                                                            <span class="badge bg-{{ $item->order->order_status === 'completed' ? 'success' : 'warning' }}">
+                                                                {{ $item->order->order_status }}
+                                                            </span>
+                                                        </td>
+                                                        <td>{{ $item->order->created_at->format('Y-m-d') }}</td>
+                                                        <td>
+                                                            <a href="{{ route('admin.orders.show', $item->order) }}"
+                                                               class="btn btn-sm btn-light-primary">
+                                                                <i class="fas fa-eye"></i>
+                                                                عرض الطلب
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -159,6 +192,23 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Notes Section -->
+            @if($appointment->notes)
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">
+                            <i class="fas fa-sticky-note text-primary me-2"></i>
+                            ملاحظات
+                        </h5>
+                        <div class="notes-text">
+                            {{ $appointment->notes }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>

@@ -134,7 +134,7 @@ Route::middleware([
         ->name('admin.')
         ->group(function () {
             // Dashboard
-            Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+            Route::get('/dashboard/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
             // Products Management
             Route::middleware(['permission:manage products'])->group(function () {

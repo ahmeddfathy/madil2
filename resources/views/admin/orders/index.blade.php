@@ -21,7 +21,7 @@
                                             </div>
                                             <div>
                                                 <h6 class="text-white mb-1">إجمالي الطلبات</h6>
-                                                <h3 class="text-white mb-0">{{ $orders->total() }}</h3>
+                                                <h3 class="text-white mb-0">{{ $stats['total_orders'] }}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -36,7 +36,7 @@
                                             </div>
                                             <div>
                                                 <h6 class="text-white mb-1">الطلبات المكتملة</h6>
-                                                <h3 class="text-white mb-0">{{ $orders->where('status', 'completed')->count() }}</h3>
+                                                <h3 class="text-white mb-0">{{ $stats['completed_orders'] }}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -51,7 +51,7 @@
                                             </div>
                                             <div>
                                                 <h6 class="text-white mb-1">قيد التنفيذ</h6>
-                                                <h3 class="text-white mb-0">{{ $orders->where('status', 'processing')->count() }}</h3>
+                                                <h3 class="text-white mb-0">{{ $stats['processing_orders'] }}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -66,7 +66,7 @@
                                             </div>
                                             <div>
                                                 <h6 class="text-white mb-1">إجمالي المبيعات</h6>
-                                                <h3 class="text-white mb-0">{{ number_format($orders->sum('total') / 100, 2) }} ريال</h3>
+                                                <h3 class="text-white mb-0">{{ number_format($stats['total_revenue'], 2) }} ريال</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -161,58 +161,73 @@
                                                         <th class="border-0">العميل</th>
                                                         <th class="border-0">المنتجات</th>
                                                         <th class="border-0">الإجمالي</th>
-                                                        <th class="border-0">الحالة</th>
+                                                        <th class="border-0">حالة الطلب</th>
+                                                        <th class="border-0">حالة الدفع</th>
                                                         <th class="border-0">التاريخ</th>
                                                         <th class="border-0">الإجراءات</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                                    @forelse($orders as $order)
+                                    @forelse($orders as $order)
                                     <tr>
-                                                        <td class="text-center">{{ $order->id }}</td>
+                                        <td class="text-center">{{ $order['id'] }}</td>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                                <div class="avatar-circle bg-primary text-white me-2">
-                                                                    {{ substr($order->customer_name, 0, 1) }}
+                                                <div class="avatar-circle bg-primary text-white me-2">
+                                                    {{ substr($order['customer_name'], 0, 1) }}
                                                 </div>
                                                 <div>
-                                                                    <h6 class="mb-0">{{ $order->customer_name }}</h6>
-                                                                    <small class="text-muted">{{ $order->customer_phone }}</small>
+                                                    <h6 class="mb-0">{{ $order['customer_name'] }}</h6>
+                                                    <small class="text-muted">{{ $order['customer_phone'] }}</small>
                                                 </div>
                                             </div>
                                         </td>
-                                                        <td>{{ $order->items_count }} منتج</td>
-                                                        <td>{{ number_format($order->total / 100, 2) }} ريال</td>
-                                                        <td>
-                                                            <span class="badge bg-{{ $order->status_color }}-subtle text-{{ $order->status_color }} rounded-pill">
-                                                                {{ $order->status_text }}
-                                                            </span>
-                                        </td>
-                                        <td>{{ $order->created_at->format('Y/m/d') }}</td>
                                         <td>
-                                                            <div class="action-buttons">
-                                                                <a href="{{ route('admin.orders.show', $order) }}"
-                                                                   class="btn btn-light-info btn-sm me-2"
-                                                                   title="عرض التفاصيل">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-
-
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    @empty
-                                                    <tr>
-                                                        <td colspan="7" class="text-center py-5">
-                                                            <div class="empty-state">
-                                                                <div class="empty-icon bg-light rounded-circle mb-3">
-                                                                    <i class="fas fa-shopping-cart text-muted fa-2x"></i>
-                                                                </div>
-                                                                <h5 class="text-muted mb-0">لا توجد طلبات</h5>
-                                                            </div>
+                                            <div class="small">
+                                                @foreach($order['items'] as $item)
+                                                    <div class="mb-1">
+                                                        {{ $item['product_name'] }}
+                                                        <span class="text-muted">
+                                                            ({{ $item['quantity'] }} × {{ number_format($item['price'], 2) }} ريال)
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </td>
+                                        <td>{{ number_format($order['total'], 2) }} ريال</td>
+                                        <td>
+                                            <span class="badge bg-{{ $order['status_color'] }}-subtle text-{{ $order['status_color'] }} rounded-pill">
+                                                {{ $order['status_text'] }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{{ $order['payment_status_color'] }}-subtle text-{{ $order['payment_status_color'] }} rounded-pill">
+                                                {{ $order['payment_status_text'] }}
+                                            </span>
+                                        </td>
+                                        <td>{{ $order['created_at_formatted'] }}</td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="{{ route('admin.orders.show', $order['id']) }}"
+                                                   class="btn btn-light-info btn-sm me-2"
+                                                   title="عرض التفاصيل">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
-                                                    @endforelse
+                                    @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center py-5">
+                                            <div class="empty-state">
+                                                <div class="empty-icon bg-light rounded-circle mb-3">
+                                                    <i class="fas fa-shopping-cart text-muted fa-2x"></i>
+                                                </div>
+                                                <h5 class="text-muted mb-0">لا توجد طلبات</h5>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                                         </div>

@@ -39,7 +39,7 @@ class AppointmentController extends Controller
 
     public function show(Appointment $appointment)
     {
-        $appointment->load('user');
+        $appointment->load(['user', 'orderItems.order']);
         return view('admin.appointments.show', compact('appointment'));
     }
 

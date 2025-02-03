@@ -79,8 +79,13 @@ class Appointment extends Model
         return $this->belongsTo(CartItem::class);
     }
 
-    public function order()
+    public function orderItems()
     {
-        return $this->hasOne(Order::class);
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasManyThrough(Order::class, OrderItem::class);
     }
 }

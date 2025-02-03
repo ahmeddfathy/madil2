@@ -12,59 +12,152 @@ class OrderController extends Controller
 {
   public function index(Request $request)
   {
-    $query = Order::with(['user', 'items.product'])
-      ->latest();
+    try {
+        $query = Order::with(['user', 'items.product'])
+            ->latest();
 
-    // Filter by status
-    if ($request->order_status) {
-      $query->where('order_status', $request->order_status);
+        // Filter by status
+        if ($request->order_status) {
+            $query->where('order_status', $request->order_status);
+        }
+
+        // Filter by payment status
+        if ($request->payment_status) {
+            $query->where('payment_status', $request->payment_status);
+        }
+
+        // Filter by date range
+        if ($request->date_from) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->date_to) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        // Search by customer name or email
+        if ($request->search) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->search}%")
+                    ->orWhere('email', 'like', "%{$request->search}%");
+            });
+        }
+
+        // Get statistics
+        $stats = [
+            'total_orders' => Order::count(),
+            'completed_orders' => Order::where('order_status', Order::ORDER_STATUS_COMPLETED)->count(),
+            'processing_orders' => Order::where('order_status', Order::ORDER_STATUS_PROCESSING)->count(),
+            'total_revenue' => Order::where('payment_status', Order::PAYMENT_STATUS_PAID)->sum('total_amount')
+        ];
+
+        $orders = $query->paginate(10);
+
+        // Transform orders data
+        $orders->getCollection()->transform(function ($order) {
+            return [
+                'id' => $order->id,
+                'customer_name' => $order->user->name,
+                'customer_phone' => $order->user->phone ?? '-',
+                'items_count' => $order->items->count(),
+                'items' => $order->items->map(function ($item) {
+                    return [
+                        'product_name' => $item->product->name,
+                        'quantity' => $item->quantity,
+                        'price' => $item->product->price,
+                        'total' => $item->quantity * $item->product->price
+                    ];
+                }),
+                'total' => $order->total_amount,
+                'status' => $order->order_status,
+                'status_text' => match($order->order_status) {
+                    Order::ORDER_STATUS_COMPLETED => 'مكتمل',
+                    Order::ORDER_STATUS_PROCESSING => 'قيد المعالجة',
+                    Order::ORDER_STATUS_PENDING => 'معلق',
+                    Order::ORDER_STATUS_CANCELLED => 'ملغي',
+                    default => 'غير معروف'
+                },
+                'status_color' => match($order->order_status) {
+                    Order::ORDER_STATUS_COMPLETED => 'success',
+                    Order::ORDER_STATUS_PROCESSING => 'info',
+                    Order::ORDER_STATUS_PENDING => 'warning',
+                    Order::ORDER_STATUS_CANCELLED => 'danger',
+                    default => 'secondary'
+                },
+                'payment_status' => $order->payment_status,
+                'payment_status_text' => match($order->payment_status) {
+                    Order::PAYMENT_STATUS_PAID => 'مدفوع',
+                    Order::PAYMENT_STATUS_PENDING => 'معلق',
+                    Order::PAYMENT_STATUS_FAILED => 'فشل',
+                    default => 'غير معروف'
+                },
+                'payment_status_color' => match($order->payment_status) {
+                    Order::PAYMENT_STATUS_PAID => 'success',
+                    Order::PAYMENT_STATUS_PENDING => 'warning',
+                    Order::PAYMENT_STATUS_FAILED => 'danger',
+                    default => 'secondary'
+                },
+                'created_at' => $order->created_at->format('Y-m-d H:i'),
+                'created_at_formatted' => $order->created_at->format('Y/m/d')
+            ];
+        });
+
+        // Get available statuses for filtering
+        $orderStatuses = [
+            Order::ORDER_STATUS_PENDING => 'معلق',
+            Order::ORDER_STATUS_PROCESSING => 'قيد المعالجة',
+            Order::ORDER_STATUS_COMPLETED => 'مكتمل',
+            Order::ORDER_STATUS_CANCELLED => 'ملغي'
+        ];
+
+        $paymentStatuses = [
+            Order::PAYMENT_STATUS_PENDING => 'معلق',
+            Order::PAYMENT_STATUS_PAID => 'مدفوع',
+            Order::PAYMENT_STATUS_FAILED => 'فشل'
+        ];
+
+        return view('admin.orders.index', compact('orders', 'orderStatuses', 'paymentStatuses', 'stats'));
+    } catch (\Exception $e) {
+        \Log::error('Error in orders index: ' . $e->getMessage());
+        return back()->with('error', 'حدث خطأ أثناء تحميل الطلبات');
     }
-
-    // Filter by payment status
-    if ($request->payment_status) {
-      $query->where('payment_status', $request->payment_status);
-    }
-
-    // Filter by date range
-    if ($request->date_from) {
-      $query->whereDate('created_at', '>=', $request->date_from);
-    }
-    if ($request->date_to) {
-      $query->whereDate('created_at', '<=', $request->date_to);
-    }
-
-    // Search by customer name or email
-    if ($request->search) {
-      $query->whereHas('user', function ($q) use ($request) {
-        $q->where('name', 'like', "%{$request->search}%")
-          ->orWhere('email', 'like', "%{$request->search}%");
-      });
-    }
-
-    $orders = $query->paginate(10)
-      ->withQueryString();
-
-    // Get available statuses for filtering
-    $orderStatuses = [
-      Order::ORDER_STATUS_PENDING => 'Pending',
-      Order::ORDER_STATUS_PROCESSING => 'Processing',
-      Order::ORDER_STATUS_COMPLETED => 'Completed',
-      Order::ORDER_STATUS_CANCELLED => 'Cancelled'
-    ];
-
-    $paymentStatuses = [
-      Order::PAYMENT_STATUS_PENDING => 'Pending',
-      Order::PAYMENT_STATUS_PAID => 'Paid',
-      Order::PAYMENT_STATUS_FAILED => 'Failed'
-    ];
-
-    return view('admin.orders.index', compact('orders', 'orderStatuses', 'paymentStatuses'));
   }
 
   public function show(Order $order)
   {
-    $order->load(['user', 'items.product']);
-    return view('admin.orders.show', compact('order'));
+    // تحميل العلاقات المطلوبة
+    $order->load([
+        'user.addresses',
+        'user.phoneNumbers',
+        'items.product',
+        'items.appointment'
+    ]);
+
+    // فصل المنتجات حسب المواعيد
+    $itemsWithAppointments = $order->items->filter(function($item) {
+        return $item->appointment !== null;
+    });
+
+    $itemsWithoutAppointments = $order->items->filter(function($item) {
+        return $item->appointment === null;
+    });
+
+    // الحصول على العناوين الإضافية
+    $additionalAddresses = $order->user->addresses()
+        ->where('id', '!=', $order->address_id)
+        ->get();
+
+    // الحصول على أرقام الهواتف الإضافية
+    $additionalPhones = $order->user->phoneNumbers()
+        ->where('phone', '!=', $order->phone)
+        ->get();
+
+    return view('admin.orders.show', compact(
+        'order',
+        'itemsWithAppointments',
+        'itemsWithoutAppointments',
+        'additionalAddresses',
+        'additionalPhones'
+    ));
   }
 
   public function updateStatus(Request $request, Order $order)
