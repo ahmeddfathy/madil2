@@ -1,151 +1,251 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appointment Details</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/admin/appointments.css') }}">
-</head>
-<body class="bg-light">
-    <div class="appointments-container py-4">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="page-title">
-                    <i class="fas fa-calendar-alt"></i> Appointment Details
-                </h1>
-                <a href="{{ route('admin.appointments.index') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Appointments
-                </a>
-            </div>
+@extends('layouts.admin')
 
-            <!-- Update Status -->
-            <div class="card appointment-details-card mb-4">
-                <div class="card-header">
-                    <h3><i class="fas fa-edit"></i> Update Status</h3>
-                </div>
-                <div class="card-body">
-                    <form action="{{ route('admin.appointments.update-status', $appointment) }}" method="POST">
-                        @csrf
-                        @method('PATCH')
+@section('title', 'تفاصيل الموعد')
+@section('page_title', 'تفاصيل الموعد')
 
-                        <div class="row g-3">
+@section('content')
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid px-0">
+            <div class="row mx-0">
+                <div class="col-12 px-0">
+                    <div class="appointments-container">
+                        <!-- Back Button -->
+                        <div class="mb-4">
+                            <a href="{{ route('admin.appointments.index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-right ml-2"></i>
+                                العودة للمواعيد
+                            </a>
+                        </div>
+
+                        <!-- Appointment Details -->
+                        <div class="row g-4">
+                            <!-- Customer Information -->
                             <div class="col-md-6">
-                                <label for="status" class="form-label">Status</label>
-                                <select name="status" id="status" class="form-select">
-                                    <option value="pending" @selected($appointment->status === 'pending')>Pending</option>
-                                    <option value="approved" @selected($appointment->status === 'approved')>Approved</option>
-                                    <option value="completed" @selected($appointment->status === 'completed')>Completed</option>
-                                    <option value="cancelled" @selected($appointment->status === 'cancelled')>Cancelled</option>
-                                </select>
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4">
+                                            <i class="fas fa-user-circle text-primary me-2"></i>
+                                            معلومات العميل
+                                        </h5>
+                                        <div class="customer-details">
+                                            <div class="detail-item">
+                                                <dt><i class="fas fa-user"></i> الاسم</dt>
+                                                <dd>{{ $appointment->user->name }}</dd>
+                                            </div>
+                                            <div class="detail-item">
+                                                <dt><i class="fas fa-envelope"></i> البريد الإلكتروني</dt>
+                                                <dd>{{ $appointment->user->email }}</dd>
+                                            </div>
+                                            <div class="detail-item">
+                                                <dt><i class="fas fa-phone"></i> رقم الهاتف</dt>
+                                                <dd>{{ $appointment->user->phone ?? 'غير محدد' }}</dd>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
+                            <!-- Appointment Information -->
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4">
+                                            <i class="fas fa-calendar-check text-primary me-2"></i>
+                                            معلومات الموعد
+                                        </h5>
+                                        <div class="appointment-details">
+                                            <div class="detail-item">
+                                                <dt><i class="fas fa-briefcase"></i> الخدمة</dt>
+                                                <dd>{{ $appointment->service_type }}</dd>
+                                            </div>
+                                            <div class="detail-item">
+                                                <dt><i class="fas fa-calendar"></i> التاريخ والوقت</dt>
+                                                <dd>
+                                                    {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d M, Y') }}
+                                                    <br>
+                                                    {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') }}
+                                                </dd>
+                                            </div>
+                                            <div class="detail-item">
+                                                <dt><i class="fas fa-clock"></i> المدة</dt>
+                                                <dd>{{ $appointment->duration ?? 'غير محدد' }}</dd>
+                                            </div>
+                                            <div class="detail-item">
+                                                <dt><i class="fas fa-tag"></i> السعر</dt>
+                                                <dd>{{ $appointment->price ? number_format($appointment->price, 2) . ' ريال' : 'غير محدد' }}</dd>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status Information -->
                             <div class="col-12">
-                                <label for="notes" class="form-label">Notes</label>
-                                <textarea name="notes" id="notes" rows="3" class="form-control">{{ old('notes', $appointment->notes) }}</textarea>
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4">
+                                            <i class="fas fa-info-circle text-primary me-2"></i>
+                                            حالة الموعد
+                                        </h5>
+                                        <div class="status-details">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-6">
+                                                    <div class="status-badge {{ $appointment->status }}">
+                                                        <i class="fas fa-circle status-icon"></i>
+                                                        @switch($appointment->status)
+                                                            @case('pending')
+                                                                قيد الانتظار
+                                                                @break
+                                                            @case('approved')
+                                                                تم الموافقة
+                                                                @break
+                                                            @case('completed')
+                                                                مكتمل
+                                                                @break
+                                                            @case('cancelled')
+                                                                ملغي
+                                                                @break
+                                                            @default
+                                                                {{ $appointment->status }}
+                                                        @endswitch
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                                                    @if($appointment->status == 'pending')
+                                                    <form action="{{ route('admin.appointments.updateStatus', $appointment) }}" method="POST" class="d-inline-block">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <input type="hidden" name="status" value="approved">
+                                                        <button type="submit" class="btn btn-success me-2">
+                                                            <i class="fas fa-check me-1"></i>
+                                                            قبول الموعد
+                                                        </button>
+                                                    </form>
+                                                    <form action="{{ route('admin.appointments.updateStatus', $appointment) }}" method="POST" class="d-inline-block">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <input type="hidden" name="status" value="cancelled">
+                                                        <button type="submit" class="btn btn-danger">
+                                                            <i class="fas fa-times me-1"></i>
+                                                            رفض الموعد
+                                                        </button>
+                                                    </form>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
+                            <!-- Notes Section -->
+                            @if($appointment->notes)
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> Update Status
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                <!-- Customer Information -->
-                <div class="col-md-6">
-                    <div class="card appointment-details-card h-100">
-                        <div class="card-header">
-                            <h3><i class="fas fa-user"></i> Customer Information</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="detail-item mb-3">
-                                <dt><i class="fas fa-user-circle"></i> Name</dt>
-                                <dd>{{ $appointment->user->name }}</dd>
-                            </div>
-                            <div class="detail-item">
-                                <dt><i class="fas fa-envelope"></i> Email</dt>
-                                <dd>{{ $appointment->user->email }}</dd>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Appointment Information -->
-                <div class="col-md-6">
-                    <div class="card appointment-details-card h-100">
-                        <div class="card-header">
-                            <h3><i class="fas fa-info-circle"></i> Appointment Information</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="detail-item">
-                                        <dt><i class="fas fa-concierge-bell"></i> Service Type</dt>
-                                        <dd>{{ ucfirst($appointment->service_type) }}</dd>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="detail-item">
-                                        <dt><i class="fas fa-check-circle"></i> Status</dt>
-                                        <dd>
-                                            <span class="status-badge {{ $appointment->status }}">
-                                                <i class="fas fa-circle status-icon"></i>
-                                                {{ ucfirst($appointment->status) }}
-                                            </span>
-                                        </dd>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="detail-item">
-                                        <dt><i class="fas fa-calendar"></i> Date</dt>
-                                        <dd>{{ $appointment->formatted_date }}</dd>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="detail-item">
-                                        <dt><i class="fas fa-clock"></i> Time</dt>
-                                        <dd>{{ $appointment->formatted_time }}</dd>
-                                    </div>
-                                </div>
-
-                                @if($appointment->notes)
-                                <div class="col-12">
-                                    <div class="detail-item">
-                                        <dt><i class="fas fa-sticky-note"></i> Notes</dt>
-                                        <dd class="notes-text">{{ $appointment->notes }}</dd>
-                                    </div>
-                                </div>
-                                @endif
-
-                                <div class="col-12">
-                                    <div class="detail-item">
-                                        <dt><i class="fas fa-calendar-plus"></i> Created</dt>
-                                        <dd>
-                                            {{ $appointment->created_at ? $appointment->created_at->format('F j, Y g:i A') : 'Not available' }}
-                                        </dd>
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4">
+                                            <i class="fas fa-sticky-note text-primary me-2"></i>
+                                            ملاحظات
+                                        </h5>
+                                        <div class="notes-text">
+                                            {{ $appointment->notes }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+@endsection
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@section('styles')
+<style>
+.content-wrapper {
+    min-height: 100vh;
+    width: 100%;
+    background: var(--background);
+    padding: 0;
+}
+
+.content-header {
+    padding: 0;
+    background: transparent;
+    width: 100%;
+}
+
+.container-fluid {
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.appointments-container {
+    padding: 1.5rem;
+    width: 100%;
+}
+
+.row {
+    margin: 0;
+    width: 100%;
+}
+
+.detail-item {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.detail-item:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.detail-item dt {
+    font-weight: 600;
+    color: var(--text-medium);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-item dd {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 1.1rem;
+}
+
+.notes-text {
+    background: var(--background);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .appointments-container {
+        padding: 0.75rem;
+    }
+
+    .card {
+        border-radius: 0;
+        margin-bottom: 1rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .status-details .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+@endsection

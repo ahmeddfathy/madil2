@@ -1,248 +1,285 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $product->name }}</title>
+@extends('layouts.admin')
 
-    <!-- Styles -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/css/admin/product-forms.css') }}">
+@section('title', $product->name)
+@section('page_title', $product->name)
 
-    <style>
-        .product-image {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 1rem;
-        }
+@section('content')
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid px-0">
+            <div class="row mx-0">
+                <div class="col-12 px-0">
+                    <div class="products-container">
+                        <!-- Header Actions -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-box text-primary me-2"></i>
+                                            تفاصيل المنتج
+                                        </h5>
+                                        <div class="actions">
+                                            <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-light-primary me-2">
+                                                <i class="fas fa-edit me-1"></i>
+                                                تعديل المنتج
+                                            </a>
+                                            <a href="{{ route('admin.products.index') }}" class="btn btn-light-secondary">
+                                                <i class="fas fa-arrow-right me-1"></i>
+                                                عودة للمنتجات
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-        .thumbnail {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
+                        <div class="row g-4">
+                            <!-- Product Images -->
+                            <div class="col-lg-6">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4">
+                                            <i class="fas fa-images text-primary me-2"></i>
+                                            صور المنتج
+                                        </h5>
+                                        <img src="{{ Storage::url($product->primary_image->image_path) }}"
+                                             alt="{{ $product->name }}"
+                                             class="product-image mb-3"
+                                             id="mainImage">
 
-        .thumbnail.active {
-            border-color: var(--primary);
-        }
+                                        @if($product->images->count() > 1)
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            @foreach($product->images as $image)
+                                            <img src="{{ Storage::url($image->image_path) }}"
+                                                 alt="صورة المنتج"
+                                                 class="thumbnail {{ $image->is_primary ? 'active' : '' }}"
+                                                 onclick="updateMainImage(this, '{{ Storage::url($image->image_path) }}')">
+                                            @endforeach
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
 
-        .info-card {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border);
-        }
+                            <!-- Product Details -->
+                            <div class="col-lg-6">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4">
+                                            <i class="fas fa-info-circle text-primary me-2"></i>
+                                            معلومات المنتج
+                                        </h5>
+                                        <div class="mb-4">
+                                            <span class="status-badge {{ $product->stock > 10 ? 'in-stock' : ($product->stock > 0 ? 'low-stock' : 'out-of-stock') }}">
+                                                @if($product->stock > 10)
+                                                    متوفر ({{ $product->stock }})
+                                                @elseif($product->stock > 0)
+                                                    مخزون منخفض ({{ $product->stock }})
+                                                @else
+                                                    غير متوفر
+                                                @endif
+                                            </span>
+                                        </div>
+                                        <div class="row g-4">
+                                            <div class="col-6">
+                                                <div class="detail-item">
+                                                    <dt><i class="fas fa-tag text-primary"></i> التصنيف</dt>
+                                                    <dd>{{ $product->category->name }}</dd>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="detail-item">
+                                                    <dt><i class="fas fa-money-bill text-primary"></i> السعر</dt>
+                                                    <dd class="text-primary fw-bold">{{ number_format($product->price / 100, 2) }} ريال</dd>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="detail-item">
+                                                    <dt><i class="fas fa-align-left text-primary"></i> الوصف</dt>
+                                                    <dd>{{ $product->description }}</dd>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-        .info-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .info-title i {
-            color: var(--primary);
-        }
-
-        .status-badge {
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .status-badge.in-stock {
-            background: #ECFDF5;
-            color: var(--success);
-        }
-
-        .status-badge.low-stock {
-            background: #FFFBEB;
-            color: var(--warning);
-        }
-
-        .status-badge.out-of-stock {
-            background: #FEF2F2;
-            color: var(--danger);
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1 class="header-title">{{ $product->name }}</h1>
-            <div class="header-actions">
-                <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-primary">
-                    <i class="fas fa-edit"></i>
-                    <span>تعديل المنتج</span>
-                </a>
-                <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-right"></i>
-                    <span>عودة للمنتجات</span>
-                </a>
-            </div>
-        </div>
-
-        <div class="row">
-            <!-- Product Images -->
-            <div class="col-lg-6 mb-4">
-                <div class="info-card">
-                    <img src="{{ Storage::url($product->primary_image->image_path) }}"
-                         alt="{{ $product->name }}"
-                         class="product-image mb-3"
-                         id="mainImage">
-
-                    @if($product->images->count() > 1)
-                    <div class="d-flex gap-2 flex-wrap">
-                        @foreach($product->images as $image)
-                        <img src="{{ Storage::url($image->image_path) }}"
-                             alt="صورة المنتج"
-                             class="thumbnail {{ $image->is_primary ? 'active' : '' }}"
-                             onclick="updateMainImage(this, '{{ Storage::url($image->image_path) }}')">
-                        @endforeach
-                    </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Product Details -->
-            <div class="col-lg-6">
-                <!-- Basic Information -->
-                <div class="info-card">
-                    <h3 class="info-title">
-                        <i class="fas fa-info-circle"></i>
-                        معلومات أساسية
-                    </h3>
-                    <div class="mb-3">
-                        <span class="status-badge {{ $product->stock > 10 ? 'in-stock' : ($product->stock > 0 ? 'low-stock' : 'out-of-stock') }}">
-                            @if($product->stock > 10)
-                                متوفر ({{ $product->stock }})
-                            @elseif($product->stock > 0)
-                                مخزون منخفض ({{ $product->stock }})
-                            @else
-                                غير متوفر
+                            <!-- Colors -->
+                            @if($product->colors && $product->colors->isNotEmpty())
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4">
+                                            <i class="fas fa-palette text-primary me-2"></i>
+                                            الألوان المتاحة
+                                        </h5>
+                                        <div class="row g-3">
+                                            @foreach($product->colors as $color)
+                                            <div class="col-md-6">
+                                                <div class="color-item d-flex align-items-center p-3 rounded border">
+                                                    <span class="color-preview me-2" style="width: 20px; height: 20px; border-radius: 50%; background-color: {{ $color->color }}"></span>
+                                                    <span>{{ $color->color }}</span>
+                                                    <span class="ms-auto">
+                                                        @if($color->is_available)
+                                                            <i class="fas fa-check text-success"></i>
+                                                        @else
+                                                            <i class="fas fa-times text-danger"></i>
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             @endif
-                        </span>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-6">
-                            <div class="text-muted mb-1">التصنيف</div>
-                            <div>{{ $product->category->name }}</div>
-                        </div>
-                        <div class="col-6">
-                            <div class="text-muted mb-1">السعر</div>
-                            <div class="fs-4 fw-bold text-primary">{{ number_format($product->price / 100, 2) }} ريال</div>
-                        </div>
-                        <div class="col-12">
-                            <div class="text-muted mb-1">الوصف</div>
-                            <div>{{ $product->description }}</div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Colors -->
-                @if($product->colors && $product->colors->isNotEmpty())
-                <div class="info-card">
-                    <h3 class="info-title">
-                        <i class="fas fa-palette"></i>
-                        الألوان المتاحة
-                    </h3>
-                    <div class="row g-2">
-                        @foreach($product->colors as $color)
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center gap-2 p-2 border rounded">
-                                <div style="width: 20px; height: 20px; border-radius: 50%; background-color: {{ $color->color }}"></div>
-                                <span>{{ $color->color }}</span>
-                                <span class="ms-auto">
-                                    @if($color->is_available)
-                                        <i class="fas fa-check text-success"></i>
-                                    @else
-                                        <i class="fas fa-times text-danger"></i>
-                                    @endif
-                                </span>
+                            <!-- Sizes -->
+                            @if($product->sizes && $product->sizes->isNotEmpty())
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4">
+                                            <i class="fas fa-ruler text-primary me-2"></i>
+                                            المقاسات المتاحة
+                                        </h5>
+                                        <div class="row g-3">
+                                            @foreach($product->sizes as $size)
+                                            <div class="col-md-6">
+                                                <div class="size-item d-flex align-items-center p-3 rounded border">
+                                                    <span>{{ $size->size }}</span>
+                                                    <span class="ms-auto">
+                                                        @if($size->is_available)
+                                                            <i class="fas fa-check text-success"></i>
+                                                        @else
+                                                            <i class="fas fa-times text-danger"></i>
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
-
-                <!-- Sizes -->
-                @if($product->sizes && $product->sizes->isNotEmpty())
-                <div class="info-card">
-                    <h3 class="info-title">
-                        <i class="fas fa-ruler"></i>
-                        المقاسات المتاحة
-                    </h3>
-                    <div class="row g-2">
-                        @foreach($product->sizes as $size)
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center gap-2 p-2 border rounded">
-                                <span>{{ $size->size }}</span>
-                                <span class="ms-auto">
-                                    @if($size->is_available)
-                                        <i class="fas fa-check text-success"></i>
-                                    @else
-                                        <i class="fas fa-times text-danger"></i>
-                                    @endif
-                                </span>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
-
-                <!-- Additional Information -->
-                <div class="info-card">
-                    <h3 class="info-title">
-                        <i class="fas fa-clock"></i>
-                        معلومات إضافية
-                    </h3>
-                    <div class="row g-3">
-                        <div class="col-6">
-                            <div class="text-muted mb-1">تاريخ الإضافة</div>
-                            <div>{{ $product->created_at->format('Y/m/d') }}</div>
-                        </div>
-                        <div class="col-6">
-                            <div class="text-muted mb-1">آخر تحديث</div>
-                            <div>{{ $product->updated_at->format('Y/m/d') }}</div>
-                        </div>
-                        <div class="col-6">
-                            <div class="text-muted mb-1">رقم المنتج</div>
-                            <div>{{ $product->id }}</div>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+@endsection
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function updateMainImage(thumbnail, src) {
-            // تحديث الصورة الرئيسية
-            document.getElementById('mainImage').src = src;
+@section('styles')
+<style>
+.products-container {
+    padding: 1.5rem;
+    width: 100%;
+}
 
-            // تحديث حالة الصور المصغرة
-            document.querySelectorAll('.thumbnail').forEach(thumb => {
-                thumb.classList.remove('active');
-            });
-            thumbnail.classList.add('active');
-        }
-    </script>
-</body>
-</html>
+.product-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.thumbnail.active {
+    border-color: var(--primary);
+}
+
+.detail-item {
+    margin-bottom: 1rem;
+}
+
+.detail-item dt {
+    font-size: 0.875rem;
+    color: var(--text-medium);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-item dd {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-badge.in-stock {
+    background: #ECFDF5;
+    color: var(--success);
+}
+
+.status-badge.low-stock {
+    background: #FFFBEB;
+    color: var(--warning);
+}
+
+.status-badge.out-of-stock {
+    background: #FEF2F2;
+    color: var(--danger);
+}
+
+.color-item,
+.size-item {
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.color-item:hover,
+.size-item:hover {
+    background: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+    .products-container {
+        padding: 0.75rem;
+    }
+
+    .product-image {
+        height: 300px;
+    }
+
+    .thumbnail {
+        width: 60px;
+        height: 60px;
+    }
+}
+</style>
+@endsection
+
+@section('scripts')
+<script>
+function updateMainImage(thumbnail, src) {
+    document.getElementById('mainImage').src = src;
+    document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+    });
+    thumbnail.classList.add('active');
+}
+</script>
+@endsection

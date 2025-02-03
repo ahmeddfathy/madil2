@@ -1,3 +1,10 @@
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 /* General Styles */
 :root {
     --primary: #4338CA;
@@ -39,17 +46,55 @@ body {
     font-family: var(--font-primary);
     color: var(--text-dark);
     line-height: 1.7;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* Layout Structure */
+.content-wrapper {
+    min-height: 100vh;
+    width: 100%;
+    background: var(--background);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+.content-header {
+    width: 100%;
+    padding: 0;
+    background: transparent;
+}
+
+.container-fluid {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 .appointments-container {
-    min-height: 100vh;
+    width: 100%;
     padding: 1.5rem;
     background: var(--background);
 }
 
+/* Grid System Overrides */
+.row {
+    margin: 0;
+    width: 100%;
+}
+
+.col-12 {
+    padding: 0;
+}
+
 /* Header & Title */
 .page-header {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
+    padding: 1rem 1.5rem;
 }
 
 .page-title {
@@ -76,11 +121,12 @@ body {
 
 /* Card Styles */
 .card {
+    width: 100%;
+    margin-bottom: 1.5rem;
     background: var(--card-bg);
     border: none;
-    border-radius: 1.25rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-    transition: all 0.3s ease;
+    border-radius: 0.5rem;
+    box-shadow: var(--card-shadow);
 }
 
 .card:hover {
@@ -110,7 +156,12 @@ body {
 }
 
 .card-body {
-    padding: 1.25rem;
+    padding: 1.5rem;
+}
+
+.card-body.px-0 {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 /* Form Styles */
@@ -144,17 +195,24 @@ body {
 }
 
 /* Table Styles */
+.table-container {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
 .table-responsive {
-    border-radius: var(--border-radius-lg);
-    background-color: var(--card-bg);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
 }
 
 .table {
+    width: 100%;
     margin: 0;
     border-collapse: separate;
     border-spacing: 0;
-    --bs-table-hover-bg: var(--primary-light);
-    --bs-table-hover-color: var(--text-dark);
 }
 
 .table thead {
@@ -163,18 +221,18 @@ body {
 }
 
 .table thead th {
-    font-size: 1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 1.25rem 1.5rem;
     background: var(--background);
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    white-space: nowrap;
 }
 
 .table tbody td {
-    padding: 1.5rem;
+    padding: 1rem 1.5rem;
     vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .table tbody tr:hover {
@@ -395,27 +453,21 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     .appointments-container {
-        padding: 1rem;
+        padding: 0.75rem;
     }
 
-    .page-title {
-        font-size: 1.875rem;
+    .card {
+        border-radius: 0;
+        margin-bottom: 1rem;
     }
 
     .card-body {
         padding: 1rem;
     }
 
+    .table thead th,
     .table tbody td {
-        padding: 1.25rem;
-    }
-
-    .table tbody td:before {
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--text-medium);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        padding: 0.75rem 1rem;
     }
 
     .btn-sm {
@@ -780,4 +832,10 @@ body {
 
 i {
     font-size: 1.125rem;
+}
+
+/* Form Container */
+.filter-container {
+    width: 100%;
+    margin-bottom: 1.5rem;
 }

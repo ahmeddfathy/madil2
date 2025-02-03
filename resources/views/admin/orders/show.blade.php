@@ -1,589 +1,315 @@
-<!DOCTYPE html>
-<html dir="rtl" lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تفاصيل الطلب #{{ $order->id }}</title>
-    <!-- Bootstrap RTL -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.rtl.min.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #4f46e5;
-            --primary-hover: #4338ca;
-            --secondary-color: #475569;
-            --success-color: #059669;
-            --warning-color: #d97706;
-            --info-color: #0284c7;
-            --danger-color: #dc2626;
-            --background: #f8fafc;
-            --card-background: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --border-color: #e2e8f0;
-        }
+@extends('layouts.admin')
 
-        body {
-            background: linear-gradient(135deg, var(--background) 0%, #eef2ff 100%);
-            font-family: 'Almarai', sans-serif;
-            min-height: 100vh;
-        }
+@section('title', 'تفاصيل الطلب #' . $order->id)
+@section('page_title', 'تفاصيل الطلب #' . $order->id)
 
-        .main-content {
-            padding: 2rem;
-        }
-
-        .btn-back {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, #64748b 100%);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 1rem;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(71, 85, 105, 0.1);
-        }
-
-        .btn-back:hover {
-            background: linear-gradient(135deg, #64748b 0%, var(--secondary-color) 100%);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px rgba(71, 85, 105, 0.2);
-        }
-
-        .btn-print {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 1rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(79, 70, 229, 0.1);
-        }
-
-        .btn-print:hover {
-            background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-color) 100%);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
-        }
-
-        .card {
-            border: none;
-            border-radius: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            background: var(--card-background);
-            transition: all 0.3s ease;
-            margin-bottom: 2rem;
-        }
-
-        .card:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .card-header {
-            background: linear-gradient(to left, var(--card-background), #f8fafc);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.75rem;
-            border-radius: 1.5rem 1.5rem 0 0 !important;
-        }
-
-        .card-title {
-            color: var(--text-primary);
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .card-title i {
-            color: var(--primary-color);
-        }
-
-        .card-body {
-            padding: 1.75rem;
-        }
-
-        .info-box {
-            background: linear-gradient(to bottom, var(--card-background), #f8fafc);
-            border-radius: 1.25rem;
-            padding: 1.75rem;
-            height: 100%;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
-        }
-
-        .info-box:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .info-box h5 {
-            color: var(--text-primary);
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .info-box h5 i {
-            color: var(--primary-color);
-            font-size: 1.35rem;
-        }
-
-        .table {
-            margin-bottom: 0;
-        }
-
-        .table.table-borderless th {
-            color: var(--text-secondary);
-            font-weight: 600;
-            padding: 1rem 0;
-            font-size: 0.95rem;
-        }
-
-        .table.table-borderless td {
-            padding: 1rem 0;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-        }
-
-        .badge {
-            padding: 0.6rem 1rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            font-size: 0.875rem;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .badge.bg-success {
-            background: linear-gradient(135deg, var(--success-color) 0%, #10b981 100%) !important;
-        }
-
-        .badge.bg-warning {
-            background: linear-gradient(135deg, var(--warning-color) 0%, #f59e0b 100%) !important;
-        }
-
-        .badge.bg-info {
-            background: linear-gradient(135deg, var(--info-color) 0%, #0ea5e9 100%) !important;
-        }
-
-        .badge.bg-secondary {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, #64748b 100%) !important;
-        }
-
-        .table-responsive {
-            border-radius: 1.25rem;
-            background: linear-gradient(to bottom, var(--card-background), #f8fafc);
-            padding: 1.5rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .table-responsive .table {
-            border-collapse: separate;
-            border-spacing: 0 0.5rem;
-        }
-
-        .table-responsive .table th {
-            background: linear-gradient(to left, #f8fafc, #f1f5f9);
-            color: var(--text-secondary);
-            font-weight: 700;
-            padding: 1.25rem 1rem;
-            white-space: nowrap;
-            border: none;
-            font-size: 0.95rem;
-        }
-
-        .table-responsive .table td {
-            padding: 1.25rem 1rem;
-            vertical-align: middle;
-            background-color: white;
-            border: none;
-            font-size: 0.95rem;
-        }
-
-        .table-responsive .table tbody tr {
-            transition: all 0.3s ease;
-            border-radius: 1rem;
-        }
-
-        .table-responsive .table tbody tr:hover td {
-            background-color: #f8fafc;
-            transform: scale(1.01);
-        }
-
-        tfoot tr {
-            border-top: 2px solid var(--border-color);
-        }
-
-        tfoot th, tfoot td {
-            font-weight: 700 !important;
-            color: var(--primary-color) !important;
-            font-size: 1.1rem !important;
-        }
-
-        @media print {
-            body {
-                background: white;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .card {
-                box-shadow: none;
-            }
-            .info-box {
-                border: 1px solid var(--border-color);
-                box-shadow: none;
-                transform: none;
-            }
-            .table td, .table th {
-                background: none !important;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 1rem;
-            }
-            .card-header {
-                padding: 1.25rem;
-            }
-            .info-box {
-                padding: 1.25rem;
-            }
-            .table-responsive {
-                padding: 1rem;
-            }
-            .badge {
-                padding: 0.5rem 0.75rem;
-            }
-        }
-
-        /* إضافة ستايلات جديدة */
-        .form-select-sm {
-            padding: 0.25rem 2rem 0.25rem 0.5rem;
-            font-size: 0.875rem;
-            border-radius: 0.75rem;
-            border: 1px solid var(--border-color);
-            background-color: white;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .form-select-sm:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
-        }
-
-        .form-select-sm:hover {
-            border-color: var(--primary-color);
-        }
-
-        /* Add flash message styles */
-        .alert {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: none;
-            border-radius: 1rem;
-            font-weight: 600;
-        }
-
-        .alert-success {
-            background: linear-gradient(135deg, var(--success-color) 0%, #10b981 100%);
-            color: white;
-        }
-
-        .alert-danger {
-            background: linear-gradient(135deg, var(--danger-color) 0%, #ef4444 100%);
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <div class="main-content">
-        <div class="container">
-            <!-- Flash Messages -->
-            @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
+@section('content')
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid px-0">
+            <div class="row mx-0">
+                <div class="col-12 px-0">
+                    <div class="orders-container">
+                        <!-- Header Actions -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title mb-1 d-flex align-items-center">
+                                                <span class="icon-circle bg-primary text-white me-2">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </span>
+                                                تفاصيل الطلب #{{ $order->id }}
+                                            </h5>
+                                            <p class="text-muted mb-0 fs-sm">عرض تفاصيل الطلب والمنتجات والمواعيد</p>
                 </div>
-            @endif
-
-            @if(session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <a href="{{ route('admin.orders.index') }}" class="btn-back no-print">
-                    <i class="fas fa-arrow-right"></i>
-                    العودة للطلبات
+                                        <div class="actions d-flex gap-2">
+                                            <a href="{{ route('admin.orders.index') }}" class="btn btn-light-secondary">
+                                                <i class="fas fa-arrow-right me-2"></i>
+                                                عودة للطلبات
                 </a>
-                <button onclick="window.print()" class="btn-print no-print">
-                    <i class="fas fa-print"></i>
+                                            <button onclick="window.print()" class="btn btn-light-primary">
+                                                <i class="fas fa-print me-2"></i>
                     طباعة الطلب
                 </button>
             </div>
-
-            <div class="row">
-                <!-- معلومات الطلب -->
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-info-circle"></i>
-                                معلومات الطلب
-                            </h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="info-box">
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <th>رقم الطلب:</th>
-                                        <td>#{{ $order->id }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>تاريخ الطلب:</th>
-                                        <td>{{ $order->created_at->format('Y/m/d') }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>حالة الطلب:</th>
-                                        <td>
-                                            <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('PUT')
-                                                <select name="order_status" class="form-select form-select-sm d-inline-block w-auto me-2" onchange="this.form.submit()">
-                                                    <option value="pending" {{ $order->order_status === 'pending' ? 'selected' : '' }}>قيد الانتظار</option>
-                                                    <option value="processing" {{ $order->order_status === 'processing' ? 'selected' : '' }}>قيد المعالجة</option>
-                                                    <option value="completed" {{ $order->order_status === 'completed' ? 'selected' : '' }}>مكتمل</option>
-                                                    <option value="cancelled" {{ $order->order_status === 'cancelled' ? 'selected' : '' }}>ملغي</option>
-                                                </select>
-                                            </form>
-                                            @switch($order->order_status)
-                                                @case('pending')
-                                                    <span class="badge bg-warning">قيد الانتظار</span>
-                                                    @break
-                                                @case('processing')
-                                                    <span class="badge bg-info">قيد المعالجة</span>
-                                                    @break
-                                                @case('completed')
-                                                    <span class="badge bg-success">مكتمل</span>
-                                                    @break
-                                                @case('cancelled')
-                                                    <span class="badge bg-secondary">ملغي</span>
-                                                    @break
-                                            @endswitch
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>طريقة الدفع:</th>
-                                        <td>{{ $order->payment_method === 'cash' ? 'كاش' : 'بطاقة' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>حالة الدفع:</th>
-                                        <td>
-                                            <form action="{{ route('admin.orders.update-payment-status', $order) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('PUT')
-                                                <select name="payment_status" class="form-select form-select-sm d-inline-block w-auto me-2" onchange="this.form.submit()">
-                                                    <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>قيد الانتظار</option>
-                                                    <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>تم الدفع</option>
-                                                    <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>فشل الدفع</option>
-                                                </select>
-                                            </form>
-                                            @switch($order->payment_status)
-                                                @case('pending')
-                                                    <span class="badge bg-warning">قيد الانتظار</span>
-                                                    @break
-                                                @case('paid')
-                                                    <span class="badge bg-success">تم الدفع</span>
-                                                    @break
-                                                @case('failed')
-                                                    <span class="badge bg-secondary">فشل الدفع</span>
-                                                    @break
-                                            @endswitch
-                                        </td>
-                                    </tr>
-                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- معلومات العميل -->
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-user"></i>
-                                معلومات العميل
-                            </h3>
+                        <!-- Order Stats -->
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-3">
+                                <div class="card border-0 shadow-sm stat-card bg-gradient-primary h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <div class="icon-circle bg-white text-primary me-3">
+                                                <i class="fas fa-shopping-cart fa-lg"></i>
                         </div>
-                        <div class="card-body">
-                            <div class="info-box">
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <th>اسم العميل:</th>
-                                        <td>{{ $order->user->name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>البريد الإلكتروني:</th>
-                                        <td>{{ $order->user->email }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>رقم الهاتف:</th>
-                                        <td>{{ $order->phone }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>عنوان التوصيل:</th>
-                                        <td>{{ $order->shipping_address }}</td>
-                                    </tr>
-                                    @if($order->notes)
-                                    <tr>
-                                        <th>ملاحظات:</th>
-                                        <td>{{ $order->notes }}</td>
-                                    </tr>
-                                    @endif
-                                </table>
+                                            <div>
+                                                <h6 class="text-white mb-1">رقم الطلب</h6>
+                                                <h3 class="text-white mb-0">#{{ $order->id }}</h3>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- المنتجات التي لها مواعيد -->
-            @php
-                $itemsWithAppointments = $order->items->filter(function($item) {
-                    return $item->appointment !== null;
-                });
-            @endphp
-
-            @if($itemsWithAppointments->isNotEmpty())
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-calendar-alt"></i>
-                        المنتجات التي لها مواعيد
-                    </h3>
-                </div>
+                            <div class="col-md-3">
+                                <div class="card border-0 shadow-sm stat-card bg-gradient-success h-100">
                 <div class="card-body">
-                    <div class="row">
-                        @foreach($itemsWithAppointments as $item)
-                        <div class="col-md-6 col-lg-4 mb-4">
-                            <div class="info-box">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="avatar me-3" style="background: linear-gradient(135deg, var(--info-color) 0%, #0ea5e9 100%);">
-                                        <i class="fas fa-tshirt"></i>
+                                        <div class="d-flex align-items-center">
+                                            <div class="icon-circle bg-white text-success me-3">
+                                                <i class="fas fa-box-open fa-lg"></i>
                                     </div>
                                     <div>
-                                        <h5 class="mb-1">{{ $item->product->name }}</h5>
-                                        <span class="badge bg-info">
-                                            {{ $item->quantity }} قطعة
-                                        </span>
+                                                <h6 class="text-white mb-1">عدد المنتجات</h6>
+                                                <h3 class="text-white mb-0">{{ $order->items->count() }}</h3>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="appointment-details">
-                                    <div class="mb-2">
-                                        <i class="fas fa-calendar text-info"></i>
-                                        <strong>تاريخ الموعد:</strong>
-                                        {{ $item->appointment->appointment_date->format('Y/m/d') }}
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card border-0 shadow-sm stat-card bg-gradient-info h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <div class="icon-circle bg-white text-info me-3">
+                                                <i class="fas fa-money-bill-wave fa-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-white mb-1">إجمالي الطلب</h6>
+                                                <h3 class="text-white mb-0">{{ number_format($order->total_amount) }} ريال</h3>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="mb-2">
-                                        <i class="fas fa-map-marker-alt text-info"></i>
-                                        <strong>الموقع:</strong>
-                                        {{ $item->appointment->location === 'store' ? 'في المتجر' : 'موقع العميل' }}
+                                </div>
                                     </div>
-                                    @if($item->appointment->location === 'client_location')
-                                    <div class="mb-2">
-                                        <i class="fas fa-home text-info"></i>
-                                        <strong>العنوان:</strong>
-                                        {{ $item->appointment->address }}
+                            <div class="col-md-3">
+                                <div class="card border-0 shadow-sm stat-card bg-gradient-warning h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <div class="icon-circle bg-white text-warning me-3">
+                                                <i class="fas fa-clock fa-lg"></i>
                                     </div>
-                                    @endif
                                     <div>
-                                        <i class="fas fa-info-circle text-info"></i>
-                                        <strong>الحالة:</strong>
-                                        <span class="badge {{ $item->appointment->status === 'approved' ? 'bg-success' : 'bg-warning' }}">
-                                            {{ $item->appointment->status === 'approved' ? 'تم التأكيد' : 'قيد الانتظار' }}
-                                        </span>
+                                                <h6 class="text-white mb-1">تاريخ الطلب</h6>
+                                                <h3 class="text-white mb-0">{{ $order->created_at->format('Y/m/d') }}</h3>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        @endforeach
+
+                        <!-- Order Details -->
+                        <div class="row g-4">
+                            <!-- Order Info -->
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4 d-flex align-items-center">
+                                            <span class="icon-circle bg-primary text-white me-2">
+                                                <i class="fas fa-info-circle"></i>
+                                            </span>
+                                            معلومات الطلب
+                                        </h5>
+                                        <div class="info-list">
+                                            <div class="info-item d-flex justify-content-between py-2">
+                                                <span class="text-muted">حالة الطلب</span>
+                                                <div>
+                                                    <select name="order_status" class="form-select form-select-sm d-inline-block w-auto me-2"
+                                                            onchange="this.form.submit()" form="update-status-form">
+                                                        <option value="pending" {{ $order->order_status === 'pending' ? 'selected' : '' }}>قيد الانتظار</option>
+                                                        <option value="processing" {{ $order->order_status === 'processing' ? 'selected' : '' }}>قيد المعالجة</option>
+                                                        <option value="completed" {{ $order->order_status === 'completed' ? 'selected' : '' }}>مكتمل</option>
+                                                        <option value="cancelled" {{ $order->order_status === 'cancelled' ? 'selected' : '' }}>ملغي</option>
+                                                    </select>
+                                                    <span class="badge bg-{{ $order->status_color }}-subtle text-{{ $order->status_color }} rounded-pill">
+                                                        {{ $order->status_text }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="info-item d-flex justify-content-between py-2">
+                                                <span class="text-muted">طريقة الدفع</span>
+                                                <span>{{ $order->payment_method === 'cash' ? 'كاش' : 'بطاقة' }}</span>
+                                            </div>
+                                            <div class="info-item d-flex justify-content-between py-2">
+                                                <span class="text-muted">حالة الدفع</span>
+                                                <div>
+                                                    <select name="payment_status" class="form-select form-select-sm d-inline-block w-auto me-2"
+                                                            onchange="this.form.submit()" form="update-payment-status-form">
+                                                        <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>قيد الانتظار</option>
+                                                        <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>تم الدفع</option>
+                                                        <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>فشل الدفع</option>
+                                                    </select>
+                                                    <span class="badge bg-{{ $order->payment_status === 'paid' ? 'success' : ($order->payment_status === 'pending' ? 'warning' : 'danger') }}-subtle
+                                                                 text-{{ $order->payment_status === 'paid' ? 'success' : ($order->payment_status === 'pending' ? 'warning' : 'danger') }} rounded-pill">
+                                                        {{ $order->payment_status === 'paid' ? 'تم الدفع' : ($order->payment_status === 'pending' ? 'قيد الانتظار' : 'فشل الدفع') }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
                     </div>
                 </div>
+                            </div>
+
+                            <!-- Customer Info -->
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4 d-flex align-items-center">
+                                            <span class="icon-circle bg-primary text-white me-2">
+                                                <i class="fas fa-user"></i>
+                                            </span>
+                                            معلومات العميل
+                                        </h5>
+                                        <div class="customer-info">
+                                            <div class="d-flex align-items-center mb-4">
+                                                <div class="avatar-circle bg-primary text-white me-3">
+                                                    {{ substr($order->user->name, 0, 1) }}
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-1">{{ $order->user->name }}</h6>
+                                                    <p class="text-muted mb-0">{{ $order->user->email }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="info-list">
+                                                <div class="info-item d-flex align-items-center py-2">
+                                                    <i class="fas fa-phone text-primary me-3"></i>
+                                                    <span>{{ $order->phone }}</span>
+                                                </div>
+                                                <div class="info-item d-flex align-items-center py-2">
+                                                    <i class="fas fa-map-marker-alt text-primary me-3"></i>
+                                                    <span>{{ $order->shipping_address }}</span>
+                                                </div>
+                                                @if($order->notes)
+                                                <div class="info-item d-flex align-items-center py-2">
+                                                    <i class="fas fa-sticky-note text-primary me-3"></i>
+                                                    <span>{{ $order->notes }}</span>
             </div>
             @endif
-
-            <!-- تفاصيل المنتجات -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-shopping-cart"></i>
-                        تفاصيل المنتجات
-                    </h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                 </div>
+
+                            <!-- Products List -->
+                            <div class="col-12">
+                                <div class="card border-0 shadow-sm">
                 <div class="card-body">
+                                        <h5 class="card-title mb-4 d-flex align-items-center">
+                                            <span class="icon-circle bg-primary text-white me-2">
+                                                <i class="fas fa-shopping-cart"></i>
+                                            </span>
+                                            المنتجات
+                                        </h5>
                     <div class="table-responsive">
-                        <table class="table">
-                            <thead>
+                                            <table class="table table-hover align-middle">
+                                                <thead class="bg-light">
                                 <tr>
-                                    <th>#</th>
-                                    <th>المنتج</th>
-                                    <th>الكمية</th>
-                                    <th>السعر</th>
-                                    <th>الإجمالي</th>
-                                    <th>الموعد</th>
+                                                        <th class="border-0 text-center" style="width: 60px">#</th>
+                                                        <th class="border-0" style="min-width: 250px">المنتج</th>
+                                                        <th class="border-0 text-center" style="width: 100px">الكمية</th>
+                                                        <th class="border-0" style="width: 150px">السعر</th>
+                                                        <th class="border-0" style="width: 150px">الإجمالي</th>
+                                                        <th class="border-0" style="width: 250px">الموعد</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($order->items as $item)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item->product->name }}</td>
-                                    <td>{{ $item->quantity }}</td>
-                                    <td>{{ number_format($item->unit_price) }} ريال</td>
-                                    <td>{{ number_format($item->subtotal) }} ريال</td>
+                                    <td class="text-center fw-bold">{{ $loop->iteration }}</td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="flex-shrink-0">
+                                                                    @if($item->product->image)
+                                                                        <img src="{{ asset($item->product->image) }}"
+                                                                             class="product-image border"
+                                                                             width="60" height="60"
+                                                                             alt="{{ $item->product->name }}">
+                                                                    @else
+                                                                        <div class="product-image border d-flex align-items-center justify-content-center bg-light">
+                                                                            <i class="fas fa-box text-muted fa-lg"></i>
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+                                                                <div class="flex-grow-1 ms-3">
+                                                                    <h6 class="mb-1 fw-bold">{{ $item->product->name }}</h6>
+                                                                    @if($item->product->category)
+                                                                        <span class="badge bg-primary-subtle text-primary">
+                                                                            {{ $item->product->category->name }}
+                                                                        </span>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-light text-dark fw-bold">
+                                            {{ $item->quantity }} قطعة
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-money-bill-wave text-success me-2"></i>
+                                            <span class="fw-bold">{{ number_format($item->unit_price) }}</span>
+                                            <small class="text-muted ms-1">ريال</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-calculator text-primary me-2"></i>
+                                            <span class="fw-bold">{{ number_format($item->subtotal) }}</span>
+                                            <small class="text-muted ms-1">ريال</small>
+                                        </div>
+                                    </td>
                                     <td>
                                         @if($item->appointment)
-                                            <span class="badge bg-info">
+                                            <div class="appointment-card">
+                                                <div class="appointment-header">
+                                                    <span class="appointment-date">
+                                                        <i class="fas fa-calendar-alt text-info me-2"></i>
                                                 {{ $item->appointment->appointment_date->format('Y/m/d') }}
                                             </span>
-                                            <br>
-                                            <small class="text-muted">
-                                                {{ $item->appointment->status === 'approved' ? 'تم التأكيد' : 'قيد الانتظار' }}
-                                            </small>
+                                                </div>
+                                                <div class="appointment-status mt-2">
+                                                    @if($item->appointment->status === 'approved')
+                                                        <div class="status-badge status-approved">
+                                                            <i class="fas fa-check-circle"></i>
+                                                            تم التأكيد
+                                                        </div>
+                                                    @else
+                                                        <div class="status-badge ">
+                                                            <i class="fas fa-clock"></i>
+                                                            قيد الانتظار
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         @else
-                                            <span class="badge bg-secondary">لا يوجد موعد</span>
+                                            <div class="appointment-card no-appointment">
+                                                <div class="status-badge status-none">
+                                                    <i class="fas fa-times-circle"></i>
+                                                    لا يوجد موعد
+                                                </div>
+                                            </div>
                                         @endif
                                     </td>
                                 </tr>
                                 @endforeach
                             </tbody>
-                            <tfoot>
+                                                <tfoot class="bg-light">
                                 <tr>
-                                    <th colspan="4">الإجمالي الكلي</th>
-                                    <td colspan="2">{{ number_format($order->total_amount) }} ريال</td>
+                                                        <td colspan="4" class="text-end fw-bold">الإجمالي الكلي</td>
+                                                        <td colspan="2">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="fas fa-money-bill-wave text-success me-2"></i>
+                                                                <span class="text-primary fs-5 fw-bold">{{ number_format($order->total_amount) }}</span>
+                                                                <small class="text-muted ms-1">ريال</small>
+                                                            </div>
+                                                        </td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -592,45 +318,412 @@
             </div>
         </div>
     </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Hidden Forms for Status Updates -->
+<form id="update-status-form" action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="d-none">
+    @csrf
+    @method('PUT')
+</form>
 
+<form id="update-payment-status-form" action="{{ route('admin.orders.update-payment-status', $order) }}" method="POST" class="d-none">
+    @csrf
+    @method('PUT')
+</form>
+@endsection
+
+@section('styles')
     <style>
-        /* إضافة ستايلات جديدة */
-        .avatar {
-            width: 3rem;
-            height: 3rem;
+/* Container Styles */
+.orders-container {
+    padding: 1.5rem;
+    width: 100%;
+}
+
+/* Icon & Avatar Styles */
+.icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.icon-circle:hover {
+    transform: scale(1.1);
+}
+
+.avatar-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    box-shadow: 0 0.5rem 1rem rgba(var(--primary-rgb), 0.15);
+}
+
+/* Card Styles */
+.card {
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+    border: none !important;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(var(--primary-rgb), 0.1) !important;
+}
+
+.stat-card {
+    border-radius: 1rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
+    pointer-events: none;
+}
+
+/* Info List Styles */
+.info-list {
             border-radius: 1rem;
+    background-color: var(--bs-light);
+    padding: 1.25rem;
+    box-shadow: inset 0 0.125rem 0.25rem rgba(0,0,0,0.05);
+}
+
+.info-item {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 1rem 0;
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    background-color: rgba(var(--primary-rgb), 0.02);
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border-radius: 0.5rem;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.info-item:first-child {
+    padding-top: 0;
+}
+
+/* Table Styles */
+.table {
+    --bs-table-hover-bg: rgba(var(--primary-rgb), 0.02);
+}
+
+.table > thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    color: var(--bs-gray-600);
+    padding: 1rem;
+}
+
+.table > tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table > tfoot td {
+    padding: 1rem;
+}
+
+/* Product Image Styles */
+.product-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.product-image:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+}
+
+/* Badge Styles */
+.badge {
+    font-weight: 500;
+    padding: 0.5em 1em;
+}
+
+.bg-primary-subtle {
+    background-color: rgba(var(--primary-rgb), 0.1);
+}
+
+.bg-success-subtle {
+    background-color: rgba(var(--success-rgb), 0.1);
+}
+
+.bg-warning-subtle {
+    background-color: rgba(var(--warning-rgb), 0.1);
+}
+
+.bg-info-subtle {
+    background-color: rgba(var(--info-rgb), 0.1);
+}
+
+.bg-secondary-subtle {
+    background-color: rgba(var(--secondary-rgb), 0.1);
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-wave {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-wave::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 80%);
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.5s, opacity 0.3s;
+}
+
+.btn-wave:active::after {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    transition: 0s;
+}
+
+/* Gradient Backgrounds */
+.bg-gradient-primary {
+    background: linear-gradient(45deg, var(--primary), #4e73df);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(45deg, var(--success), #1cc88a);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(45deg, var(--warning), #f6c23e);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(45deg, var(--info), #36b9cc);
+}
+
+/* Light Button Variants */
+.btn-light-primary {
+    background-color: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+}
+
+.btn-light-primary:hover {
+    background-color: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(var(--primary-rgb), 0.15);
+}
+
+.btn-light-secondary {
+    background-color: rgba(var(--secondary-rgb), 0.1);
+    color: var(--secondary);
+}
+
+.btn-light-secondary:hover {
+    background-color: var(--secondary);
             color: white;
-            font-size: 1.25rem;
-        }
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(var(--secondary-rgb), 0.15);
+}
 
-        .appointment-details {
-            background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
-            padding: 1.25rem;
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    .info-list {
+        box-shadow: none;
+    }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .orders-container {
+        padding: 0.75rem;
+    }
+
+    .card-body {
+        padding: 1rem !important;
+    }
+
+    .info-list {
+        padding: 1rem;
+    }
+
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.75rem;
+    }
+
+    .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.875rem;
+    }
+
+    .icon-circle {
+        width: 32px;
+        height: 32px;
+    }
+
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .product-image {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+/* تحسينات جديدة للمواعيد */
+.appointment-card {
+    background: var(--bs-light);
             border-radius: 1rem;
-            margin-top: 1rem;
-        }
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+}
 
-        .appointment-details i {
-            width: 1.5rem;
-            margin-left: 0.5rem;
-        }
+.appointment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.05);
+}
 
-        .appointment-details strong {
-            color: var(--text-primary);
-            margin-left: 0.5rem;
-        }
+.appointment-header {
+    margin-bottom: 0.5rem;
+}
 
+.appointment-date {
+    font-weight: 600;
+    color: var(--info);
+    font-size: 0.95rem;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.status-approved {
+    background-color: rgba(var(--success-rgb), 0.1);
+    color: var(--success);
+}
+
+.status-approved:hover {
+    background-color: var(--success);
+    color: white;
+}
+
+.status-pending {
+    background-color: rgba(var(--warning-rgb), 0.1);
+    color: var(--warning);
+}
+
+.status-pending:hover {
+    background-color: var(--warning);
+    color: white;
+}
+
+.status-none {
+    background-color: rgba(var(--secondary-rgb), 0.1);
+    color: var(--secondary);
+}
+
+.status-none:hover {
+    background-color: var(--secondary);
+    color: white;
+}
+
+.no-appointment {
+    opacity: 0.7;
+}
+
+.no-appointment:hover {
+    opacity: 1;
+}
+
+/* تحسينات الجدول */
+.table > tbody tr:hover .appointment-card {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+}
+
+/* تحسينات التجاوب */
         @media (max-width: 768px) {
-            .col-md-6 {
-                margin-bottom: 1rem;
+    .appointment-card {
+        padding: 0.5rem;
+    }
+
+    .status-badge {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .appointment-date {
+        font-size: 0.875rem;
             }
         }
     </style>
-</body>
-</html>
+@endsection

@@ -1,173 +1,275 @@
-<!DOCTYPE html>
-<html lang="en" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة المنتجات - Madil Admin</title>
+@extends('layouts.admin')
 
-    <!-- Styles -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('assets/css/admin/products.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom Styles -->
+@section('title', 'إدارة المنتجات')
+@section('page_title', 'إدارة المنتجات')
 
-</head>
-<body>
-    <!-- Navigation -->
-
-    <!-- Main Content -->
-    <div class="container-fluid">
-        <!-- Header Section -->
-        <div class="row mb-4 align-items-center">
-            <div class="col-md-6">
-                <h2>إدارة المنتجات</h2>
-                <p>قم بإدارة وتنظيم منتجات متجرك</p>
-            </div>
-            <div class="col-md-6 text-md-end">
-                <a href="{{ route('admin.products.create') }}" class="btn btn-primary btn-action">
-                    <i class="fas fa-plus"></i>
-                    <span>إضافة منتج جديد</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Search & Filter Section -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <form action="{{ route('admin.products.index') }}" method="GET" class="row g-3">
-                    <div class="col-md-4">
-                        <div class="search-wrapper">
-                            <i class="fas fa-search search-icon"></i>
-                            <input type="text" name="search" class="form-control search-box"
-                                placeholder="ابحث عن المنتجات..." value="{{ request('search') }}">
+@section('content')
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid px-0">
+            <div class="row mx-0">
+                <div class="col-12 px-0">
+                    <div class="products-container">
+                        <!-- Header Actions -->
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-3">
+                                            <i class="fas fa-filter text-primary me-2"></i>
+                                            تصفية المنتجات
+                                        </h5>
+                                        <form action="{{ route('admin.products.index') }}" method="GET" class="row g-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label">
+                                                    <i class="fas fa-search text-primary me-2"></i>
+                                                    بحث
+                                                </label>
+                                                <input type="text" name="search" class="form-control shadow-sm"
+                                                       placeholder="ابحث عن المنتجات..." value="{{ request('search') }}">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">
+                                                    <i class="fas fa-tag text-primary me-2"></i>
+                                                    التصنيف
+                                                </label>
+                                                <select name="category" class="form-select shadow-sm">
+                                                    <option value="">جميع الفئات</option>
+                                                    @foreach($categories as $category)
+                                                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                                        {{ $category->name }}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">
+                                                    <i class="fas fa-sort text-primary me-2"></i>
+                                                    الترتيب
+                                                </label>
+                                                <select name="sort" class="form-select shadow-sm">
+                                                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>الأحدث أولاً</option>
+                                                    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>الأقدم أولاً</option>
+                                                    <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>السعر من الأعلى</option>
+                                                    <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>السعر من الأقل</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-12 mt-3">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-filter me-2"></i>
+                                                    تصفية
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-3">
+                                            <i class="fas fa-plus text-primary me-2"></i>
+                                            إضافة منتج
+                                        </h5>
+                                        <a href="{{ route('admin.products.create') }}" class="btn btn-success w-100">
+                                            <i class="fas fa-plus me-2"></i>
+                                            إضافة منتج جديد
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <select name="category" class="form-select search-box">
-                            <option value="">جميع الفئات</option>
-                            @foreach($categories as $category)
-                            <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                                {{ $category->name }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select name="sort" class="form-select search-box">
-                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>الأحدث أولاً</option>
-                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>الأقدم أولاً</option>
-                            <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>السعر من الأعلى</option>
-                            <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>السعر من الأقل</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary btn-action w-100">
-                            <i class="fas fa-filter"></i>
-                            <span>تصفية</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
 
-        <!-- Products Grid -->
-        <div class="row g-4">
-            @forelse($products as $product)
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                <div class="product-card">
-                    <div class="product-image-container">
-                        @if($product->primary_image)
-                        <img src="{{ Storage::url($product->primary_image->image_path) }}"
-                            alt="{{ $product->name }}"
-                            class="product-image" />
-                        @else
-                        <div class="no-image">
-                            <i class="fas fa-image"></i>
-                            <span>لا توجد صورة</span>
-                        </div>
-                        @endif
+                        <!-- Products Grid -->
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="row g-4">
+                                    @forelse($products as $product)
+                                    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                                        <div class="product-card shadow-sm">
+                                            <div class="product-image-container">
+                                                @if($product->primary_image)
+                                                <img src="{{ Storage::url($product->primary_image->image_path) }}"
+                                                    alt="{{ $product->name }}"
+                                                    class="product-image" />
+                                                @else
+                                                <div class="no-image">
+                                                    <i class="fas fa-image"></i>
+                                                    <span>لا توجد صورة</span>
+                                                </div>
+                                                @endif
 
-                        <span class="stock-badge {{ $product->stock > 10 ? 'in-stock' : ($product->stock > 0 ? 'low-stock' : 'out-of-stock') }}">
-                            @if($product->stock > 10)
-                                <i class="fas fa-check-circle"></i>
-                            @elseif($product->stock > 0)
-                                <i class="fas fa-exclamation-circle"></i>
-                            @else
-                                <i class="fas fa-times-circle"></i>
-                            @endif
-                            {{ $product->stock > 0 ? $product->stock . ' في المخزون' : 'نفذت الكمية' }}
-                        </span>
-                    </div>
+                                                <span class="stock-badge {{ $product->stock > 10 ? 'in-stock' : ($product->stock > 0 ? 'low-stock' : 'out-of-stock') }}">
+                                                    @if($product->stock > 10)
+                                                        <i class="fas fa-check-circle"></i>
+                                                    @elseif($product->stock > 0)
+                                                        <i class="fas fa-exclamation-circle"></i>
+                                                    @else
+                                                        <i class="fas fa-times-circle"></i>
+                                                    @endif
+                                                    {{ $product->stock > 0 ? $product->stock . ' في المخزون' : 'نفذت الكمية' }}
+                                                </span>
+                                            </div>
 
-                    <div class="product-details">
-                        <span class="category-badge">
-                            <i class="fas fa-tag"></i>
-                            {{ $product->category->name }}
-                        </span>
-                        <h5 class="product-title">{{ $product->name }}</h5>
-                        <p class="product-description">
-                            {{ Str::limit($product->description, 100) }}
-                        </p>
-                        <div class="product-price">
-                            {{ number_format($product->price / 100, 2) }}
-                        </div>
-                    </div>
+                                            <div class="product-details p-3">
+                                                <span class="category-badge">
+                                                    <i class="fas fa-tag"></i>
+                                                    {{ $product->category->name }}
+                                                </span>
+                                                <h5 class="product-title mt-2">{{ $product->name }}</h5>
+                                                <p class="product-description text-muted">
+                                                    {{ Str::limit($product->description, 100) }}
+                                                </p>
+                                                <div class="product-price fw-bold text-primary">
+                                                    {{ number_format($product->price, 2) }} ريال
+                                                </div>
+                                            </div>
 
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-between gap-2">
-                            <a href="{{ route('admin.products.show', $product) }}"
-                                class="btn btn-outline-info btn-action flex-grow-1">
-                                <i class="fas fa-eye"></i>
-                                <span>عرض</span>
-                            </a>
+                                            <div class="card-footer bg-light border-top p-3">
+                                                <div class="d-flex gap-2">
+                                                    <a href="{{ route('admin.products.show', $product) }}"
+                                                       class="btn btn-sm btn-light-info flex-grow-1">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{{ route('admin.products.edit', $product) }}"
+                                                       class="btn btn-sm btn-light-primary flex-grow-1">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <form action="{{ route('admin.products.destroy', $product) }}"
+                                                          method="POST"
+                                                          class="flex-grow-1">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                                class="btn btn-sm btn-light-danger w-100"
+                                                                onclick="return confirm('هل أنت متأكد من حذف هذا المنتج؟');">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @empty
+                                    <div class="col-12">
+                                        <div class="empty-state text-center py-5">
+                                            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                            <h4>لا توجد منتجات</h4>
+                                            <p class="text-muted">لم يتم العثور على أي منتجات. يمكنك إضافة منتج جديد من خلال الزر أعلاه.</p>
+                                        </div>
+                                    </div>
+                                    @endforelse
+                                </div>
 
-                            <a href="{{ route('admin.products.edit', $product) }}"
-                                class="btn btn-outline-primary btn-action flex-grow-1">
-                                <i class="fas fa-edit"></i>
-                                <span>تعديل</span>
-                            </a>
-
-                            <form action="{{ route('admin.products.destroy', $product) }}"
-                                method="POST"
-                                class="flex-grow-1 m-0">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                    class="btn btn-outline-danger btn-action w-100"
-                                    onclick="return confirm('هل أنت متأكد من حذف هذا المنتج؟');">
-                                    <i class="fas fa-trash-alt"></i>
-                                    <span>حذف</span>
-                                </button>
-                            </form>
+                                @if($products->hasPages())
+                                <div class="d-flex justify-content-center mt-4">
+                                    {{ $products->links() }}
+                                </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            @empty
-            <div class="col-12">
-                <div class="alert-info">
-                    <i class="fas fa-box-open fa-2x mb-3"></i>
-                    <p>لا توجد منتجات متاحة حالياً</p>
-                    <a href="{{ route('admin.products.create') }}" class="btn btn-primary btn-action mt-3">
-                        <i class="fas fa-plus"></i>
-                        <span>إضافة منتج جديد</span>
-                    </a>
-                </div>
-            </div>
-            @endforelse
         </div>
-
-        <!-- Pagination -->
-        @if($products->hasPages())
-        <div class="d-flex justify-content-center mt-4">
-            {{ $products->links() }}
-        </div>
-        @endif
     </div>
+</div>
+@endsection
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@section('styles')
+<style>
+.products-container {
+    padding: 1.5rem;
+    width: 100%;
+}
+
+.product-card {
+    background: white;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.product-image-container {
+    position: relative;
+    padding-top: 75%;
+    background: #f8f9fa;
+    overflow: hidden;
+}
+
+.product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+}
+
+.stock-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.stock-badge.in-stock {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.stock-badge.low-stock {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.stock-badge.out-of-stock {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: 1rem;
+    font-size: 0.875rem;
+}
+
+.btn-light-primary,
+.btn-light-info,
+.btn-light-danger {
+    padding: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .products-container {
+        padding: 0.75rem;
+    }
+}
+</style>
+@endsection

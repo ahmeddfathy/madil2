@@ -23,6 +23,14 @@ class CategoryController extends Controller
     return view('admin.categories.create');
   }
 
+  public function show(Category $category)
+  {
+    $category->loadCount('products');
+    $category->load('products');
+
+    return view('admin.categories.show', compact('category'));
+  }
+
   public function store(Request $request)
   {
     $validated = $request->validate([
@@ -35,7 +43,7 @@ class CategoryController extends Controller
     Category::create($validated);
 
     return redirect()->route('admin.categories.index')
-      ->with('success', 'Category created successfully.');
+      ->with('success', 'تم إضافة التصنيف بنجاح');
   }
 
   public function edit(Category $category)
@@ -55,18 +63,18 @@ class CategoryController extends Controller
     $category->update($validated);
 
     return redirect()->route('admin.categories.index')
-      ->with('success', 'Category updated successfully.');
+      ->with('success', 'تم تحديث التصنيف بنجاح');
   }
 
   public function destroy(Category $category)
   {
     if ($category->products()->exists()) {
-      return back()->with('error', 'Cannot delete category with associated products.');
+      return back()->with('error', 'لا يمكن حذف التصنيف لوجود منتجات مرتبطة به');
     }
 
     $category->delete();
 
     return redirect()->route('admin.categories.index')
-      ->with('success', 'Category deleted successfully.');
+      ->with('success', 'تم حذف التصنيف بنجاح');
   }
 }

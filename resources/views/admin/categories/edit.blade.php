@@ -1,54 +1,189 @@
-<x-app-layout>
-  <x-slot name="header">
-    <div class="flex justify-between items-center">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        {{ __('Edit Category') }}: {{ $category->name }}
-      </h2>
-      <a href="{{ route('admin.categories.index') }}"
-        class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-        Back to Categories
-      </a>
-    </div>
-  </x-slot>
+@extends('layouts.admin')
 
-  <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-        <div class="p-6">
-          <form action="{{ route('admin.categories.update', $category) }}" method="POST">
-            @csrf
-            @method('PUT')
+@section('title', 'تعديل التصنيف - ' . $category->name)
+@section('page_title', 'تعديل التصنيف: ' . $category->name)
 
-            <div class="space-y-6">
-              <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Category Name</label>
-                <input type="text" name="name" id="name"
-                  value="{{ old('name', $category->name) }}"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                @error('name')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-              </div>
+@section('content')
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid px-0">
+            <div class="row mx-0">
+                <div class="col-12 px-0">
+                    <div class="categories-container">
+                        <!-- Header Actions -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-edit text-primary me-2"></i>
+                                            تعديل التصنيف
+                                        </h5>
+                                        <div class="actions">
+                                            <a href="{{ route('admin.categories.show', $category) }}" class="btn btn-light-info me-2">
+                                                <i class="fas fa-eye me-1"></i>
+                                                عرض التصنيف
+                                            </a>
+                                            <a href="{{ route('admin.categories.index') }}" class="btn btn-light-secondary">
+                                                <i class="fas fa-arrow-right me-1"></i>
+                                                عودة للتصنيفات
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-              <div>
-                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                <textarea name="description" id="description" rows="4"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">{{ old('description', $category->description) }}</textarea>
-                @error('description')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-              </div>
+                        <!-- Form -->
+                        <form action="{{ route('admin.categories.update', $category) }}" method="POST">
+                            @csrf
+                            @method('PUT')
 
-              <div class="border-t border-gray-200 pt-6">
-                <button type="submit"
-                  class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                  Update Category
-                </button>
-              </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-body">
+                                            <h5 class="card-title mb-4">
+                                                <i class="fas fa-info-circle text-primary me-2"></i>
+                                                معلومات التصنيف
+                                            </h5>
+
+                                            <div class="row g-4">
+                                                <div class="col-12">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">اسم التصنيف</label>
+                                                        <input type="text" name="name" class="form-control shadow-sm"
+                                                               value="{{ old('name', $category->name) }}">
+                                                        @error('name')
+                                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">الوصف</label>
+                                                        <textarea name="description" class="form-control shadow-sm" rows="4">{{ old('description', $category->description) }}</textarea>
+                                                        @error('description')
+                                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Category Stats -->
+                                <div class="col-12 mt-4">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-body">
+                                            <h5 class="card-title mb-4">
+                                                <i class="fas fa-chart-bar text-primary me-2"></i>
+                                                إحصائيات التصنيف
+                                            </h5>
+
+                                            <div class="row g-4">
+                                                <div class="col-md-4">
+                                                    <div class="stat-card bg-primary bg-opacity-10 rounded p-3">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-box-open text-primary fa-2x me-3"></i>
+                                                            <div>
+                                                                <h6 class="mb-1">عدد المنتجات</h6>
+                                                                <h4 class="mb-0 text-primary">{{ $category->products_count }}</h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="stat-card bg-success bg-opacity-10 rounded p-3">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-clock text-success fa-2x me-3"></i>
+                                                            <div>
+                                                                <h6 class="mb-1">تاريخ الإنشاء</h6>
+                                                                <h4 class="mb-0 text-success">{{ $category->created_at->format('Y/m/d') }}</h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="stat-card bg-info bg-opacity-10 rounded p-3">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-calendar text-info fa-2x me-3"></i>
+                                                            <div>
+                                                                <h6 class="mb-1">آخر تحديث</h6>
+                                                                <h4 class="mb-0 text-info">{{ $category->updated_at->format('Y/m/d') }}</h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="col-12 mt-4">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-body">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save me-2"></i>
+                                                حفظ التغييرات
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-          </form>
         </div>
-      </div>
     </div>
-  </div>
-</x-app-layout>
+</div>
+@endsection
+
+@section('styles')
+<style>
+.categories-container {
+    padding: 1.5rem;
+    width: 100%;
+}
+
+.btn-light-secondary {
+    background-color: var(--secondary-light);
+    color: var(--secondary);
+    border: none;
+}
+
+.btn-light-secondary:hover {
+    background-color: var(--secondary);
+    color: white;
+}
+
+.btn-light-info {
+    background-color: var(--info-light);
+    color: var(--info);
+    border: none;
+}
+
+.btn-light-info:hover {
+    background-color: var(--info);
+    color: white;
+}
+
+.stat-card {
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+@media (max-width: 768px) {
+    .categories-container {
+        padding: 0.75rem;
+    }
+}
+</style>
+@endsection
