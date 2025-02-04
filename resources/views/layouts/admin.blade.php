@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="h-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,23 +10,23 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/css/admin/admin-dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/admin/admin-layout.css') }}">
     @yield('styles')
 </head>
-<body>
+<body class="h-100">
     <div class="admin-layout">
         <!-- Sidebar Overlay -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
         <!-- Sidebar -->
-        <div class="sidebar shadow-sm" id="sidebar">
+        <aside class="sidebar shadow-sm" id="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-logo">
+                <a href="{{ route('admin.dashboard') }}" class="sidebar-logo">
                     مدير ماديل
-                </div>
+                </a>
             </div>
 
-            <div class="sidebar-nav">
+            <nav class="sidebar-nav">
                 <!-- Dashboard Section -->
                 <div class="nav-section">
                     <div class="nav-section-title">الرئيسية</div>
@@ -87,39 +87,43 @@
                         </a>
                     </div>
                 </div>
-            </div>
-        </div>
+            </nav>
+        </aside>
 
         <!-- Mobile Toggle Button -->
         <button class="sidebar-toggle d-lg-none" id="sidebarToggle" aria-label="Toggle Sidebar">
-            <i class="fas fa-chevron-left"></i>
+            <i class="fas fa-bars"></i>
         </button>
 
         <!-- Main Content -->
-        <div class="main-content-wrapper">
+        <main class="main-content-wrapper">
             <!-- Top Navigation -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-3">
-                <div class="container-fluid px-0">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+                <div class="container-fluid">
                     <div class="d-flex align-items-center">
-                        <h1 class="h4 mb-0">@yield('page_title', 'لوحة التحكم')</h1>
+                        <h1 class="h4 mb-0 text-truncate">@yield('page_title', 'لوحة التحكم')</h1>
                     </div>
 
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i>
-                                {{ Auth::user()->name }}
+                                <i class="fas fa-user-circle"></i>
+                                <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <i class="fas fa-user-cog me-2"></i>الملف الشخصي
-                                </a></li>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                        <i class="fas fa-user-cog"></i>
+                                        <span>الملف الشخصي</span>
+                                    </a>
+                                </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
                                         <button type="submit" class="dropdown-item text-danger">
-                                            <i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج
+                                            <i class="fas fa-sign-out-alt"></i>
+                                            <span>تسجيل الخروج</span>
                                         </button>
                                     </form>
                                 </li>
@@ -130,24 +134,34 @@
             </nav>
 
             <!-- Page Content -->
-            <div class="container-fluid px-4 py-4">
+            <div class="container-fluid">
                 @yield('content')
             </div>
-        </div>
+        </main>
     </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Sidebar Toggle
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('sidebarOverlay').classList.toggle('active');
-        });
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarToggle = document.getElementById('sidebarToggle');
 
-        document.getElementById('sidebarOverlay').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.remove('active');
-            this.classList.remove('active');
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        }
+
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        // Close sidebar on window resize if in mobile view
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992 && sidebar.classList.contains('active')) {
+                toggleSidebar();
+            }
         });
     </script>
     @yield('scripts')

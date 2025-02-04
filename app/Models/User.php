@@ -141,4 +141,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(Address::class)->where('is_default', true);
     }
+
+    /**
+     * Get the user's admin status.
+     *
+     * @return bool
+     */
+    public function getIsAdminAttribute()
+    {
+        return $this->role === 'admin'; // أو أي منطق آخر تستخدمه لتحديد المشرف
+    }
 }

@@ -198,16 +198,22 @@
 
                             <!-- Products List -->
                             <div class="col-12">
-                                @if($itemsWithAppointments->isNotEmpty())
                                 <div class="card border-0 shadow-sm mb-4">
                                     <div class="card-body">
                                         <h5 class="card-title mb-4 d-flex align-items-center">
                                             <span class="icon-circle bg-primary text-white me-2">
-                                                <i class="fas fa-calendar-check"></i>
+                                                <i class="fas fa-shopping-bag"></i>
                                             </span>
-                                            المنتجات مع مواعيد
+                                            منتجات الطلب
                                         </h5>
-                                        <div class="table-responsive">
+
+                                        <!-- Products with Appointments -->
+                                        @if($itemsWithAppointments->isNotEmpty())
+                                        <div class="table-responsive mb-4">
+                                            <h6 class="mb-3">
+                                                <i class="fas fa-calendar-check text-primary me-2"></i>
+                                                المنتجات مع مواعيد
+                                            </h6>
                                             <table class="table table-hover align-middle">
                                                 <thead class="bg-light">
                                                     <tr>
@@ -296,20 +302,15 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                    </div>
-                                </div>
-                                @endif
+                                        @endif
 
-                                @if($itemsWithoutAppointments->isNotEmpty())
-                                <div class="card border-0 shadow-sm mb-4">
-                                    <div class="card-body">
-                                        <h5 class="card-title mb-4 d-flex align-items-center">
-                                            <span class="icon-circle bg-primary text-white me-2">
-                                                <i class="fas fa-shopping-bag"></i>
-                                            </span>
-                                            المنتجات بدون مواعيد
-                                        </h5>
+                                        <!-- Products without Appointments -->
+                                        @if($itemsWithoutAppointments->isNotEmpty())
                                         <div class="table-responsive">
+                                            <h6 class="mb-3">
+                                                <i class="fas fa-shopping-bag text-primary me-2"></i>
+                                                المنتجات بدون مواعيد
+                                            </h6>
                                             <table class="table table-hover align-middle">
                                                 <thead class="bg-light">
                                                     <tr>
@@ -372,9 +373,16 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                        @endif
+
+                                        @if($itemsWithAppointments->isEmpty() && $itemsWithoutAppointments->isEmpty())
+                                        <div class="text-center text-muted py-4">
+                                            <i class="fas fa-shopping-cart mb-2 fa-2x"></i>
+                                            <p class="mb-0">لا توجد منتجات في هذا الطلب</p>
+                                        </div>
+                                        @endif
                                     </div>
                                 </div>
-                                @endif
                             </div>
                         </div>
 

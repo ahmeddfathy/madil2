@@ -9,58 +9,74 @@
 <div class="row g-3 mb-4">
     <!-- Orders Card -->
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="stat-card h-100">
-            <div class="icon-wrapper bg-primary">
-                <i class="fas fa-shopping-cart"></i>
-            </div>
-            <div class="stat-value">{{ $stats['orders'] ?? 0 }}</div>
-            <div class="stat-title">إجمالي الطلبات</div>
-            <div class="trend">
-                <span>اليوم: {{ $stats['today_orders'] ?? 0 }}</span> |
-                <span>الشهر: {{ $stats['month_orders'] ?? 0 }}</span>
+        <div class="stat-card h-100 p-3 bg-white rounded-3 shadow-sm">
+            <div class="d-flex align-items-center">
+                <div class="icon-wrapper bg-primary me-3">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value h4 mb-1">{{ $stats['orders'] ?? 0 }}</div>
+                    <div class="stat-title text-muted">إجمالي الطلبات</div>
+                    <div class="trend small mt-2">
+                        <span class="me-2">اليوم: {{ $stats['today_orders'] ?? 0 }}</span>
+                        <span>الشهر: {{ $stats['month_orders'] ?? 0 }}</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Revenue Card -->
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="stat-card h-100">
-            <div class="icon-wrapper bg-success">
-                <i class="fas fa-dollar-sign"></i>
-            </div>
-            <div class="stat-value">{{ number_format($stats['revenue'] ?? 0, 2) }} ريال</div>
-            <div class="stat-title">إجمالي الإيرادات</div>
-            <div class="trend">
-                <span>اليوم: {{ number_format($stats['today_revenue'] ?? 0, 2) }} ريال</span>
+        <div class="stat-card h-100 p-3 bg-white rounded-3 shadow-sm">
+            <div class="d-flex align-items-center">
+                <div class="icon-wrapper bg-success me-3">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value h4 mb-1">{{ number_format($stats['revenue'] ?? 0, 2) }} ريال</div>
+                    <div class="stat-title text-muted">إجمالي الإيرادات</div>
+                    <div class="trend small mt-2">
+                        <span>اليوم: {{ number_format($stats['today_revenue'] ?? 0, 2) }} ريال</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Users Card -->
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="stat-card h-100">
-            <div class="icon-wrapper bg-info">
-                <i class="fas fa-users"></i>
-            </div>
-            <div class="stat-value">{{ $stats['users'] }}</div>
-            <div class="stat-title">إجمالي المستخدمين</div>
-            <div class="trend">
-                <span>المستخدمين النشطين</span>
+        <div class="stat-card h-100 p-3 bg-white rounded-3 shadow-sm">
+            <div class="d-flex align-items-center">
+                <div class="icon-wrapper bg-info me-3">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value h4 mb-1">{{ $stats['users'] }}</div>
+                    <div class="stat-title text-muted">إجمالي المستخدمين</div>
+                    <div class="trend small mt-2">
+                        <span>المستخدمين النشطين</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Order Status Card -->
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="stat-card h-100">
-            <div class="icon-wrapper bg-warning">
-                <i class="fas fa-tasks"></i>
-            </div>
-            <div class="stat-value">{{ $stats['pending_orders'] ?? 0 }}</div>
-            <div class="stat-title">الطلبات المعلقة</div>
-            <div class="trend">
-                <span>قيد المعالجة: {{ $stats['processing_orders'] ?? 0 }}</span> |
-                <span>مكتملة: {{ $stats['completed_orders'] ?? 0 }}</span>
+        <div class="stat-card h-100 p-3 bg-white rounded-3 shadow-sm">
+            <div class="d-flex align-items-center">
+                <div class="icon-wrapper bg-warning me-3">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value h4 mb-1">{{ $stats['pending_orders'] ?? 0 }}</div>
+                    <div class="stat-title text-muted">الطلبات المعلقة</div>
+                    <div class="trend small mt-2">
+                        <span class="me-2">قيد المعالجة: {{ $stats['processing_orders'] ?? 0 }}</span>
+                        <span>مكتملة: {{ $stats['completed_orders'] ?? 0 }}</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -69,38 +85,50 @@
 <!-- Quick Actions -->
 <div class="row g-3 mb-4">
     @can('create', App\Models\Product::class)
-    <div class="col-12 col-md-4">
-        <a href="{{ route('admin.products.create') }}" class="action-card d-block h-100">
-            <div class="action-icon bg-primary">
-                <i class="fas fa-plus"></i>
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="action-card bg-white rounded-3 shadow-sm p-3 h-100">
+            <div class="d-flex align-items-center">
+                <div class="action-icon bg-primary me-3">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">إضافة منتج</h5>
+                    <p class="mb-0 text-muted small">إضافة منتجات جديدة للمتجر</p>
+                </div>
             </div>
-            <h5>إضافة منتج</h5>
-            <p class="mb-0">إضافة منتجات جديدة للمتجر</p>
-        </a>
+        </div>
     </div>
     @endcan
 
     @can('viewAny', App\Models\Order::class)
-    <div class="col-12 col-md-4">
-        <a href="{{ route('admin.orders.index') }}" class="action-card d-block h-100">
-            <div class="action-icon bg-info">
-                <i class="fas fa-tasks"></i>
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="action-card bg-white rounded-3 shadow-sm p-3 h-100">
+            <div class="d-flex align-items-center">
+                <div class="action-icon bg-info me-3">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">إدارة الطلبات</h5>
+                    <p class="mb-0 text-muted small">عرض وإدارة طلبات العملاء</p>
+                </div>
             </div>
-            <h5>إدارة الطلبات</h5>
-            <p class="mb-0">عرض وإدارة طلبات العملاء</p>
-        </a>
+        </div>
     </div>
     @endcan
 
     @can('viewAny', App\Models\Appointment::class)
-    <div class="col-12 col-md-4">
-        <a href="{{ route('admin.appointments.index') }}" class="action-card d-block h-100">
-            <div class="action-icon bg-success">
-                <i class="fas fa-calendar"></i>
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="action-card bg-white rounded-3 shadow-sm p-3 h-100">
+            <div class="d-flex align-items-center">
+                <div class="action-icon bg-success me-3">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">المواعيد</h5>
+                    <p class="mb-0 text-muted small">إدارة مواعيد العملاء</p>
+                </div>
             </div>
-            <h5>المواعيد</h5>
-            <p class="mb-0">إدارة مواعيد العملاء</p>
-        </a>
+        </div>
     </div>
     @endcan
 </div>
@@ -109,11 +137,11 @@
 <div class="row g-4">
     <!-- Sales Chart -->
     <div class="col-12 col-lg-8">
-        <div class="chart-container">
+        <div class="chart-container bg-white rounded-3 shadow-sm">
             <div class="activity-header border-bottom">
                 <h5 class="activity-title">نظرة عامة على المبيعات</h5>
             </div>
-            <div class="chart-wrapper">
+            <div class="chart-wrapper position-relative" style="height: 300px;">
                 <canvas id="salesChart"></canvas>
             </div>
         </div>
@@ -121,11 +149,11 @@
 
     <!-- Order Status Chart -->
     <div class="col-12 col-lg-4">
-        <div class="chart-container">
+        <div class="chart-container bg-white rounded-3 shadow-sm">
             <div class="activity-header border-bottom">
                 <h5 class="activity-title">توزيع حالات الطلبات</h5>
             </div>
-            <div class="chart-wrapper">
+            <div class="chart-wrapper position-relative" style="height: 300px;">
                 <canvas id="orderStatusChart"></canvas>
             </div>
         </div>
@@ -142,50 +170,50 @@
                 <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-primary">عرض الكل</a>
                 @endcan
             </div>
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
+            <div class="table-responsive-xl">
+                <table class="table table-hover mb-0 recent-orders-table">
                     <thead>
                         <tr>
-                            <th>الطلب</th>
-                            <th>العميل</th>
-                            <th>المنتجات</th>
-                            <th>حالة الطلب</th>
-                            <th>حالة الدفع</th>
-                            <th>المبلغ</th>
-                            <th>التاريخ</th>
-                            <th>الإجراءات</th>
+                            <th style="min-width: 70px">الطلب</th>
+                            <th style="min-width: 120px">العميل</th>
+                            <th style="min-width: 250px">المنتجات</th>
+                            <th style="min-width: 120px">حالة الطلب</th>
+                            <th style="min-width: 120px">حالة الدفع</th>
+                            <th style="min-width: 100px">المبلغ</th>
+                            <th style="min-width: 120px">التاريخ</th>
+                            <th style="min-width: 80px">الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($recentOrders as $order)
                         <tr>
-                            <td>{{ $order['id'] }}</td>
-                            <td>{{ $order['user_name'] }}</td>
-                            <td>
-                                <div class="small">
+                            <td data-label="الطلب">{{ $order['id'] }}</td>
+                            <td data-label="العميل">{{ $order['user_name'] }}</td>
+                            <td data-label="المنتجات">
+                                <div class="small products-list">
                                     @foreach($order['items'] as $item)
                                         <div class="mb-1">
                                             {{ $item['product_name'] }}
-                                            <span class="text-muted">
+                                            <span class="text-muted d-block d-md-inline">
                                                 ({{ $item['quantity'] }} × {{ number_format($item['unit_price'], 2) }} ريال = {{ number_format($item['total_price'], 2) }} ريال)
                                             </span>
                                         </div>
                                     @endforeach
                                 </div>
                             </td>
-                            <td>
+                            <td data-label="حالة الطلب">
                                 <span class="badge bg-{{ $order['status_color'] }}">
                                     {{ $order['status_text'] }}
                                 </span>
                             </td>
-                            <td>
+                            <td data-label="حالة الدفع">
                                 <span class="badge bg-{{ $order['payment_status_color'] }}">
                                     {{ $order['payment_status_text'] }}
                                 </span>
                             </td>
-                            <td>{{ number_format($order['total'], 2) }} ريال</td>
-                            <td>{{ $order['created_at'] }}</td>
-                            <td>
+                            <td data-label="المبلغ">{{ number_format($order['total'], 2) }} ريال</td>
+                            <td data-label="التاريخ">{{ $order['created_at'] }}</td>
+                            <td data-label="الإجراءات">
                                 <a href="{{ route('admin.orders.show', $order['id']) }}"
                                    class="btn btn-sm btn-primary"
                                    title="عرض تفاصيل الطلب">
@@ -373,4 +401,126 @@
     });
 </script>
 @endif
+@endsection
+
+@section('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/admin/admin-dashboard.css') }}">
+<style>
+    /* Dashboard Cards */
+    .stat-card {
+        transition: transform 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .icon-wrapper {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    .action-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        color: white;
+        font-size: 1.1rem;
+    }
+
+    .action-card {
+        transition: transform 0.2s;
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    .action-card:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Chart Styles */
+    .chart-container {
+        width: 100%;
+        height: 100%;
+        min-height: 350px;
+    }
+
+    .chart-wrapper {
+        width: 100%;
+        padding: 1rem;
+        height: 100%;
+    }
+
+    /* Table Styles */
+    .recent-orders-table {
+        width: 100%;
+    }
+
+    .products-list {
+        max-width: 100%;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 767.98px) {
+        .icon-wrapper {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+
+        .action-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 1rem;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+        }
+
+        .trend {
+            font-size: 0.75rem;
+        }
+
+        .chart-container {
+            min-height: 300px;
+        }
+
+        .table-responsive-xl {
+            border: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .products-list {
+            max-width: 250px;
+        }
+
+        .products-list .text-muted {
+            font-size: 0.85em;
+        }
+    }
+
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        .chart-container {
+            min-height: 325px;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .chart-container {
+            min-height: 350px;
+        }
+    }
+</style>
 @endsection

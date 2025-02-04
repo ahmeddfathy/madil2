@@ -16,7 +16,10 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
+
+        
         return $this->clientDashboard($user);
+
     }
 
     private function clientDashboard($user)

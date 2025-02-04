@@ -176,3 +176,15 @@ Route::post('/cart/add', [ProductController::class, 'addToCart'])->name('cart.ad
 Route::get('/cart/items', [ProductController::class, 'getCartItems'])->name('cart.items');
 Route::patch('/cart/items/{cartItem}', [ProductController::class, 'updateCartItem'])->name('cart.update-item');
 Route::delete('/cart/items/{cartItem}', [ProductController::class, 'removeCartItem'])->name('cart.remove-item');
+
+// مسارات لوحة تحكم العميل
+Route::middleware('client')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    // ... باقي مسارات العميل
+});
+
+// مسارات لوحة تحكم المشرف
+Route::middleware('admin')->prefix('admin')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+    // ... باقي مسارات المشرف
+});
