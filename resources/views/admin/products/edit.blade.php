@@ -283,62 +283,7 @@
 @endsection
 
 @section('styles')
-<style>
-.products-container {
-    padding: 1.5rem;
-    width: 100%;
-}
-
-.btn-light-primary {
-    background-color: var(--primary-light);
-    color: var(--primary);
-    border: none;
-}
-
-.btn-light-primary:hover {
-    background-color: var(--primary);
-    color: white;
-}
-
-.btn-light-secondary {
-    background-color: var(--secondary-light);
-    color: var(--secondary);
-    border: none;
-}
-
-.btn-light-secondary:hover {
-    background-color: var(--secondary);
-    color: white;
-}
-
-.btn-light-info {
-    background-color: var(--info-light);
-    color: var(--info);
-    border: none;
-}
-
-.btn-light-info:hover {
-    background-color: var(--info);
-    color: white;
-}
-
-.btn-light-danger {
-    background-color: var(--danger-light);
-    color: var(--danger);
-    border: none;
-}
-
-.btn-light-danger:hover {
-    background-color: var(--danger);
-    color: white;
-}
-
-@media (max-width: 768px) {
-    .products-container {
-        padding: 0.75rem;
-    }
-}
-</style>
+<link rel="stylesheet" href="{{ asset('assets/css/admin/products.css') }}">
 @endsection
 
 @section('scripts')

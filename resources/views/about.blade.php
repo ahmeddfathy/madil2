@@ -88,7 +88,16 @@
                                 <i class="fas fa-eye"></i>
                             </div>
                             <h2>رؤيتنا</h2>
-                            <p class="lead">أن نكون المحل الرائد في مجال تفصيل الملابس الرجالية والنسائية في مدينة جدة، وأن نتميز بجودة التصاميم والخامات، مع توفير تجربة متميزة للعملاء تجمع بين الأصالة والابتكار، والانتقال إلى التوسع المستدام في مجال الأزياء والمنتجات المكملة.</p>
+                            <div class="vision-image">
+                                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978" alt="رؤيتنا" class="img-fluid">
+                            </div>
+                            <p class="lead">أن نكون المحل الرائد في مجال تفصيل الملابس الرجالية والنسائية في مدينة جدة، وأن نتميز بجودة التصاميم والخامات.</p>
+                            <ul class="vision-points">
+                                <li>التميز في جودة التصاميم والخامات</li>
+                                <li>تقديم تجربة متميزة للعملاء</li>
+                                <li>الجمع بين الأصالة والابتكار</li>
+                                <li>التوسع المستدام في مجال الأزياء</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -101,7 +110,16 @@
                                 <i class="fas fa-rocket"></i>
                             </div>
                             <h2>رسالتنا</h2>
-                            <p class="lead">تقديم خدمات تفصيل الملابس الرجالية والعباءات النسائية بمستوى عالٍ من الجودة والدقة في التصميم، مع التركيز على تلبية احتياجات مختلف الفئات العمرية وتقديم منتجات مبتكرة ومتميزة، مع تعزيز رضا العملاء من خلال الاستماع لمتطلباتهم والسعي نحو التميز المستمر.</p>
+                            <div class="mission-image">
+                                <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e" alt="رسالتنا" class="img-fluid">
+                            </div>
+                            <p class="lead">تقديم خدمات تفصيل الملابس بمستوى عالٍ من الجودة والدقة في التصميم، مع التركيز على تلبية احتياجات مختلف الفئات.</p>
+                            <ul class="mission-points">
+                                <li>تقديم أعلى مستويات الجودة في التفصيل</li>
+                                <li>تلبية احتياجات جميع الفئات العمرية</li>
+                                <li>تقديم منتجات مبتكرة ومتميزة</li>
+                                <li>تعزيز رضا العملاء باستمرار</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -121,7 +139,9 @@
                 <div class="timeline-item left">
                     <div class="timeline-content glass-effect">
                         <div class="timeline-image">
-                            <img src="{{ asset('images/timeline/2020.jpg') }}" alt="2020" onerror="this.src='https://via.placeholder.com/500x300?text=2020'">
+                            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8"
+                                 alt="افتتاح محل Madil 2020"
+                                 class="img-fluid">
                         </div>
                         <div class="timeline-text">
                             <h3>2020</h3>
@@ -132,7 +152,9 @@
                 <div class="timeline-item right">
                     <div class="timeline-content glass-effect">
                         <div class="timeline-image">
-                            <img src="{{ asset('images/timeline/2021.jpg') }}" alt="2021" onerror="this.src='https://via.placeholder.com/500x300?text=2021'">
+                            <img src="https://images.unsplash.com/photo-1589310243389-96a5483213a8"
+                                 alt="توسيع الخدمات 2021"
+                                 class="img-fluid">
                         </div>
                         <div class="timeline-text">
                             <h3>2021</h3>
@@ -143,7 +165,9 @@
                 <div class="timeline-item left">
                     <div class="timeline-content glass-effect">
                         <div class="timeline-image">
-                            <img src="{{ asset('images/timeline/2022.jpg') }}" alt="2022" onerror="this.src='https://via.placeholder.com/500x300?text=2022'">
+                            <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f"
+                                 alt="خدمات التعديل 2022"
+                                 class="img-fluid">
                         </div>
                         <div class="timeline-text">
                             <h3>2022</h3>
@@ -154,7 +178,9 @@
                 <div class="timeline-item right">
                     <div class="timeline-content glass-effect">
                         <div class="timeline-image">
-                            <img src="{{ asset('images/timeline/2023.jpg') }}" alt="2023" onerror="this.src='https://via.placeholder.com/500x300?text=2023'">
+                            <img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a"
+                                 alt="المنصة الإلكترونية 2023"
+                                 class="img-fluid">
                         </div>
                         <div class="timeline-text">
                             <h3>2023</h3>

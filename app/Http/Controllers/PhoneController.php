@@ -98,21 +98,22 @@ class PhoneController extends Controller
         return response()->json(['message' => 'تم حذف رقم الهاتف بنجاح']);
     }
 
-    public function makePrimary($id)
+    public function makePrimary(PhoneNumber $phone)
     {
-        $phone = PhoneNumber::where('user_id', Auth::id())->findOrFail($id);
-        $phone->setAsPrimary();
+        // التأكد من أن الرقم يخص المستخدم الحالي
+        if ($phone->user_id !== auth()->id()) {
+            return response()->json(['message' => 'غير مصرح لك بهذا الإجراء'], 403);
+        }
 
-        return response()->json([
-            'message' => 'تم تعيين الرقم كرقم رئيسي بنجاح',
-            'phone' => [
-                'id' => $phone->id,
-                'phone' => $this->formatPhoneNumber($phone->phone),
-                'type' => $phone->type,
-                'type_text' => $phone->type_text,
-                'is_primary' => true
-            ]
-        ]);
+        // إلغاء تعيين الرقم الرئيسي السابق
+        PhoneNumber::where('user_id', auth()->id())
+            ->where('is_primary', true)
+            ->update(['is_primary' => false]);
+
+        // تعيين الرقم الجديد كرقم رئيسي
+        $phone->update(['is_primary' => true]);
+
+        return response()->json(['message' => 'تم تعيين الرقم كرقم رئيسي بنجاح']);
     }
 
     private function formatPhoneNumber(string $phone): string

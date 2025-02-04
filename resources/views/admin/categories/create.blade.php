@@ -91,27 +91,5 @@
 @endsection
 
 @section('styles')
-<style>
-.categories-container {
-    padding: 1.5rem;
-    width: 100%;
-}
-
-.btn-light-secondary {
-    background-color: var(--secondary-light);
-    color: var(--secondary);
-    border: none;
-}
-
-.btn-light-secondary:hover {
-    background-color: var(--secondary);
-    color: white;
-}
-
-@media (max-width: 768px) {
-    .categories-container {
-        padding: 0.75rem;
-    }
-}
-</style>
+<link rel="stylesheet" href="{{ asset('assets/css/admin/category.css') }}">
 @endsection

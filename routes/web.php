@@ -86,15 +86,17 @@ Route::middleware([
 
         // Phones
         Route::post('/phones', [PhoneController::class, 'store']);
-        Route::get('/phones/{id}', [PhoneController::class, 'show']);
-        Route::put('/phones/{id}', [PhoneController::class, 'update']);
-        Route::delete('/phones/{id}', [PhoneController::class, 'destroy']);
+        Route::get('/phones/{phone}', [PhoneController::class, 'show']);
+        Route::put('/phones/{phone}', [PhoneController::class, 'update']);
+        Route::delete('/phones/{phone}', [PhoneController::class, 'destroy']);
+        Route::post('/phones/{phone}/make-primary', [PhoneController::class, 'makePrimary']);
 
         // Addresses
         Route::post('/addresses', [AddressController::class, 'store']);
-        Route::get('/addresses/{id}', [AddressController::class, 'show']);
-        Route::put('/addresses/{id}', [AddressController::class, 'update']);
-        Route::delete('/addresses/{id}', [AddressController::class, 'destroy']);
+        Route::get('/addresses/{address}', [AddressController::class, 'show']);
+        Route::put('/addresses/{address}', [AddressController::class, 'update']);
+        Route::delete('/addresses/{address}', [AddressController::class, 'destroy']);
+        Route::post('/addresses/{address}/make-primary', [AddressController::class, 'makePrimary']);
 
         // Cart
         Route::prefix('cart')->name('cart.')->group(function () {

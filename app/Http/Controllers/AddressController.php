@@ -134,4 +134,22 @@ class AddressController extends Controller
 
         return response()->json(['message' => 'تم حذف العنوان بنجاح']);
     }
+
+    public function makePrimary(Address $address)
+    {
+        // التأكد من أن العنوان يخص المستخدم الحالي
+        if ($address->user_id !== auth()->id()) {
+            return response()->json(['message' => 'غير مصرح لك بهذا الإجراء'], 403);
+        }
+
+        // إلغاء تعيين العنوان الرئيسي السابق
+        Address::where('user_id', auth()->id())
+            ->where('is_primary', true)
+            ->update(['is_primary' => false]);
+
+        // تعيين العنوان الجديد كعنوان رئيسي
+        $address->update(['is_primary' => true]);
+
+        return response()->json(['message' => 'تم تعيين العنوان كعنوان رئيسي بنجاح']);
+    }
 }

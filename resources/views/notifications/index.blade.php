@@ -4,59 +4,7 @@
 
 @section('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-<style>
-    .notifications-container {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .notification-item {
-        background: #fff;
-        border-radius: 10px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        border: 1px solid #eee;
-        transition: all 0.3s ease;
-    }
-
-    .notification-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .notification-item.unread {
-        border-right: 4px solid var(--bs-primary);
-        background: rgba(var(--bs-primary-rgb), 0.02);
-    }
-
-    .notification-icon {
-        width: 40px;
-        height: 40px;
-        background: rgba(var(--bs-primary-rgb), 0.1);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--bs-primary);
-    }
-
-    .notification-time {
-        font-size: 0.85rem;
-        color: #666;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 3rem 1rem;
-    }
-
-    .empty-state-icon {
-        font-size: 3rem;
-        color: #ccc;
-        margin-bottom: 1rem;
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('assets/css/customer/notifications.css') }}">
 @endsection
 
 @section('content')

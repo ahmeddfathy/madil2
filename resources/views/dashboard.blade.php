@@ -2,8 +2,12 @@
 
 @section('title', 'لوحة التحكم')
 
+@section('styles')
+<link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+@endsection
+
 @section('content')
-<div class="container">
+<div class="container py-4">
     <!-- Welcome Section -->
     <div class="welcome-section mb-4">
         <div class="row align-items-center">
@@ -13,6 +17,74 @@
             </div>
             <div class="col-md-4 text-md-end">
                 <span class="badge bg-primary">{{ Auth::user()->role === 'admin' ? 'مدير' : 'عميل' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="dashboard-card orders">
+                <div class="card-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="card-info">
+                    <h3>{{ $stats['orders_count'] }}</h3>
+                    <p>الطلبات</p>
+                </div>
+                <div class="card-arrow">
+                    <a href="/orders" class="stretched-link">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="dashboard-card appointments">
+                <div class="card-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="card-info">
+                    <h3>{{ $stats['appointments_count'] }}</h3>
+                    <p>المواعيد</p>
+                </div>
+                <div class="card-arrow">
+                    <a href="/appointments" class="stretched-link">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="dashboard-card cart">
+                <div class="card-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="card-info">
+                    <h3>{{ $stats['cart_items_count'] }}</h3>
+                    <p>منتجات في السلة</p>
+                </div>
+                <div class="card-arrow">
+                    <a href="/cart" class="stretched-link">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="dashboard-card notifications">
+                <div class="card-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="card-info">
+                    <h3>{{ $stats['unread_notifications'] }}</h3>
+                    <p>إشعارات جديدة</p>
+                </div>
+                <div class="card-arrow">
+                    <a href="/notifications" class="stretched-link">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -148,74 +220,7 @@
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="row g-4 mb-5">
-        <div class="col-md-3 col-sm-6">
-            <div class="dashboard-card orders">
-                <div class="card-icon">
-                    <i class="fas fa-shopping-bag"></i>
-                </div>
-                <div class="card-info">
-                    <h3>{{ $stats['orders_count'] }}</h3>
-                    <p>الطلبات</p>
-                </div>
-                <div class="card-arrow">
-                    <a href="/orders" class="stretched-link">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="dashboard-card appointments">
-                <div class="card-icon">
-                    <i class="fas fa-calendar-check"></i>
-                </div>
-                <div class="card-info">
-                    <h3>{{ $stats['appointments_count'] }}</h3>
-                    <p>المواعيد</p>
-                </div>
-                <div class="card-arrow">
-                    <a href="/appointments" class="stretched-link">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="dashboard-card cart">
-                <div class="card-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                </div>
-                <div class="card-info">
-                    <h3>{{ $stats['cart_items_count'] }}</h3>
-                    <p>منتجات في السلة</p>
-                </div>
-                <div class="card-arrow">
-                    <a href="/cart" class="stretched-link">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="dashboard-card notifications">
-                <div class="card-icon">
-                    <i class="fas fa-bell"></i>
-                </div>
-                <div class="card-info">
-                    <h3>{{ $stats['unread_notifications'] }}</h3>
-                    <p>إشعارات جديدة</p>
-                </div>
-                <div class="card-arrow">
-                    <a href="/notifications" class="stretched-link">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Recent Orders & Upcoming Appointments -->
     <div class="row g-4">
         <!-- Recent Orders -->
         <div class="col-lg-6">
@@ -319,25 +324,154 @@
         </div>
     </div>
 </div>
+
+<!-- Add Phone Modal -->
+<div class="modal fade" id="addPhoneModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">إضافة رقم هاتف</h5>
+                <button type="button" class="btn-close ms-0 me-auto" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addPhoneForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label required">رقم الهاتف</label>
+                        <input type="tel" class="form-control" name="phone" required
+                               pattern="\d{10}" title="يجب أن يتكون رقم الهاتف من 10 أرقام">
+                        <div class="form-text">مثال: 0512345678</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label required">النوع</label>
+                        <select class="form-select" name="type" required>
+                            <option value="">اختر نوع الرقم</option>
+                            @foreach(App\Models\PhoneNumber::TYPES as $value => $text)
+                                <option value="{{ $value }}">{{ $text }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Phone Modal -->
+<div class="modal fade" id="editPhoneModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تعديل رقم الهاتف</h5>
+                <button type="button" class="btn-close ms-0 me-auto" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editPhoneForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label required">رقم الهاتف</label>
+                        <input type="tel" class="form-control" name="phone" required
+                               pattern="\d{10}" title="يجب أن يتكون رقم الهاتف من 10 أرقام">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label required">النوع</label>
+                        <select class="form-select" name="type" required>
+                            @foreach(App\Models\PhoneNumber::TYPES as $value => $text)
+                                <option value="{{ $value }}">{{ $text }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <input type="hidden" name="phone_id">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Address Modal -->
+<div class="modal fade" id="addAddressModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">إضافة عنوان</h5>
+                <button type="button" class="btn-close ms-0 me-auto" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addAddressForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label required">النوع</label>
+                        <select class="form-select" name="type" required>
+                            <option value="">اختر نوع العنوان</option>
+                            @foreach(App\Models\Address::TYPES as $value => $text)
+                                <option value="{{ $value }}">{{ $text }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label required">المدينة</label>
+                        <input type="text" class="form-control" name="city" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label required">المنطقة</label>
+                        <input type="text" class="form-control" name="area" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label required">الشارع</label>
+                        <input type="text" class="form-control" name="street" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">رقم المبنى</label>
+                        <input type="text" class="form-control" name="building_no">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">تفاصيل إضافية</label>
+                        <textarea class="form-control" name="details" rows="3"
+                                  placeholder="مثال: بجوار مسجد، خلف مدرسة، الخ..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Address Modal -->
+<div class="modal fade" id="editAddressModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تعديل العنوان</h5>
+                <button type="button" class="btn-close ms-0 me-auto" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editAddressForm">
+                <!-- نفس محتوى نموذج إضافة العنوان -->
+                <input type="hidden" name="address_id">
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ asset('js/dashboard.js') }}"></script>
+
 <script>
-    // Phone Numbers Functions
-    $('#addPhoneForm').on('submit', function(e) {
-        e.preventDefault();
-        const formData = $(this).serialize();
-
-        $.post('/phones', formData)
-            .done(function(response) {
-                $('#addPhoneModal').modal('hide');
-                location.reload();
-            })
-            .fail(function(xhr) {
-                alert(xhr.responseJSON?.message || 'حدث خطأ أثناء إضافة رقم الهاتف');
-            });
+    // تهيئة CSRF token
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
     });
-
-    // ... rest of the JavaScript functions ...
 </script>
 @endsection

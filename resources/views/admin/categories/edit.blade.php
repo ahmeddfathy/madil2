@@ -144,46 +144,5 @@
 @endsection
 
 @section('styles')
-<style>
-.categories-container {
-    padding: 1.5rem;
-    width: 100%;
-}
-
-.btn-light-secondary {
-    background-color: var(--secondary-light);
-    color: var(--secondary);
-    border: none;
-}
-
-.btn-light-secondary:hover {
-    background-color: var(--secondary);
-    color: white;
-}
-
-.btn-light-info {
-    background-color: var(--info-light);
-    color: var(--info);
-    border: none;
-}
-
-.btn-light-info:hover {
-    background-color: var(--info);
-    color: white;
-}
-
-.stat-card {
-    transition: all 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-@media (max-width: 768px) {
-    .categories-container {
-        padding: 0.75rem;
-    }
-}
-</style>
+<link rel="stylesheet" href="{{ asset('assets/css/admin/category.css') }}">
 @endsection
