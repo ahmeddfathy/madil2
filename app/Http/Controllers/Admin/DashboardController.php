@@ -72,7 +72,7 @@ class DashboardController extends Controller
             $previousTotal = 0;
 
             foreach ($salesData as $data) {
-                $total = round($data->total / 100, 2);
+                $total = $data->total;
                 $chartLabels[] = Carbon::createFromFormat('Y-m', $data->month)->translatedFormat('F Y');
                 $chartData[] = $total;
 
@@ -106,7 +106,7 @@ class DashboardController extends Controller
                     return [
                         'id' => $order->id,
                         'user_name' => $order->user->name,
-                        'total' => round($order->total_amount / 100, 2),
+                        'total' => $order->total_amount,
                         'payment_status' => $order->payment_status,
                         'order_status' => $order->order_status,
                         'created_at' => $order->created_at->format('Y-m-d H:i'),
@@ -115,8 +115,8 @@ class DashboardController extends Controller
                             return [
                                 'product_name' => $item->product->name,
                                 'quantity' => $item->quantity,
-                                'unit_price' => round($item->product->price / 100, 2),
-                                'total_price' => round(($item->quantity * $item->product->price) / 100, 2)
+                                'unit_price' => $item->product->price,
+                                'total_price' => $item->quantity * $item->product->price
                             ];
                         }),
                         'status_color' => match($order->order_status) {

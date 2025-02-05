@@ -1,18 +1,19 @@
 /* Global Styles */
 :root {
-    --primary-color: #6c5ce7;
-    --secondary-color: #a8a6ff;
-    --success-color: #00b894;
+    --primary-color: #6c5ce7;     /* أزرق مائل للبنفسجي - واضح ومريح */
+    --secondary-color: #a8a6ff;   /* درجة أفتح - للعناصر الثانوية */
+    --success-color: #00b894;     /* أخضر واضح */
     --warning-color: #fdcb6e;
-    --danger-color: #d63031;
+    --danger-color: #e74c3c;      /* أحمر واضح */
     --processing-color: #0984e3;
-    --background-color: #f0f3ff;
-    --glass-background: rgba(255, 255, 255, 0.85);
-    --glass-background-dark: rgba(255, 255, 255, 0.75);
-    --text-color: #2d3436;
-    --text-light: #636e72;
+    --background-color: #f0f3ff;  /* خلفية فاتحة مائلة للأزرق */
+    --glass-background: rgba(255, 255, 255, 0.25);      /* شفافية عالية للوضوح */
+    --glass-background-dark: rgba(255, 255, 255, 0.15);  /* شفافية معتدلة */
+    --glass-border: 1px solid rgba(255, 255, 255, 0.18); /* حدود خفيفة جداً */
+    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15); /* ظل خفيف */
+    --text-color: #2d3436;        /* نص داكن للقراءة الواضحة */
+    --text-light: #636e72;        /* نص رمادي مائل للأزرق */
     --border-color: rgba(108, 92, 231, 0.2);
-    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
 }
 
 body {

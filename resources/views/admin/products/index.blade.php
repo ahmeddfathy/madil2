@@ -121,7 +121,7 @@
                                                     {{ Str::limit($product->description, 100) }}
                                                 </p>
                                                 <div class="product-price fw-bold text-primary">
-                                                    {{ number_format($product->price, 2) }} ريال
+                                                    {{ number_format($product->price, 0) }} ريال
                                                 </div>
                                             </div>
 

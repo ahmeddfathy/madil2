@@ -62,7 +62,7 @@ class ProductController extends Controller
                         'id' => $product->id,
                         'name' => $product->name,
                         'category' => $product->category->name,
-                        'price' => number_format($product->price, 2),
+                        'price' => $product->price,
                         'image_url' => $product->images->first() ? asset('storage/' . $product->images->first()->image_path) : asset('images/placeholder.jpg'),
                         'images' => collect($product->images)->map(function($image) {
                             return asset('storage/' . $image->image_path);
@@ -148,7 +148,7 @@ class ProductController extends Controller
                         'id' => $product->id,
                         'name' => $product->name,
                         'category' => $product->category->name,
-                        'price' => number_format($product->price, 2),
+                        'price' => $product->price,
                         'image_url' => $product->images->first() ?
                             asset('storage/' . $product->images->first()->image_path) :
                             asset('images/placeholder.jpg'),
@@ -182,7 +182,7 @@ class ProductController extends Controller
             'id' => $product->id,
             'name' => $product->name,
             'description' => $product->description,
-            'price' => number_format($product->price, 2),
+            'price' => $product->price,
             'category' => $product->category->name,
             'image_url' => $product->images->first() ? asset('storage/' . $product->images->first()->image_path) : asset('images/placeholder.jpg'),
             'images' => collect($product->images)->map(function($image) {
@@ -253,6 +253,8 @@ class ProductController extends Controller
         $cartItem = CartItem::where('cart_id', $cart->id)
             ->where('product_id', $product->id)
             ->where('needs_appointment', $needs_appointment)
+            ->where('color', $request->color)
+            ->where('size', $request->size)
             ->first();
 
         if ($cartItem) {
@@ -282,7 +284,7 @@ class ProductController extends Controller
             'success' => true,
             'message' => 'تمت إضافة المنتج إلى سلة التسوق',
             'cart_count' => $cart->items()->sum('quantity'),
-            'cart_total' => number_format($cart->total_amount, 2),
+            'cart_total' => $cart->total_amount,
             'show_appointment' => $needs_appointment,
             'product_name' => $product->name,
             'product_id' => $product->id,
@@ -320,14 +322,14 @@ class ProductController extends Controller
                     asset('storage/' . $item->product->images->first()->image_path) :
                     asset('images/placeholder.jpg'),
                 'quantity' => $item->quantity,
-                'price' => number_format($item->unit_price, 2),
-                'subtotal' => number_format($item->subtotal, 2),
+                'price' => $item->unit_price,
+                'subtotal' => $item->subtotal,
             ];
         });
 
         return response()->json([
             'items' => $items,
-            'total' => number_format($cart->total_amount, 2),
+            'total' => $cart->total_amount,
             'count' => $cart->items()->sum('quantity')
         ]);
     }
@@ -350,8 +352,8 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'تم تحديث الكمية بنجاح',
-            'item_subtotal' => number_format($cartItem->subtotal, 2),
-            'cart_total' => number_format($cart->total_amount, 2),
+            'item_subtotal' => $cartItem->subtotal,
+            'cart_total' => $cart->total_amount,
             'cart_count' => $cart->items()->sum('quantity')
         ]);
     }
@@ -368,7 +370,7 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'تم حذف المنتج من السلة',
-            'cart_total' => number_format($cart->total_amount, 2),
+            'cart_total' => $cart->total_amount,
             'cart_count' => $cart->items()->sum('quantity')
         ]);
     }

@@ -25,7 +25,6 @@ class Product extends Model
   ];
 
   protected $casts = [
-    'price' => 'integer',
     'stock' => 'integer'
   ];
 
@@ -44,7 +43,6 @@ class Product extends Model
 
   protected $appends = [
     'image_url',
-    'formatted_price',
     'all_images'
   ];
 
@@ -115,11 +113,6 @@ class Product extends Model
     return $this->images->map(function($image) {
       return Storage::url($image->image_path);
     })->toArray();
-  }
-
-  public function getFormattedPriceAttribute()
-  {
-    return number_format($this->price, 2);
   }
 
   public function toArray()

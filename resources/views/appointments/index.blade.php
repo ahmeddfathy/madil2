@@ -11,11 +11,7 @@
 <div class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="page-title mb-0">المواعيد</h2>
-    <a href="{{ route('appointments.create') }}" class="btn btn-primary">
-      <i class="bi bi-plus-lg"></i>
-      حجز موعد جديد
-    </a>
-                    </div>
+  </div>
 
   <div class="filters d-flex justify-content-center gap-2">
     <a href="{{ route('appointments.index') }}"
@@ -29,8 +25,8 @@
     <a href="{{ route('appointments.index', ['filter' => 'past']) }}"
       class="filter-btn {{ request('filter') === 'past' ? 'active' : '' }}">
       المواعيد السابقة
-                        </a>
-                    </div>
+    </a>
+  </div>
 
   <div class="appointments-container">
     @forelse($appointments as $appointment)
@@ -71,17 +67,6 @@
           <i class="bi bi-eye"></i>
           عرض التفاصيل
         </a>
-        @if($appointment->status === 'pending')
-        <form action="{{ route('appointments.cancel', $appointment) }}" method="POST" class="d-inline">
-          @csrf
-          @method('DELETE')
-          <button type="submit" class="btn btn-outline-danger"
-            onclick="return confirm('هل أنت متأكد من إلغاء الموعد؟')">
-            <i class="bi bi-x-lg"></i>
-            إلغاء الموعد
-          </button>
-        </form>
-        @endif
       </div>
     </div>
     @empty
@@ -90,16 +75,13 @@
         <i class="bi bi-calendar-x"></i>
       </div>
       <h3>لا توجد مواعيد</h3>
-      <p>لم تقم بحجز أي مواعيد بعد</p>
-      <a href="{{ route('appointments.create') }}" class="btn btn-primary">
-        حجز موعد جديد
-                        </a>
-                    </div>
-                @endforelse
+      <p>لا توجد مواعيد مسجلة حالياً</p>
+    </div>
+    @endforelse
 
     <div class="mt-4">
-                    {{ $appointments->links() }}
-                </div>
-        </div>
+      {{ $appointments->links() }}
     </div>
+  </div>
+</div>
 @endsection

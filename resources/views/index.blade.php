@@ -33,27 +33,20 @@
       <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                  <a class="nav-link" href="index.html">الرئيسية</a>
+                  <a class="nav-link" href="/">الرئيسية</a>
               </li>
               <li class="nav-item">
-                  <a class="nav-link" href="about.html">من نحن</a>
+                  <a class="nav-link" href="/about">من نحن</a>
               </li>
               <li class="nav-item">
-                  <a class="nav-link" href="products.html">المنتجات</a>
+                  <a class="nav-link" href="/products">المنتجات</a>
               </li>
 
-              <li class="nav-item">
-                  <a class="nav-link" href="profile.html">بروفايل</a>
-              </li>
+
 
           </ul>
           <div class="nav-buttons">
-              <a href="cart.html" class="btn btn-outline-primary position-relative me-2">
-                  <i class="fas fa-shopping-cart"></i>
-                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                      3
-                  </span>
-              </a>
+
               <a href="/login" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
               <a href="/register" class="btn btn-primary">إنشاء حساب</a>
           </div>
@@ -226,18 +219,24 @@
           </div>
           <div class="col-lg-6">
             <div class="contact-form">
-              <form>
+              @if(session('success'))
+                <div class="alert alert-success mb-4">
+                    {{ session('success') }}
+                </div>
+              @endif
+              <form method="POST" action="{{ route('contact.send') }}">
+                @csrf
                 <div class="form-group">
-                  <input type="text" class="form-control" placeholder="الاسم الكامل" />
+                  <input type="text" name="name" class="form-control" placeholder="الاسم الكامل" required />
                 </div>
                 <div class="form-group">
-                  <input type="email" class="form-control" placeholder="البريد الإلكتروني" />
+                  <input type="email" name="email" class="form-control" placeholder="البريد الإلكتروني" required />
                 </div>
                 <div class="form-group">
-                  <input type="tel" class="form-control" placeholder="رقم الجوال" />
+                  <input type="tel" name="phone" class="form-control" placeholder="رقم الجوال" required />
                 </div>
                 <div class="form-group">
-                  <textarea class="form-control" rows="4" placeholder="رسالتك"></textarea>
+                  <textarea name="message" class="form-control" rows="4" placeholder="رسالتك" required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">إرسال الرسالة</button>
               </form>

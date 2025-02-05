@@ -8,7 +8,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+
 
 class ProductController extends Controller
 {
@@ -64,8 +64,6 @@ class ProductController extends Controller
             DB::beginTransaction();
 
             $validatedData['slug'] = Str::slug($validatedData['name']);
-            $validatedData['price'] = $this->formatPrice($validatedData['price']);
-
             $product = Product::create($validatedData);
 
             // Store colors
@@ -143,8 +141,6 @@ class ProductController extends Controller
             DB::beginTransaction();
 
             $validated['slug'] = Str::slug($validated['name']);
-            $validated['price'] = $this->formatPrice($validated['price']);
-
             $product->update($validated);
 
             // Update colors

@@ -108,54 +108,6 @@ class AppointmentController extends Controller
     }
 
     /**
-     * تحديث حالة الموعد
-     */
-    public function updateStatus(Request $request, Appointment $appointment)
-    {
-        $this->authorize('update', $appointment);
-
-        $validated = $this->validateStatus($request);
-        $appointment->update($validated);
-
-        $appointment->user->notify(new AppointmentStatusUpdated($appointment));
-
-        return redirect()
-            ->route('admin.appointments.index')
-            ->with('success', 'تم تحديث حالة الموعد بنجاح');
-    }
-
-    /**
-     * إلغاء الموعد
-     */
-    public function cancel(Appointment $appointment)
-    {
-        $this->authorizeAccess($appointment);
-
-        if ($appointment->status !== Appointment::STATUS_PENDING) {
-            return back()->with('error', 'لا يمكن إلغاء هذا الموعد');
-        }
-
-        $appointment->update(['status' => Appointment::STATUS_CANCELLED]);
-
-        return redirect()
-            ->route('appointments.index')
-            ->with('success', 'تم إلغاء الموعد بنجاح');
-    }
-
-    /**
-     * حذف الموعد
-     */
-    public function destroy(Appointment $appointment)
-    {
-        $this->authorize('delete', $appointment);
-        $appointment->delete();
-
-        return redirect()
-            ->route('admin.appointments.index')
-            ->with('success', 'تم حذف الموعد بنجاح');
-    }
-
-    /**
      * التحقق من صحة البيانات
      */
     private function validateAppointment(Request $request): array
@@ -169,22 +121,6 @@ class AppointmentController extends Controller
             'location' => ['required', 'string', 'in:store,client_location'],
             'address' => ['required_if:location,client_location', 'nullable', 'string', 'max:500'],
             'cart_item_id' => ['required', 'exists:cart_items,id']
-        ]);
-    }
-
-    /**
-     * التحقق من صحة حالة الموعد
-     */
-    private function validateStatus(Request $request): array
-    {
-        return $request->validate([
-            'status' => ['required', 'in:' . implode(',', [
-                Appointment::STATUS_APPROVED,
-                Appointment::STATUS_REJECTED,
-                Appointment::STATUS_COMPLETED,
-                Appointment::STATUS_CANCELLED
-            ])],
-            'notes' => ['nullable', 'string']
         ]);
     }
 
@@ -228,34 +164,5 @@ class AppointmentController extends Controller
         }
     }
 
-    /**
-     * إعادة توجيه لصفحة تسجيل الدخول
-     */
-    private function redirectToLogin()
-    {
-        return redirect()
-            ->route('login')
-            ->with('error', 'يجب تسجيل الدخول أولاً لحجز موعد');
-    }
 
-    /**
-     * استجابة النجاح
-     */
-    private function successResponse(Appointment $appointment)
-    {
-        session(['appointment_id' => $appointment->id]);
-
-        return redirect()
-            ->route('appointments.show', $appointment)
-            ->with('success', 'تم حجز الموعد بنجاح');
-    }
-
-    /**
-     * استجابة الخطأ
-     */
-    private function errorResponse(\Exception $e)
-    {
-        Log::error('خطأ في حفظ الموعد: ' . $e->getMessage());
-        return back()->with('error', 'حدث خطأ أثناء حفظ الموعد. الرجاء المحاولة مرة أخرى.');
-    }
 }

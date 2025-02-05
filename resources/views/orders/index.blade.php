@@ -52,7 +52,7 @@
                     {{ $order->created_at->format('Y/m/d') }}
                 </div>
                 <div class="order-total">
-                    {{ number_format($order->total_amount / 100, 2) }} ريال
+                    {{ $order->total_amount }} ريال
                 </div>
                 <a href="{{ route('orders.show', $order->id) }}" class="btn btn-primary">
                     <i class="bi bi-eye"></i>

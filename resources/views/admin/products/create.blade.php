@@ -68,7 +68,7 @@
 
                                             <div class="mb-3">
                                                 <label class="form-label">السعر (ريال)</label>
-                                                <input type="number" name="price" class="form-control shadow-sm" step="0.01" value="{{ old('price') }}">
+                                                <input type="number" name="price" class="form-control shadow-sm" value="{{ old('price') }}">
                                                 @error('price')
                                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                                 @enderror

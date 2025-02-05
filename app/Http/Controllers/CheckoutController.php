@@ -99,7 +99,6 @@ class CheckoutController extends Controller
       $validated = $request->validate([
         'shipping_address' => ['required', 'string', 'max:500'],
         'phone' => ['required', 'string', 'max:20', 'regex:/^([0-9\s\-\+\(\)]*)$/'],
-        'payment_method' => ['required', 'in:cash,card'],
         'notes' => ['nullable', 'string', 'max:1000']
       ]);
 
@@ -124,10 +123,8 @@ class CheckoutController extends Controller
           'total_amount' => $totalAmount,
           'shipping_address' => $validated['shipping_address'],
           'phone' => $validated['phone'],
-          'payment_method' => $validated['payment_method'],
-          'payment_status' => $validated['payment_method'] === 'card' ?
-            Order::PAYMENT_STATUS_PENDING :
-            Order::PAYMENT_STATUS_PAID,
+          'payment_method' => 'cash',
+          'payment_status' => Order::PAYMENT_STATUS_PENDING,
           'order_status' => Order::ORDER_STATUS_PENDING,
           'notes' => $validated['notes'] ?? null
         ];
@@ -153,10 +150,10 @@ class CheckoutController extends Controller
             'quantity' => $item->quantity,
             'unit_price' => $item->product->price,
             'subtotal' => $item->product->price * $item->quantity,
-            'appointment_id' => $appointment ? $appointment->id : null
+            'appointment_id' => $appointment ? $appointment->id : null,
+            'color' => $item->color,
+            'size' => $item->size
           ]);
-
-          $item->product->decrement('stock', $item->quantity);
 
           // تحديث حالة الموعد إذا وجد
           if ($appointment) {
@@ -170,22 +167,6 @@ class CheckoutController extends Controller
               'status' => Appointment::STATUS_APPROVED,
               'order_item_id' => $orderItem->id
             ]);
-          }
-        }
-
-        // معالجة الدفع
-        if ($validated['payment_method'] === 'card') {
-          try {
-            $paymentResult = $this->processPayment($order);
-            if (!$paymentResult->success) {
-              throw new CheckoutException('فشلت عملية الدفع');
-            }
-          } catch (\Exception $e) {
-            Log::error('Payment processing failed', [
-              'order_id' => $order->id,
-              'error' => $e->getMessage()
-            ]);
-            throw new CheckoutException('حدث خطأ أثناء معالجة الدفع');
           }
         }
 

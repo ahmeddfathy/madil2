@@ -91,7 +91,7 @@
                                             <div class="col-6">
                                                 <div class="detail-item">
                                                     <dt><i class="fas fa-money-bill text-primary"></i> السعر</dt>
-                                                    <dd class="text-primary fw-bold">{{ number_format($product->price / 100, 2) }} ريال</dd>
+                                                    <dd class="text-primary fw-bold">{{ number_format($product->price, 0) }} ريال</dd>
                                                 </div>
                                             </div>
                                             <div class="col-12">

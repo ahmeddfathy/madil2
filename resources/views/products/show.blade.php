@@ -12,7 +12,7 @@
 </head>
 <body>
     <!-- Navbar -->
-    
+
     <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/">Madil</a>
@@ -209,6 +209,7 @@
 
                     <!-- Custom Measurements Option -->
                     <div class="custom-measurements-section mb-4">
+                        @auth
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="needsAppointment">
                             <label class="form-check-label" for="needsAppointment">
@@ -220,9 +221,16 @@
                             <i class="fas fa-info-circle me-1"></i>
                             اختر هذا الخيار إذا كنت تريد تحديد موعد لأخذ المقاسات الخاصة بك
                         </small>
+                        @else
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                يجب تسجيل الدخول لتتمكن من حجز موعد لأخذ المقاسات
+                            </div>
+                        @endauth
                     </div>
 
                     <!-- Quantity Selector -->
+                    @auth
                     <div class="quantity-selector mb-4">
                         <h5 class="section-title">
                             <i class="fas fa-shopping-basket me-2"></i>
@@ -240,6 +248,13 @@
                         <i class="fas fa-shopping-cart me-2"></i>
                         أضف إلى السلة
                     </button>
+                    @else
+                        <!-- Login to Order Button -->
+                        <button class="btn btn-primary btn-lg w-100 mb-4" onclick="showLoginPrompt('{{ route('login') }}')">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            تسجيل الدخول للطلب
+                        </button>
+                    @endauth
 
                     <!-- Error Messages -->
                     <div class="alert alert-danger d-none" id="errorMessage"></div>
@@ -366,6 +381,25 @@
                             تأكيد الحجز
                         </button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Prompt Modal -->
+    <div class="modal fade" id="loginPromptModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">تسجيل الدخول مطلوب</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>يجب عليك تسجيل الدخول أولاً لتتمكن من طلب المنتج</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <a href="" class="btn btn-primary" id="loginButton">تسجيل الدخول</a>
                 </div>
             </div>
         </div>
@@ -1000,6 +1034,12 @@
             appointmentTime.min = '09:00';
             appointmentTime.max = '21:00';
         });
+
+        function showLoginPrompt(loginUrl) {
+            const modal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
+            document.getElementById('loginButton').href = loginUrl;
+            modal.show();
+        }
     </script>
 
 

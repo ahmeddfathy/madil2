@@ -1,14 +1,16 @@
 /* Global Styles */
 :root {
-    --primary-color: #6c5ce7;
-    --secondary-color: #a8a6ff;
-    --background-color: #f0f3ff;
-    --glass-background: rgba(255, 255, 255, 0.25);
-    --glass-background-dark: rgba(255, 255, 255, 0.15);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.18);
-    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-    --text-color: #2d3436;
-    --text-light: #636e72;
+    --primary-color: #4B5FDB;     /* أزرق مائل للبنفسجي - واضح ومريح */
+    --secondary-color: #8E9BEF;   /* درجة أفتح - للعناصر الثانوية */
+    --background-color: #F8FAFF;  /* خلفية فاتحة مائلة للأزرق */
+    --glass-background: rgba(255, 255, 255, 0.95);      /* شفافية عالية للوضوح */
+    --glass-background-dark: rgba(255, 255, 255, 0.9);  /* شفافية معتدلة */
+    --glass-border: 1px solid rgba(75, 95, 219, 0.08); /* حدود خفيفة جداً */
+    --card-shadow: 0 2px 12px rgba(75, 95, 219, 0.06); /* ظل خفيف */
+    --text-color: #1A1F36;        /* نص داكن للقراءة الواضحة */
+    --text-light: #4F566B;        /* نص رمادي مائل للأزرق */
+    --danger-color: #DC3545;      /* أحمر واضح */
+    --success-color: #28A745;     /* أخضر واضح */
 }
 
 body {

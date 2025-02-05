@@ -78,8 +78,6 @@ class OrderController extends Controller
                     'unit_price' => $product->price,
                     'subtotal' => $product->price * $quantity
                 ]);
-
-                $product->decrement('stock', $quantity);
             }
 
             DB::commit();

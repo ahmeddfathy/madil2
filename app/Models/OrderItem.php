@@ -16,7 +16,9 @@ class OrderItem extends Model
     'appointment_id',
     'quantity',
     'unit_price',
-    'subtotal'
+    'subtotal',
+    'color',
+    'size'
   ];
 
   protected $casts = [

@@ -14,7 +14,8 @@ use App\Http\Controllers\{
     NotificationController,
     DashboardController,
     PhoneController,
-    AddressController
+    AddressController,
+    ContactController
 };
 
 // Admin Controllers
@@ -56,6 +57,7 @@ Route::prefix('products')->name('products.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
     Route::get('/filter', [ProductController::class, 'filter'])->name('filter');
     Route::get('/{product}/details', [ProductController::class, 'getProductDetails'])->name('details');
+    Route::get('/{product}', [ProductController::class, 'show'])->name('show');
 });
 
 // Auth Routes
@@ -79,10 +81,7 @@ Route::middleware([
 
     // Customer Routes
     Route::middleware(['role:customer'])->group(function () {
-        // Products
-        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-        Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
-        Route::post('/products/filter', [ProductController::class, 'filter'])->name('products.filter');
+
 
         // Phones
         Route::post('/phones', [PhoneController::class, 'store']);
@@ -171,11 +170,13 @@ Route::middleware([
 Route::post('/appointments', [AppointmentController::class, 'store'])
     ->name('appointments.store');
 
-// Cart Routes
-Route::post('/cart/add', [ProductController::class, 'addToCart'])->name('cart.add');
-Route::get('/cart/items', [ProductController::class, 'getCartItems'])->name('cart.items');
-Route::patch('/cart/items/{cartItem}', [ProductController::class, 'updateCartItem'])->name('cart.update-item');
-Route::delete('/cart/items/{cartItem}', [ProductController::class, 'removeCartItem'])->name('cart.remove-item');
+// Protected Cart Routes
+Route::middleware(['auth:sanctum'])->group(function() {
+    Route::post('/cart/add', [ProductController::class, 'addToCart'])->name('cart.add');
+    Route::get('/cart/items', [ProductController::class, 'getCartItems'])->name('cart.items');
+    Route::patch('/cart/items/{cartItem}', [ProductController::class, 'updateCartItem'])->name('cart.update-item');
+    Route::delete('/cart/items/{cartItem}', [ProductController::class, 'removeCartItem'])->name('cart.remove-item');
+});
 
 // مسارات لوحة تحكم العميل
 Route::middleware('client')->group(function () {
@@ -188,3 +189,10 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
     // ... باقي مسارات المشرف
 });
+
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+
+    // Products
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+    Route::post('/products/filter', [ProductController::class, 'filter'])->name('products.filter');

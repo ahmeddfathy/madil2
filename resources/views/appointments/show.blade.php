@@ -115,20 +115,6 @@
                     @endif
                 </div>
             </div>
-
-            @if($appointment->status === 'pending')
-            <div class="text-center">
-                <form action="{{ route('appointments.cancel', $appointment) }}" method="POST" class="d-inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger"
-                        onclick="return confirm('هل أنت متأكد من إلغاء الموعد؟')">
-                        <i class="bi bi-x-lg me-2"></i>
-                        إلغاء الموعد
-                    </button>
-                </form>
-            </div>
-            @endif
         </div>
     </div>
 </div>

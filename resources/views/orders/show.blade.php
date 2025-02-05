@@ -73,10 +73,20 @@
                                 <div class="item-details">
                                     <h4 class="item-name">{{ $item->product->name }}</h4>
                                     <p class="item-price">
-                                        {{ number_format($item->unit_price / 100, 2) }} ريال × {{ $item->quantity }}
+                                        {{ $item->unit_price }} ريال × {{ $item->quantity }}
                                     </p>
+                                    @if($item->color || $item->size)
+                                    <p class="item-options">
+                                        @if($item->color)
+                                        <span class="item-color">اللون: {{ $item->color }}</span>
+                                        @endif
+                                        @if($item->size)
+                                        <span class="item-size">المقاس: {{ $item->size }}</span>
+                                        @endif
+                                    </p>
+                                    @endif
                                     <p class="item-subtotal">
-                                        الإجمالي: {{ number_format($item->subtotal / 100, 2) }} ريال
+                                        الإجمالي: {{ $item->subtotal }} ريال
                                     </p>
                                 </div>
                             </div>
@@ -86,7 +96,7 @@
                         <div class="order-total mt-4">
                             <div class="d-flex justify-content-between">
                                 <h4>الإجمالي الكلي:</h4>
-                                <span class="total-amount">{{ number_format($order->total_amount / 100, 2) }} ريال</span>
+                                <span class="total-amount">{{ $order->total_amount }} ريال</span>
                             </div>
                         </div>
                     </div>

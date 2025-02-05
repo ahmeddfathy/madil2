@@ -220,6 +220,8 @@
                                                         <th class="border-0 text-center" style="width: 60px">#</th>
                                                         <th class="border-0" style="min-width: 250px">المنتج</th>
                                                         <th class="border-0 text-center" style="width: 100px">الكمية</th>
+                                                        <th class="border-0" style="width: 100px">اللون</th>
+                                                        <th class="border-0" style="width: 100px">المقاس</th>
                                                         <th class="border-0" style="width: 150px">السعر</th>
                                                         <th class="border-0" style="width: 150px">الإجمالي</th>
                                                         <th class="border-0" style="width: 250px">الموعد</th>
@@ -257,6 +259,24 @@
                                                             <span class="badge bg-light text-dark fw-bold">
                                                                 {{ $item->quantity }} قطعة
                                                             </span>
+                                                        </td>
+                                                        <td>
+                                                            @if($item->color)
+                                                                <span class="badge bg-light text-dark">
+                                                                    {{ $item->color }}
+                                                                </span>
+                                                            @else
+                                                                <span class="text-muted">-</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if($item->size)
+                                                                <span class="badge bg-light text-dark">
+                                                                    {{ $item->size }}
+                                                                </span>
+                                                            @else
+                                                                <span class="text-muted">-</span>
+                                                            @endif
                                                         </td>
                                                         <td>
                                                             <div class="d-flex align-items-center">
@@ -317,6 +337,8 @@
                                                         <th class="border-0 text-center" style="width: 60px">#</th>
                                                         <th class="border-0" style="min-width: 250px">المنتج</th>
                                                         <th class="border-0 text-center" style="width: 100px">الكمية</th>
+                                                        <th class="border-0" style="width: 100px">اللون</th>
+                                                        <th class="border-0" style="width: 100px">المقاس</th>
                                                         <th class="border-0" style="width: 150px">السعر</th>
                                                         <th class="border-0" style="width: 150px">الإجمالي</th>
                                                     </tr>
@@ -353,6 +375,24 @@
                                                             <span class="badge bg-light text-dark fw-bold">
                                                                 {{ $item->quantity }} قطعة
                                                             </span>
+                                                        </td>
+                                                        <td>
+                                                            @if($item->color)
+                                                                <span class="badge bg-light text-dark">
+                                                                    {{ $item->color }}
+                                                                </span>
+                                                            @else
+                                                                <span class="text-muted">-</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if($item->size)
+                                                                <span class="badge bg-light text-dark">
+                                                                    {{ $item->size }}
+                                                                </span>
+                                                            @else
+                                                                <span class="text-muted">-</span>
+                                                            @endif
                                                         </td>
                                                         <td>
                                                             <div class="d-flex align-items-center">

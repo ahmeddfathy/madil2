@@ -34,10 +34,10 @@
                     <i class="fas fa-dollar-sign"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-value h4 mb-1">{{ number_format($stats['revenue'] ?? 0, 2) }} ريال</div>
+                    <div class="stat-value h4 mb-1">{{ $stats['revenue'] }} ريال</div>
                     <div class="stat-title text-muted">إجمالي الإيرادات</div>
                     <div class="trend small mt-2">
-                        <span>اليوم: {{ number_format($stats['today_revenue'] ?? 0, 2) }} ريال</span>
+                        <span>اليوم: {{ $stats['today_revenue'] }} ريال</span>
                     </div>
                 </div>
             </div>
@@ -195,7 +195,7 @@
                                         <div class="mb-1">
                                             {{ $item['product_name'] }}
                                             <span class="text-muted d-block d-md-inline">
-                                                ({{ $item['quantity'] }} × {{ number_format($item['unit_price'], 2) }} ريال = {{ number_format($item['total_price'], 2) }} ريال)
+                                                ({{ $item['quantity'] }} × {{ $item['unit_price'] }} ريال = {{ $item['total_price'] }} ريال)
                                             </span>
                                         </div>
                                     @endforeach
@@ -211,7 +211,7 @@
                                     {{ $order['payment_status_text'] }}
                                 </span>
                             </td>
-                            <td data-label="المبلغ">{{ number_format($order['total'], 2) }} ريال</td>
+                            <td data-label="المبلغ">{{ $order['total'] }} ريال</td>
                             <td data-label="التاريخ">{{ $order['created_at'] }}</td>
                             <td data-label="الإجراءات">
                                 <a href="{{ route('admin.orders.show', $order['id']) }}"
@@ -272,10 +272,7 @@
                         },
                         ticks: {
                             callback: function(value) {
-                                return new Intl.NumberFormat('ar-SA', {
-                                    style: 'currency',
-                                    currency: 'SAR'
-                                }).format(value);
+                                return value + ' ريال';
                             },
                             font: {
                                 size: 12
@@ -313,10 +310,7 @@
                         },
                         callbacks: {
                             label: function(context) {
-                                return new Intl.NumberFormat('ar-SA', {
-                                    style: 'currency',
-                                    currency: 'SAR'
-                                }).format(context.parsed.y);
+                                return context.parsed.y + ' ريال';
                             }
                         }
                     }

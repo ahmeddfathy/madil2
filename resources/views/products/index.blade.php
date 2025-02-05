@@ -139,10 +139,19 @@
                                 </div>
                                 <p class="product-price">{{ number_format($product->price, 2) }} ج.م</p>
                                 <div class="product-actions">
-                                    <a href="{{ route('products.show', $product->id) }}" class="order-product-btn">
-                                        <i class="fas fa-shopping-cart me-2"></i>
-                                        طلب المنتج
-                                    </a>
+                                    @auth
+                                        <a href="{{ route('products.show', $product->id) }}" class="order-product-btn">
+                                            <i class="fas fa-shopping-cart me-2"></i>
+                                            طلب المنتج
+                                        </a>
+                                    @else
+                                        <a href="{{ route('login') }}" class="order-product-btn"
+                                           onclick="event.preventDefault();
+                                                    showLoginPrompt('{{ route('login') }}');">
+                                            <i class="fas fa-shopping-cart me-2"></i>
+                                            طلب المنتج
+                                        </a>
+                                    @endauth
                                 </div>
                             </div>
                         </div>
@@ -182,16 +191,16 @@
     <!-- Product Modal -->
     <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
+            <div class="modal-content glass-modal">
+                <div class="modal-header border-0">
                     <h5 class="modal-title">تفاصيل المنتج</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
+                    <div class="row g-4">
                         <div class="col-md-6">
-                            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
-                                <div class="carousel-inner">
+                            <div id="productCarousel" class="carousel slide product-carousel" data-bs-ride="carousel">
+                                <div class="carousel-inner rounded-3">
                                     <!-- Carousel items will be dynamically added -->
                                 </div>
                                 <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
@@ -203,39 +212,61 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <h3 id="modalProductName"></h3>
-                            <p id="modalProductDescription" class="my-3"></p>
-                            <div class="price-section">
-                                <h4 id="modalProductPrice"></h4>
+                            <h3 id="modalProductName" class="product-title mb-3"></h3>
+                            <p id="modalProductDescription" class="product-description mb-4"></p>
+                            <div class="price-section mb-4">
+                                <h4 id="modalProductPrice" class="product-price"></h4>
                             </div>
-                            <div class="quantity-selector my-3">
-                                <label>الكمية:</label>
-                                <div class="input-group">
-                                    <button class="btn btn-outline-secondary" type="button" id="decreaseQuantity">-</button>
+                            <div class="quantity-selector mb-4">
+                                <label class="form-label">الكمية:</label>
+                                <div class="input-group quantity-group">
+                                    <button class="btn btn-outline-primary" type="button" id="decreaseQuantity">-</button>
                                     <input type="number" class="form-control text-center" id="productQuantity" value="1" min="1">
-                                    <button class="btn btn-outline-secondary" type="button" id="increaseQuantity">+</button>
+                                    <button class="btn btn-outline-primary" type="button" id="increaseQuantity">+</button>
                                 </div>
                             </div>
 
                             <!-- Colors Section -->
-                            <div class="colors-section my-3" id="modalProductColors">
-                                <label>الألوان المتاحة:</label>
+                            <div class="colors-section mb-4" id="modalProductColors">
+                                <label class="form-label">الألوان المتاحة:</label>
                                 <div class="colors-grid">
                                     <!-- Colors will be added dynamically -->
                                 </div>
                             </div>
 
                             <!-- Sizes Section -->
-                            <div class="sizes-section my-3" id="modalProductSizes">
-                                <label>المقاسات المتاحة:</label>
+                            <div class="sizes-section mb-4" id="modalProductSizes">
+                                <label class="form-label">المقاسات المتاحة:</label>
                                 <div class="sizes-grid">
                                     <!-- Sizes will be added dynamically -->
                                 </div>
                             </div>
 
-                            <button class="btn add-to-cart-btn w-100" id="modalAddToCart">أضف للسلة</button>
+                            <button class="btn add-to-cart-btn w-100" id="modalAddToCart">
+                                <i class="fas fa-shopping-cart me-2"></i>
+                                أضف للسلة
+                            </button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Prompt Modal -->
+    <div class="modal fade" id="loginPromptModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">تسجيل الدخول مطلوب</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>يجب عليك تسجيل الدخول أو إنشاء حساب جديد لتتمكن من طلب المنتج</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <a href="{{ route('login') }}" class="btn btn-outline-primary">تسجيل الدخول</a>
+                    <a href="{{ route('register') }}" class="btn btn-primary">إنشاء حساب جديد</a>
                 </div>
             </div>
         </div>
@@ -689,6 +720,11 @@
 
         function updatePagination(pagination) {
             // Add pagination update logic if needed
+        }
+
+        function showLoginPrompt(loginUrl) {
+            const modal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
+            modal.show();
         }
     </script>
 
@@ -1203,6 +1239,175 @@
                 right: 20px;
                 padding: 12px 20px;
                 font-size: 0.9rem;
+            }
+        }
+
+        /* Modal Styles */
+        .glass-modal {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .product-carousel {
+            background: #f8f9fa;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .product-carousel .carousel-item img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            margin: 0 1rem;
+        }
+
+        .product-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .product-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            color: #6c5ce7;
+            font-weight: 600;
+        }
+
+        .quantity-group {
+            max-width: 200px;
+        }
+
+        .quantity-group .btn {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .quantity-group input {
+            height: 40px;
+            text-align: center;
+            border-right: 1px solid #dee2e6;
+            border-left: 1px solid #dee2e6;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #444;
+            margin-bottom: 0.75rem;
+        }
+
+        .color-item {
+            padding: 0.75rem 1.25rem;
+            border-radius: 25px;
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .color-item.selected {
+            background: #6c5ce7;
+            color: white;
+            border-color: #5849c2;
+            transform: translateY(-2px);
+        }
+
+        .color-item:not(.available) {
+            opacity: 0.5;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+
+        .size-item {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .size-item.selected {
+            background: #6c5ce7;
+            color: white;
+            border-color: #5849c2;
+            transform: translateY(-2px);
+        }
+
+        .size-item:not(.available) {
+            opacity: 0.5;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+
+        #modalAddToCart {
+            background: #6c5ce7;
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        #modalAddToCart:hover {
+            background: #5849c2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .product-carousel .carousel-item img {
+                height: 300px;
+            }
+
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+
+            .glass-modal {
+                border-radius: 12px;
             }
         }
     </style>

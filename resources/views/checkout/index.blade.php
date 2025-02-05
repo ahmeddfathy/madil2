@@ -55,9 +55,8 @@
                                                 <p>الكمية: {{ $item->quantity }}</p>
                                             </div>
                                         </div>
-                                        <p class="product-price">
-                                            {{ number_format($item->subtotal / 100, 2) }} ريال
-                                        </p>
+                                        <p class="item-price">{{ $item->unit_price }} ريال × {{ $item->quantity }}</p>
+                                        <p class="item-subtotal">الإجمالي: {{ $item->subtotal }} ريال</p>
                                     </div>
                                     @endforeach
                                 @else
@@ -81,22 +80,15 @@
                                                 <p>الكمية: {{ $sessionCart[$product->id] }}</p>
                                             </div>
                                         </div>
-                                        <p class="product-price">
-                                            {{ number_format($product->price * $sessionCart[$product->id] / 100, 2) }} ريال
-                                        </p>
+                                        <p class="item-price">{{ $product->price }} ريال × {{ $sessionCart[$product->id] }}</p>
+                                        <p class="item-subtotal">الإجمالي: {{ $product->price * $sessionCart[$product->id] }} ريال</p>
                                     </div>
                                     @endforeach
                                 @endif
 
-                                <div class="total-amount">
-                                    <span>الإجمالي:</span>
-                                    <span>
-                                        @if(Auth::check() && isset($cart))
-                                            {{ number_format($cart->total_amount / 100, 2) }} ريال
-                                        @else
-                                            {{ number_format($total / 100, 2) }} ريال
-                                        @endif
-                                    </span>
+                                <div class="d-flex justify-content-between">
+                                    <h4>الإجمالي الكلي:</h4>
+                                    <span class="total-amount">{{ $cart->total_amount }} ريال</span>
                                 </div>
                             </div>
                         </div>
@@ -138,20 +130,11 @@
                                         طريقة الدفع
                                     </label>
                                     <div class="payment-method">
-                                        <label class="radio-group">
-                                            <input type="radio" name="payment_method" value="cash"
-                                                {{ old('payment_method') == 'cash' ? 'checked' : '' }} required>
-                                            <span>الدفع عند الاستلام</span>
-                                        </label>
-                                        <label class="radio-group">
-                                            <input type="radio" name="payment_method" value="card"
-                                                {{ old('payment_method') == 'card' ? 'checked' : '' }} required>
-                                            <span>بطاقة ائتمان/مدى</span>
-                                        </label>
+                                        <div class="payment-info">
+                                            <span class="payment-label">الدفع عند الاستلام</span>
+                                            <input type="hidden" name="payment_method" value="cash">
+                                        </div>
                                     </div>
-                                    @error('payment_method')
-                                    <p class="error-message">{{ $message }}</p>
-                                    @enderror
                                 </div>
 
                                 <div class="form-group">

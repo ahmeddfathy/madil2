@@ -1,17 +1,17 @@
 /* Variables */
 :root {
-    --primary-color: #6c5ce7;
-    --secondary-color: #a8a6ff;
-    --background-color: #f0f3ff;
-    --glass-background: rgba(255, 255, 255, 0.25);
-    --glass-background-dark: rgba(255, 255, 255, 0.15);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.18);
-    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-    --text-color: #2d3436;
-    --text-light: #636e72;
+    --primary-color: #6c5ce7;     /* أزرق مائل للبنفسجي - واضح ومريح */
+    --secondary-color: #a8a6ff;   /* درجة أفتح - للعناصر الثانوية */
+    --background-color: #f0f3ff;  /* خلفية فاتحة مائلة للأزرق */
+    --glass-background: rgba(255, 255, 255, 0.25);      /* شفافية عالية للوضوح */
+    --glass-background-dark: rgba(255, 255, 255, 0.15);  /* شفافية معتدلة */
+    --glass-border: 1px solid rgba(255, 255, 255, 0.18); /* حدود خفيفة جداً */
+    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15); /* ظل خفيف */
+    --text-color: #2d3436;        /* نص داكن للقراءة الواضحة */
+    --text-light: #636e72;        /* نص رمادي مائل للأزرق */
     --text-muted: #b2bec3;
-    --danger-color: #e74c3c;
-    --success-color: #00b894;
+    --danger-color: #e74c3c;      /* أحمر واضح */
+    --success-color: #00b894;     /* أخضر واضح */
 }
 
 /* General Styles */

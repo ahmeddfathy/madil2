@@ -23,8 +23,6 @@ class CartController extends Controller
             return view('cart.index', [
                 'cart_items' => collect(),
                 'subtotal' => 0,
-                'shipping_cost' => 0,
-                'discount' => 0,
                 'total' => 0
             ]);
         }
@@ -37,22 +35,11 @@ class CartController extends Controller
             return $item->product->price * $item->quantity;
         });
 
-        // حساب تكلفة الشحن (يمكن تعديلها حسب سياسة الموقع)
-        $shipping_cost = $subtotal > 20000 ? 0 : 1000; // مجاني للطلبات فوق 200 ريال
-
-        // حساب الخصم (يمكن تعديله حسب سياسة الموقع)
-        $discount = 0;
-        if ($subtotal > 50000) { // خصم 10% للطلبات فوق 500 ريال
-            $discount = $subtotal * 0.1;
-        }
-
-        $total = $subtotal + $shipping_cost - $discount;
+        $total = $subtotal;
 
         return view('cart.index', compact(
             'cart_items',
             'subtotal',
-            'shipping_cost',
-            'discount',
             'total'
         ));
     }

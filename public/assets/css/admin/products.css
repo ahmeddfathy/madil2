@@ -57,7 +57,7 @@
 /* Product Card */
 .product-card {
     background: white;
-    border-radius: 1.25rem;
+    border-radius: 20px;
     border: 1px solid var(--border-color);
     box-shadow: var(--card-shadow);
     overflow: hidden;
@@ -69,7 +69,7 @@
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: var(--card-shadow-hover);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
 /* Product Image */
@@ -84,6 +84,11 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.05);
 }
 
 .no-image {
@@ -121,40 +126,72 @@
     color: var(--primary);
 }
 
-/* Badge Styles */
+/* Stock Badge */
 .stock-badge {
     position: absolute;
-    top: 1.25rem;
-    right: 1.25rem;
-    padding: 0.625rem 1.25rem;
-    border-radius: 2rem;
-    font-size: 0.875rem;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
     font-weight: 600;
-    letter-spacing: 0.025em;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(4px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.stock-badge i {
+    font-size: 1rem;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .stock-badge.in-stock {
-    color: var(--success);
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stock-badge.in-stock i {
+    color: #10B981;
+    background: white;
 }
 
 .stock-badge.low-stock {
-    color: var(--warning);
-    background: rgba(245, 158, 11, 0.1);
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stock-badge.low-stock i {
+    color: #F59E0B;
+    background: white;
 }
 
 .stock-badge.out-of-stock {
-    color: var(--danger);
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stock-badge.out-of-stock i {
+    color: #EF4444;
+    background: white;
+}
+
+/* Hover effect for stock badge */
+.product-card:hover .stock-badge {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .category-badge {
@@ -265,7 +302,14 @@
 
     .stock-badge {
         padding: 0.4rem 0.8rem;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+        border-radius: 10px;
+    }
+
+    .stock-badge i {
+        font-size: 0.9rem;
+        width: 18px;
+        height: 18px;
     }
 }
 

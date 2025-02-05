@@ -80,7 +80,7 @@
                 </form>
               </div>
               <div class="cart-item-price">
-                {{ number_format($item->product->price * $item->quantity / 100, 2) }} ريال
+                {{ $item->product->price * $item->quantity }} ريال
               </div>
             </div>
           </div>
@@ -93,21 +93,11 @@
           <h4 class="mb-4">ملخص الطلب</h4>
           <div class="summary-item">
             <span class="summary-label">إجمالي المنتجات</span>
-            <span class="summary-value">{{ number_format($subtotal / 100, 2) }} ريال</span>
+            <span class="summary-value">{{ $subtotal }} ريال</span>
           </div>
-          <div class="summary-item">
-            <span class="summary-label">الشحن</span>
-            <span class="summary-value">{{ number_format($shipping_cost / 100, 2) }} ريال</span>
-          </div>
-          @if($discount > 0)
-          <div class="summary-item">
-            <span class="summary-label">الخصم</span>
-            <span class="summary-value text-success">- {{ number_format($discount / 100, 2) }} ريال</span>
-          </div>
-          @endif
           <div class="summary-item">
             <span class="summary-label">الإجمالي الكلي</span>
-            <span class="total-amount">{{ number_format($total / 100, 2) }} ريال</span>
+            <span class="total-amount">{{ $total }} ريال</span>
           </div>
           <a href="{{ route('checkout.index') }}" class="btn btn-primary checkout-btn">
             متابعة الشراء
