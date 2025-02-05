@@ -1,22 +1,22 @@
 /* Variables */
 :root {
-    --primary-color: #6c5ce7;     /* أزرق مائل للبنفسجي - واضح ومريح */
-    --secondary-color: #a8a6ff;   /* درجة أفتح - للعناصر الثانوية */
-    --background-color: #f0f3ff;  /* خلفية فاتحة مائلة للأزرق */
-    --glass-background: rgba(255, 255, 255, 0.25);      /* شفافية عالية للوضوح */
-    --glass-background-dark: rgba(255, 255, 255, 0.15);  /* شفافية معتدلة */
-    --glass-border: 1px solid rgba(255, 255, 255, 0.18); /* حدود خفيفة جداً */
-    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15); /* ظل خفيف */
-    --text-color: #2d3436;        /* نص داكن للقراءة الواضحة */
-    --text-light: #636e72;        /* نص رمادي مائل للأزرق */
-    --text-muted: #b2bec3;
-    --danger-color: #e74c3c;      /* أحمر واضح */
-    --success-color: #00b894;     /* أخضر واضح */
+    --primary-color: #4A3AFF;     /* أزرق نابض بالحياة مع عمق أكبر */
+    --secondary-color: #7B6EFF;   /* درجة فاتحة مع تباين واضح */
+    --background-color: #F0F4FF;  /* خلفية مشرقة وناعمة */
+    --glass-background: rgba(255, 255, 255, 0.75);      /* شفافية أكثر وضوحًا */
+    --glass-background-dark: rgba(255, 255, 255, 0.65);  /* شفافية معتدلة ومريحة */
+    --glass-border: 1px solid rgba(255, 255, 255, 0.55); /* حدود خفيفة وواضحة */
+    --card-shadow: 0 12px 40px 0 rgba(74, 58, 255, 0.3); /* ظل أكثر عمقًا وتأثيرًا */
+    --text-color: #1E2A38;        /* نص داكن واضح للقراءة */
+    --text-light: #2C3E50;        /* نص رمادي مائل للأزرق مع وضوح */
+    --text-muted: #4A5F6E;        /* رمادي مائل للأزرق أكثر حيوية */
+    --danger-color: #FF4D4D;      /* أحمر صارخ وواضح */
+    --success-color: #2ECC71;     /* أخضر مشرق وحيوي */
 }
 
 /* General Styles */
 body {
-    background: linear-gradient(135deg, var(--background-color), #fff);
+    background-color: var(--background-color);
     min-height: 100vh;
     font-family: 'Tajawal', sans-serif;
 }

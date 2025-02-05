@@ -184,11 +184,7 @@ Route::middleware('client')->group(function () {
     // ... باقي مسارات العميل
 });
 
-// مسارات لوحة تحكم المشرف
-Route::middleware('admin')->prefix('admin')->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
-    // ... باقي مسارات المشرف
-});
+
 
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 

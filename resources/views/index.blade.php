@@ -46,9 +46,12 @@
 
           </ul>
           <div class="nav-buttons">
-
-              <a href="/login" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
-              <a href="/register" class="btn btn-primary">إنشاء حساب</a>
+              @auth
+                  <a href="{{ route('dashboard') }}" class="btn btn-primary">لوحة التحكم</a>
+              @else
+                  <a href="/login" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
+                  <a href="/register" class="btn btn-primary">إنشاء حساب</a>
+              @endauth
           </div>
       </div>
   </div>
