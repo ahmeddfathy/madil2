@@ -11,8 +11,8 @@
     --glass-background-dark: rgba(255, 255, 255, 0.65);
     --glass-border: 1px solid rgba(255, 255, 255, 0.55);
 
-    /* ظل قوي وواضح */
-    --card-shadow: 0 12px 40px 0 rgba(74, 58, 255, 0.3);
+    /* تم إزالة الظل */
+    --card-shadow: none;
 
     /* درجات لونية أكثر تباينًا */
     --text-color: #1E2A38;        /* أزرق رمادي داكن وواضح */
@@ -40,7 +40,7 @@ body {
     -webkit-backdrop-filter: blur(4px);
     border-radius: 10px;
     border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    box-shadow: none;
 }
 
 /* Navbar Styles */
@@ -96,8 +96,8 @@ body {
     -webkit-backdrop-filter: blur(4px);
     border-radius: 15px;
     padding: 2rem;
-    border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    border: 2px solid rgba(74, 58, 255, 0.15);
+    box-shadow: none;
     margin-bottom: 2rem;
 }
 
@@ -134,16 +134,15 @@ body {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    border: var(--glass-border);
-    box-shadow: var(--card-shadow);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid rgba(74, 58, 255, 0.15);
+    box-shadow: none;
     position: relative;
     overflow: hidden;
 }
 
 .dashboard-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    background: var(--glass-background-dark);
+    transform: none;
+    background: var(--glass-background);
 }
 
 .card-icon {
@@ -154,27 +153,31 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(74, 58, 255, 0.2);
 }
 
 .dashboard-card:hover .card-icon {
-    transform: scale(1.1) rotate(-5deg);
+    transform: none;
 }
 
 .orders .card-icon {
+    background: rgba(74, 58, 255, 0.1);
     color: var(--primary-color);
 }
 
 .appointments .card-icon {
+    background: rgba(0, 184, 148, 0.1);
     color: #00b894;
 }
 
 .cart .card-icon {
+    background: rgba(253, 121, 168, 0.1);
     color: #fd79a8;
 }
 
 .notifications .card-icon {
+    background: rgba(255, 159, 67, 0.1);
     color: #ff9f43;
 }
 
@@ -234,8 +237,8 @@ body {
     -webkit-backdrop-filter: blur(4px);
     border-radius: 15px;
     padding: 2rem;
-    border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    border: 2px solid rgba(74, 58, 255, 0.15);
+    box-shadow: none;
     height: 100%;
 }
 
@@ -290,14 +293,14 @@ body {
     -webkit-backdrop-filter: blur(4px);
     border-radius: 15px;
     padding: 1.5rem;
-    border: var(--glass-border);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid rgba(74, 58, 255, 0.15);
+    transition: none;
 }
 
 .appointment-card:hover {
-    transform: translateY(-5px);
-    background: var(--glass-background-dark);
-    box-shadow: var(--card-shadow);
+    transform: none;
+    background: var(--glass-background);
+    box-shadow: none;
 }
 
 .appointment-header {
@@ -370,11 +373,15 @@ body {
 .btn {
     padding: 0.75rem 1.5rem;
     border-radius: 12px;
-    transition: all 0.3s ease;
+    transition: none;
     font-weight: 600;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     letter-spacing: 0.3px;
+}
+
+.btn:hover {
+    transform: none;
 }
 
 .btn-primary {
@@ -411,7 +418,7 @@ body {
     -webkit-backdrop-filter: blur(10px);
     border: var(--glass-border);
     border-radius: 15px;
-    box-shadow: var(--card-shadow);
+    box-shadow: none;
 }
 
 .notification-dropdown .dropdown-item {
@@ -466,38 +473,217 @@ body {
 }
 
 /* Responsive Styles */
-@media (max-width: 768px) {
-    .welcome-section {
-        padding: 1.5rem;
-    }
-
-    .welcome-section h1 {
-        font-size: 1.6rem;
-    }
-
+@media (max-width: 1200px) {
     .dashboard-card {
-        padding: 1.25rem;
-    }
-
-    .card-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 1.3rem;
+        padding: 1.5rem;
     }
 
     .card-info h3 {
         font-size: 1.6rem;
     }
+}
+
+@media (max-width: 992px) {
+    .welcome-section {
+        text-align: center;
+    }
+
+    .welcome-section .badge {
+        margin-top: 1rem;
+    }
 
     .section-card {
+        margin-bottom: 1.5rem;
+    }
+
+    .table-responsive {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .welcome-section {
         padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .welcome-section h1 {
+        font-size: 1.4rem;
+    }
+
+    .dashboard-card {
+        padding: 1.25rem;
+        height: 100%;
+        margin-bottom: 0;
+    }
+
+    .card-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+
+    .card-info h3 {
+        font-size: 1.4rem;
+    }
+
+    .card-info p {
+        font-size: 0.9rem;
+    }
+
+    .section-card {
+        padding: 1.25rem;
+        height: 100%;
+        margin-bottom: 0;
+    }
+
+    .section-card h2 {
+        font-size: 1.3rem;
     }
 
     .appointments-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
     .table td, .table th {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .btn-group .btn {
+        padding: 0.25rem 0.5rem;
+    }
+
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .welcome-section {
+        padding: 1rem;
+    }
+
+    .welcome-section h1 {
+        font-size: 1.2rem;
+    }
+
+    .welcome-section p {
+        font-size: 0.9rem;
+    }
+
+    .dashboard-card {
+        padding: 1rem;
+    }
+
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .card-info h3 {
+        font-size: 1.2rem;
+    }
+
+    .section-card {
+        padding: 1rem;
+    }
+
+    .section-card h2 {
+        font-size: 1.2rem;
+    }
+
+    .appointment-card {
+        padding: 1rem;
+    }
+
+    .list-group-item {
+        padding: 0.75rem;
+    }
+
+    .btn-group {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .modal-footer {
+        padding: 0.75rem;
+    }
+
+    .empty-state i {
+        font-size: 2rem;
+    }
+
+    .empty-state p {
+        font-size: 0.9rem;
+    }
+
+    /* Full width cards on mobile */
+    .card, .section-card {
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .card:last-child, .section-card:last-child {
+        margin-bottom: 0;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .card-header {
+        padding: 1rem;
+    }
+}
+
+/* Fix for very small devices */
+@media (max-width: 360px) {
+    .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .welcome-section {
+        padding: 0.75rem;
+    }
+
+    .dashboard-card {
+        padding: 0.75rem;
+    }
+
+    .card-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+
+    .card-info h3 {
+        font-size: 1.1rem;
+    }
+
+    .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    /* Adjust spacing for very small screens */
+    .card, .section-card {
+        margin-bottom: 0.75rem;
+    }
+
+    .card-body, .card-header {
         padding: 0.75rem;
     }
 }
@@ -551,14 +737,16 @@ body {
 
 /* Addresses Section */
 .card {
-    border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(74, 58, 255, 0.15);
+    box-shadow: none;
     border-radius: 12px;
-    transition: all 0.3s ease;
+    transition: none;
+    background: var(--glass-background);
 }
 
 .card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: none;
+    transform: none;
 }
 
 .card-header {
@@ -601,10 +789,11 @@ body {
 }
 
 .list-group-item {
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(74, 58, 255, 0.15);
     margin-bottom: 0.5rem;
     border-radius: 8px !important;
-    transition: all 0.2s ease;
+    transition: none;
+    background: var(--glass-background);
 }
 
 .list-group-item:last-child {
@@ -617,7 +806,7 @@ body {
 }
 
 .list-group-item:hover {
-    background-color: #f8f9fa;
+    background-color: var(--glass-background);
 }
 
 /* Address Content */

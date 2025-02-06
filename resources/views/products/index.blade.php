@@ -45,8 +45,12 @@
                             0
                       </span>
                     </button>
-                    <a href="/login" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
-                    <a href="/register" class="btn btn-primary">إنشاء حساب</a>
+                    @auth
+                        <a href="/dashboard" class="btn btn-primary">لوحة التحكم</a>
+                    @else
+                        <a href="/login" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
+                        <a href="/register" class="btn btn-primary">إنشاء حساب</a>
+                    @endauth
               </div>
           </div>
       </div>
@@ -93,8 +97,8 @@
                                 max="{{ $priceRange['max'] }}"
                                 value="{{ $priceRange['max'] }}">
                             <div class="price-labels">
-                                <span>{{ number_format($priceRange['min']) }} ج.م</span>
-                                <span id="priceValue">{{ number_format($priceRange['max']) }} ج.م</span>
+                                <span>{{ number_format($priceRange['min']) }} ر.س</span>
+                                <span id="priceValue">{{ number_format($priceRange['max']) }} ر.س</span>
                             </div>
                         </div>
                     </div>
@@ -117,7 +121,7 @@
                     @foreach($products as $product)
                     <div class="col-md-6 col-lg-4">
                         <div class="product-card">
-                            <a href="{{ route('products.show', $product->id) }}" class="product-image-wrapper">
+                            <a href="{{ route('products.show', $product->slug) }}" class="product-image-wrapper">
                                 @if($product->images->isNotEmpty())
                                     <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
                                          alt="{{ $product->name }}"
@@ -130,17 +134,17 @@
                             </a>
                             <div class="product-details">
                                 <div class="product-category">{{ $product->category->name }}</div>
-                                <a href="{{ route('products.show', $product->id) }}" class="product-title text-decoration-none">
+                                <a href="{{ route('products.show', $product->slug) }}" class="product-title text-decoration-none">
                                     <h3>{{ $product->name }}</h3>
                                 </a>
                                 <div class="product-rating">
                                     <div class="stars" style="--rating: {{ $product['rating'] }}"></div>
                                     <span class="reviews">({{ $product['reviews'] }} تقييم)</span>
                                 </div>
-                                <p class="product-price">{{ number_format($product->price, 2) }} ج.م</p>
+                                <p class="product-price">{{ number_format($product->price, 2) }} ر.س</p>
                                 <div class="product-actions">
                                     @auth
-                                        <a href="{{ route('products.show', $product->id) }}" class="order-product-btn">
+                                        <a href="{{ route('products.show', $product->slug) }}" class="order-product-btn">
                                             <i class="fas fa-shopping-cart me-2"></i>
                                             طلب المنتج
                                         </a>
@@ -176,7 +180,7 @@
         <div class="cart-footer">
             <div class="cart-total">
                 <span>الإجمالي:</span>
-                <span id="cartTotal">0 ج.م</span>
+                <span id="cartTotal">0 ر.س</span>
             </div>
             <a href="{{ route('checkout.index') }}" class="checkout-btn">
                 <i class="fas fa-shopping-cart ml-2"></i>
@@ -360,7 +364,7 @@
                 }, 200);
             }
 
-            cartTotal.textContent = data.total + ' ج.م';
+            cartTotal.textContent = data.total + ' ر.س';
 
             // Clear current items with fade out effect
             cartItems.style.opacity = '0';
@@ -389,7 +393,7 @@
                                     <img src="${item.image}" alt="${item.name}" class="cart-item-image" style="width: 80px; height: 80px; object-fit: cover;">
                                     <div class="cart-item-details flex-grow-1">
                                         <h5 class="cart-item-title mb-2">${item.name}</h5>
-                                        <div class="cart-item-price mb-2">${item.price} ج.م</div>
+                                        <div class="cart-item-price mb-2">${item.price} ر.س</div>
                                         <div class="quantity-controls d-flex align-items-center gap-2">
                                             <button class="btn btn-sm btn-outline-secondary" onclick="updateCartQuantity(${item.id}, -1)">-</button>
                                             <input type="number" value="${item.quantity}" min="1"
@@ -398,7 +402,7 @@
                                             <button class="btn btn-sm btn-outline-secondary" onclick="updateCartQuantity(${item.id}, 1)">+</button>
                                         </div>
                                         <div class="cart-item-subtotal mt-2 text-primary">
-                                            الإجمالي: ${item.subtotal} ج.م
+                                            الإجمالي: ${item.subtotal} ر.س
                                         </div>
                                     </div>
                                 </div>
@@ -585,7 +589,7 @@
 
         if (priceRange) {
             priceRange.addEventListener('input', function() {
-                priceValue.textContent = Number(this.value).toLocaleString() + ' ج.م';
+                priceValue.textContent = Number(this.value).toLocaleString() + ' ر.س';
                 activeFilters.maxPrice = Number(this.value);
                 debounce(applyFilters, 500)();
             });
@@ -692,21 +696,21 @@
                 productElement.className = 'col-md-6 col-lg-4';
                 productElement.innerHTML = `
                     <div class="product-card">
-                        <a href="/products/${product.id}" class="product-image-wrapper">
+                        <a href="/products/${product.slug}" class="product-image-wrapper">
                             <img src="${product.image_url}" alt="${product.name}" class="product-image">
                         </a>
                         <div class="product-details">
                             <div class="product-category">${product.category}</div>
-                            <a href="/products/${product.id}" class="product-title text-decoration-none">
+                            <a href="/products/${product.slug}" class="product-title text-decoration-none">
                                 <h3>${product.name}</h3>
                             </a>
                             <div class="product-rating">
                                 <div class="stars" style="--rating: ${product.rating}"></div>
                                 <span class="reviews">(${product.reviews} تقييم)</span>
                             </div>
-                            <p class="product-price">${product.price} ج.م</p>
+                            <p class="product-price">${product.price} ر.س</p>
                             <div class="product-actions">
-                                <a href="/products/${product.id}" class="order-product-btn">
+                                <a href="/products/${product.slug}" class="order-product-btn">
                                     <i class="fas fa-shopping-cart me-2"></i>
                                     طلب المنتج
                                 </a>
@@ -1416,7 +1420,7 @@
         function updateProductModal(product) {
             $('#modalProductName').text(product.name);
             $('#modalProductDescription').text(product.description);
-            $('#modalProductPrice').text(product.price + ' ج.م');
+            $('#modalProductPrice').text(product.price + ' ر.س');
 
             // Update colors
             const colorsContainer = $('#modalProductColors .colors-grid');

@@ -38,11 +38,11 @@
                     <i class="bi bi-box-seam"></i>
                 </div>
                 <div class="ms-3">
-                    <h3 class="order-number">طلب #{{ $order->id }}</h3>
-                    <span class="status-badge status-{{ $order->order_status }}">
-                        {{ $order->order_status === 'completed' ? 'مكتمل' :
-                               ($order->order_status === 'cancelled' ? 'ملغي' :
-                               ($order->order_status === 'processing' ? 'قيد المعالجة' : 'معلق')) }}
+                    <h3 class="order-number">طلب #{{ $order->order_number }}</h3>
+                    <span class="status-badge status-{{ $order->status }}">
+                        {{ $order->status === 'completed' ? 'مكتمل' :
+                               ($order->status === 'cancelled' ? 'ملغي' :
+                               ($order->status === 'processing' ? 'قيد المعالجة' : 'معلق')) }}
                     </span>
                 </div>
             </div>

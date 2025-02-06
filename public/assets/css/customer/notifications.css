@@ -12,8 +12,8 @@
     --glass-background-dark: rgba(255, 255, 255, 0.65);
     --glass-border: 1px solid rgba(255, 255, 255, 0.55);
 
-    /* ظل قوي وواضح */
-    --card-shadow: 0 12px 40px 0 rgba(74, 58, 255, 0.3);
+    /* تم إزالة الظل */
+    --card-shadow: none;
 
     /* درجات لونية أكثر تباينًا */
     --text-color: #1E2A38;        /* أزرق رمادي داكن وواضح */
@@ -36,7 +36,7 @@ body {
 .notifications-container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 0.75rem;
 }
 
 /* Page Title */
@@ -71,14 +71,14 @@ body {
     border-radius: 12px;
     font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.1);
+    box-shadow: none;
 }
 
 .btn-outline-primary:hover {
     background: var(--primary-color);
     color: white;
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
+    box-shadow: none;
 }
 
 /* Notification Item */
@@ -86,25 +86,25 @@ body {
     background: var(--glass-background);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border-radius: 20px;
-    padding: 1.75rem;
-    margin-bottom: 1.5rem;
-    border: var(--glass-border);
-    box-shadow: var(--card-shadow);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid rgba(108, 92, 231, 0.2);
+    box-shadow: none;
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
 }
 
 .notification-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15);
-    border-color: rgba(108, 92, 231, 0.3);
+    transform: none;
+    border-color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.85);
 }
 
 .notification-item.unread {
-    border-right: 4px solid var(--primary-color);
-    background: var(--glass-background);
+    border-right: 3px solid var(--primary-color);
+    background: rgba(255, 255, 255, 0.85);
 }
 
 .notification-item.unread::before {
@@ -114,28 +114,28 @@ body {
     right: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(45deg, rgba(108, 92, 231, 0.08), transparent);
+    background: linear-gradient(45deg, rgba(74, 58, 255, 0.05), transparent);
     pointer-events: none;
 }
 
 /* Notification Icon */
 .notification-icon {
-    width: 50px;
-    height: 50px;
-    background: rgba(108, 92, 231, 0.1);
-    border-radius: 15px;
+    width: 45px;
+    height: 45px;
+    background: rgba(74, 58, 255, 0.08);
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--primary-color);
-    font-size: 1.5rem;
-    border: 2px solid rgba(108, 92, 231, 0.2);
-    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.1);
+    font-size: 1.25rem;
+    border: 1px solid rgba(74, 58, 255, 0.15);
+    box-shadow: none;
     transition: all 0.3s ease;
 }
 
 .notification-item:hover .notification-icon {
-    transform: scale(1.1) rotate(15deg);
+    transform: none;
     background: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
@@ -145,64 +145,57 @@ body {
 .notification-item h5 {
     color: var(--text-color);
     font-weight: 600;
-    font-size: 1.2rem;
-    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
 }
 
 .notification-item p {
     color: var(--text-light);
-    margin-bottom: 1rem;
-    line-height: 1.6;
-    font-size: 1.05rem;
-}
-
-/* Mark as Read Button */
-.btn-sm.btn-outline-primary {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-    border-radius: 10px;
-    background: var(--glass-background);
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+    font-size: 1rem;
 }
 
 /* Notification Time */
 .notification-time {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-light);
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(108, 92, 231, 0.08);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
+    background: rgba(74, 58, 255, 0.05);
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
     width: fit-content;
-    border: 1px solid rgba(108, 92, 231, 0.15);
+    border: 1px solid rgba(74, 58, 255, 0.1);
 }
 
 /* Empty State */
 .empty-state {
     text-align: center;
-    padding: 4rem 2rem;
+    padding: 3rem 2rem;
     background: var(--glass-background);
     backdrop-filter: blur(8px);
-    border-radius: 30px;
-    border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    border-radius: 12px;
+    border: 1px solid rgba(74, 58, 255, 0.15);
+    box-shadow: none;
+    margin-top: 2rem;
 }
 
 .empty-state-icon {
-    font-size: 4rem;
+    font-size: 3rem;
     color: var(--primary-color);
-    margin-bottom: 1.5rem;
-    opacity: 0.7;
-    background: rgba(108, 92, 231, 0.1);
-    width: 100px;
-    height: 100px;
+    margin-bottom: 1.25rem;
+    opacity: 0.8;
+    background: rgba(74, 58, 255, 0.08);
+    width: 80px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    margin: 0 auto 2rem;
-    border: 2px solid rgba(108, 92, 231, 0.2);
+    border-radius: 12px;
+    margin: 0 auto 1.5rem;
+    border: 1px solid rgba(74, 58, 255, 0.15);
 }
 
 .empty-state h3 {
@@ -241,7 +234,7 @@ body {
     background: var(--primary-color);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
+    box-shadow: none;
 }
 
 /* Animations */
@@ -308,4 +301,13 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-color);
+}
+
+/* Mark as Read Button */
+.btn-sm.btn-outline-primary {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    background: var(--glass-background);
+    border: 1px solid var(--primary-color);
 }

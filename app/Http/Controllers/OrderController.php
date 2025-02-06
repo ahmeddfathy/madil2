@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Notifications\OrderCreated;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -62,6 +63,7 @@ class OrderController extends Controller
             // Create order
             $order = Order::create([
                 'user_id' => Auth::id(),
+                'uuid' => (string) Str::uuid(),
                 'total_amount' => $total,
                 'shipping_address' => $validated['shipping_address'],
                 'phone' => $validated['phone'],

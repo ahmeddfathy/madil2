@@ -13,129 +13,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/customer/dashboard.css') }}">
     <style>
-        /* Sidebar Styles */
-        .sidebar {
-            position: fixed;
-            right: 0;
-            top: 0;
-            height: 100vh;
-            width: 280px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            transition: all 0.3s ease;
-            border-left: 1px solid rgba(255, 255, 255, 0.18);
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-user-info {
-            padding: 20px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin-bottom: 10px;
-            object-fit: cover;
-            border: 3px solid rgba(108, 92, 231, 0.8);
-            box-shadow: 0 0 15px rgba(108, 92, 231, 0.3);
-        }
-
-        .sidebar-menu {
-            padding: 20px 0;
-        }
-
-        .sidebar-menu .nav-link {
-            padding: 12px 20px;
-            color: #333;
-            display: flex;
-            align-items: center;
-            transition: all 0.3s;
-            margin: 2px 10px;
-            border-radius: 10px;
-        }
-
-        .sidebar-menu .nav-link:hover {
-            background: rgba(255, 255, 255, 0.3);
-            color: var(--primary-color);
-            transform: translateX(-5px);
-        }
-
-        .sidebar-menu .nav-link.active {
-            background: rgba(108, 92, 231, 0.15);
-            color: var(--primary-color);
-            border-right: 4px solid var(--primary-color);
-        }
-
-        .sidebar-menu .nav-link i {
-            margin-left: 10px;
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Main Content Styles */
-        .main-content {
-            margin-right: 280px;
-            padding: 20px;
-            padding-top: 76px;
-            transition: all 0.3s ease;
-        }
-
-        /* Mobile Styles */
-        @media (max-width: 991.98px) {
-            .sidebar {
-                transform: translateX(280px);
-            }
-
-            .sidebar.show {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-right: 0;
-                padding-top: 76px;
-            }
-
-            .sidebar-toggle {
-                display: block !important;
-            }
-        }
-
-        .sidebar-toggle {
-            display: none;
-            position: fixed;
-            right: 20px;
-            top: 20px;
-            z-index: 1001;
-            background: rgba(108, 92, 231, 0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+        /* Base Styles */
+        body {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            overflow-x: hidden;
         }
 
         /* Navbar Styles */
         .glass-navbar {
-            background: rgba(255, 255, 255, 0.7) !important;
+            background: rgba(255, 255, 255, 0.9) !important;
             backdrop-filter: blur(10px) !important;
             -webkit-backdrop-filter: blur(10px) !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 0;
+            padding-right: 4rem !important;
+        }
+
+        .navbar-brand img {
+            height: 50px;
+            width: auto;
         }
 
         .navbar-nav .nav-link {
@@ -143,69 +41,289 @@
             padding: 0.5rem 1rem;
             transition: all 0.3s;
             border-radius: 8px;
-            margin: 0 5px;
+            margin: 0.25rem;
+            font-weight: 500;
         }
 
-        .navbar-nav .nav-link:hover {
-            background: rgba(108, 92, 231, 0.1);
-            color: var(--primary-color);
-            transform: translateY(-2px);
-        }
-
+        .navbar-nav .nav-link:hover,
         .navbar-nav .nav-link.active {
-            background: rgba(108, 92, 231, 0.15);
+            background: rgba(108, 92, 231, 0.1);
             color: var(--primary-color);
         }
 
         .nav-buttons .btn-link {
-            color: #333;
-            text-decoration: none;
             padding: 0.5rem;
+            color: #333;
             transition: all 0.3s;
             border-radius: 8px;
-            margin: 0 5px;
+            position: relative;
         }
 
         .nav-buttons .btn-link:hover {
             background: rgba(108, 92, 231, 0.1);
             color: var(--primary-color);
-            transform: translateY(-2px);
         }
 
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-user-info {
+            padding: 1.5rem 1rem;
+            text-align: center;
+            background: rgba(108, 92, 231, 0.05);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid var(--primary-color);
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .sidebar-menu .nav-link {
+            padding: 0.75rem 1rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            margin: 0.25rem 0.75rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .sidebar-menu .nav-link:hover,
+        .sidebar-menu .nav-link.active {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--primary-color);
+        }
+
+        .sidebar-menu .nav-link i {
+            width: 24px;
+            margin-left: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-right: 280px;
+            padding: 1rem;
+            padding-top: 76px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 250px;
+            }
+            .main-content {
+                margin-right: 250px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-right: 0;
+            }
+            .sidebar-toggle {
+                display: block !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-brand img {
+                height: 40px;
+            }
+            .nav-buttons {
+                margin-top: 1rem;
+                justify-content: center !important;
+            }
+            .nav-buttons .btn-link {
+                padding: 0.4rem;
+            }
+            .sidebar {
+                width: 100%;
+                max-width: 300px;
+            }
+            .main-content {
+                padding: 0.75rem;
+                padding-top: 70px;
+            }
+            .sidebar-menu .nav-link {
+                padding: 0.6rem 0.75rem;
+                margin: 0.25rem 0.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar {
+                padding: 0.5rem 0;
+            }
+            .navbar-brand img {
+                height: 35px;
+            }
+            .nav-buttons .btn-link {
+                padding: 0.3rem;
+                font-size: 0.9rem;
+            }
+            .sidebar-user-info {
+                padding: 1rem;
+            }
+            .user-avatar {
+                width: 60px;
+                height: 60px;
+            }
+            .sidebar-menu .nav-link {
+                font-size: 0.9rem;
+            }
+            .main-content {
+                padding: 0.5rem;
+                padding-top: 65px;
+            }
+            .glass-navbar {
+                padding-right: 3.5rem !important;
+            }
+        }
+
+        /* Sidebar Toggle Button */
+        .sidebar-toggle {
+            display: block;
+            position: fixed;
+            right: 1rem;
+            top: 1rem;
+            z-index: 1050;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--secondary-color);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .sidebar-toggle i {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.show + .main-content .sidebar-toggle i {
+            transform: rotate(180deg);
+        }
+
+        /* Notification Dropdown */
         .notification-dropdown {
-            background: rgba(255, 255, 255, 0.9);
+            width: 300px;
+            max-width: 90vw;
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            border-radius: 15px;
-            min-width: 300px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             padding: 0;
             overflow: hidden;
         }
 
-        .notification-dropdown .dropdown-item {
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-            transition: all 0.3s;
+        @media (max-width: 576px) {
+            .notification-dropdown {
+                width: 280px;
+                margin-top: 0.5rem;
+            }
         }
 
-        .notification-dropdown .dropdown-item:hover {
-            background: rgba(108, 92, 231, 0.1);
+        /* Badge Styles */
+        .badge {
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+            font-weight: 500;
         }
 
-        .notification-dropdown .dropdown-item.unread {
-            background: rgba(108, 92, 231, 0.05);
+        /* Button Styles */
+        .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
         }
 
-        .notification-dropdown .notification-content {
-            margin-right: 2rem;
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Scrollbar Styles */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(108, 92, 231, 0.5);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(108, 92, 231, 0.7);
         }
     </style>
     @yield('styles')
 </head>
 
 <body>
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle" type="button" aria-label="Toggle Sidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
         <div class="container">
@@ -280,11 +398,6 @@
             </div>
         </div>
     </nav>
-
-    <!-- Sidebar Toggle Button (Mobile) -->
-    <button class="sidebar-toggle" type="button">
-        <i class="fas fa-bars"></i>
-    </button>
 
     <!-- Sidebar -->
     <div class="sidebar">

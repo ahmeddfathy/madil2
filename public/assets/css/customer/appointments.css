@@ -6,7 +6,7 @@
     --glass-background: rgba(255, 255, 255, 0.75);      /* شفافية أكثر وضوحًا */
     --glass-background-dark: rgba(255, 255, 255, 0.65);  /* شفافية معتدلة ومريحة */
     --glass-border: 1px solid rgba(255, 255, 255, 0.55); /* حدود خفيفة وواضحة */
-    --card-shadow: 0 12px 40px 0 rgba(74, 58, 255, 0.3); /* ظل أكثر عمقًا وتأثيرًا */
+    --card-shadow: none; /* تم إزالة الظل */
     --text-color: #1E2A38;        /* نص داكن واضح للقراءة */
     --text-light: #2C3E50;        /* نص رمادي مائل للأزرق مع وضوح */
     --text-muted: #4A5F6E;        /* رمادي مائل للأزرق أكثر حيوية */
@@ -60,7 +60,7 @@ body {
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    box-shadow: none;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: grid;
     grid-template-columns: 1fr auto auto;
@@ -70,7 +70,7 @@ body {
 
 .appointment-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
+    box-shadow: none;
 }
 
 .appointment-content {
@@ -146,7 +146,7 @@ body {
     min-width: 120px;
     text-align: center;
     margin: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
 }
 
 .status-pending {
@@ -176,7 +176,7 @@ body {
     padding: 1.25rem;
     margin-bottom: 2rem;
     border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    box-shadow: none;
     display: flex;
     justify-content: center;
     gap: 1rem;
@@ -197,13 +197,13 @@ body {
     background: var(--primary-color);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
+    box-shadow: none;
 }
 
 .filter-btn.active {
     background: var(--primary-color);
     color: white;
-    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
+    box-shadow: none;
 }
 
 /* Buttons */
@@ -213,7 +213,7 @@ body {
     font-weight: 600;
     font-size: 1rem;
     transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
+    box-shadow: none;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -228,7 +228,7 @@ body {
 .btn-primary:hover {
     background: var(--secondary-color);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
+    box-shadow: none;
 }
 
 .btn-outline-primary {
@@ -241,20 +241,20 @@ body {
     background: var(--primary-color);
     color: var(--white-color);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(115, 103, 240, 0.3);
+    box-shadow: none;
 }
 
 .btn-danger {
     background: var(--danger-color);
     color: var(--white-color);
     border: none;
-    box-shadow: 0 4px 12px rgba(234, 84, 85, 0.3);
+    box-shadow: none;
 }
 
 .btn-danger:hover {
     background: #e42728;
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(234, 84, 85, 0.4);
+    box-shadow: none;
 }
 
 .btn-details {
@@ -269,7 +269,7 @@ body {
 .btn-details:hover {
     background: var(--secondary-color);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
+    box-shadow: none;
 }
 
 /* Empty State */
@@ -280,7 +280,7 @@ body {
     backdrop-filter: blur(8px);
     border-radius: 30px;
     border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    box-shadow: none;
     margin: 2rem auto;
     max-width: 600px;
 }
@@ -315,13 +315,13 @@ body {
     position: relative;
     z-index: 1;
     border: none;
-    box-shadow: 0 8px 25px rgba(115, 103, 240, 0.3);
+    box-shadow: none;
 }
 
 .empty-state .btn:hover {
     background: var(--primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 8px 35px rgba(115, 103, 240, 0.35);
+    box-shadow: none;
 }
 
 @media (max-width: 768px) {
@@ -401,7 +401,7 @@ body {
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 2.5rem;
-    box-shadow: var(--shadow-md);
+    box-shadow: none;
     border: 1px solid var(--glass-border);
 }
 
@@ -441,7 +441,7 @@ body {
 
 .form-control:focus, .form-select:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.1);
+    box-shadow: none;
 }
 
 .form-label {
@@ -470,7 +470,7 @@ body {
 .service-option.selected {
     border-color: var(--primary-color);
     background: rgba(115, 103, 240, 0.1);
-    box-shadow: 0 4px 12px rgba(115, 103, 240, 0.2);
+    box-shadow: none;
 }
 
 /* Time Slots */

@@ -41,8 +41,12 @@
                             0
                         </span>
                     </button>
-                    <a href="/login" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
-                    <a href="/register" class="btn btn-primary">إنشاء حساب</a>
+                            @auth
+                                <a href="/dashboard" class="btn btn-primary">لوحة التحكم</a>
+                            @else
+                                <a href="/login" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
+                                <a href="/register" class="btn btn-primary">إنشاء حساب</a>
+                            @endauth
                 </div>
             </div>
         </div>
@@ -62,7 +66,7 @@
         <div class="cart-footer">
             <div class="cart-total">
                 <span>الإجمالي:</span>
-                <span id="cartTotal">0 ج.م</span>
+                <span id="cartTotal">0 ر.س</span>
             </div>
             <a href="{{ route('checkout.index') }}" class="checkout-btn">
                 <i class="fas fa-shopping-cart ml-2"></i>
@@ -127,7 +131,7 @@
                     </div>
 
                     <div class="product-price mb-4">
-                        <span class="currency">ج.م</span>
+                        <span class="currency">ر.س</span>
                         <span class="amount">{{ number_format($product->price, 2) }}</span>
                     </div>
 
@@ -781,7 +785,7 @@
                 }, 200);
             }
 
-            cartTotal.textContent = data.total + ' ج.م';
+            cartTotal.textContent = data.total + ' ر.س';
 
             // Clear current items with fade out effect
             cartItems.style.opacity = '0';
@@ -810,7 +814,7 @@
                                     <img src="${item.image}" alt="${item.name}" class="cart-item-image" style="width: 80px; height: 80px; object-fit: cover;">
                                     <div class="cart-item-details flex-grow-1">
                                         <h5 class="cart-item-title mb-2">${item.name}</h5>
-                                        <div class="cart-item-price mb-2">${item.price} ج.م</div>
+                                        <div class="cart-item-price mb-2">${item.price} ر.س</div>
                                         <div class="quantity-controls d-flex align-items-center gap-2">
                                             <button class="btn btn-sm btn-outline-secondary" onclick="updateCartQuantity(${item.id}, -1)">-</button>
                                             <input type="number" value="${item.quantity}" min="1"
@@ -819,7 +823,7 @@
                                             <button class="btn btn-sm btn-outline-secondary" onclick="updateCartQuantity(${item.id}, 1)">+</button>
                                 </div>
                                         <div class="cart-item-subtotal mt-2 text-primary">
-                                    الإجمالي: ${item.subtotal} ج.م
+                                    الإجمالي: ${item.subtotal} ر.س
                                 </div>
                             </div>
                         </div>

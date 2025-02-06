@@ -46,11 +46,6 @@ Route::get('/about', function () {
 
 
 
-// Newsletter Subscription
-Route::post('/newsletter/subscribe', function (Request $request) {
-    // هنا يمكن إضافة منطق معالجة الاشتراك في النشرة البريدية
-    return back()->with('success', 'تم الاشتراك في النشرة البريدية بنجاح');
-})->name('newsletter.subscribe');
 
 // Products Routes (Public)
 Route::prefix('products')->name('products.')->group(function () {

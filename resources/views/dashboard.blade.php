@@ -11,19 +11,19 @@
     <!-- Welcome Section -->
     <div class="welcome-section mb-4">
         <div class="row align-items-center">
-            <div class="col-md-8">
+            <div class="col-12 col-md-8 mb-3 mb-md-0">
                 <h1 class="h3 mb-1">مرحباً، {{ Auth::user()->name }}</h1>
                 <p class="text-muted mb-0">مرحباً بك في لوحة التحكم الخاصة بك</p>
             </div>
-            <div class="col-md-4 text-md-end">
+            <div class="col-12 col-md-4 text-center text-md-end">
                 <span class="badge bg-primary">{{ Auth::user()->role === 'admin' ? 'مدير' : 'عميل' }}</span>
             </div>
         </div>
     </div>
 
     <!-- Stats Cards -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-3 col-sm-6">
+    <div class="row g-3 g-md-4 mb-4">
+        <div class="col-12 col-sm-6 col-md-3">
             <div class="dashboard-card orders">
                 <div class="card-icon">
                     <i class="fas fa-shopping-bag"></i>
@@ -39,7 +39,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
+        <div class="col-12 col-sm-6 col-md-3">
             <div class="dashboard-card appointments">
                 <div class="card-icon">
                     <i class="fas fa-calendar-check"></i>
@@ -55,7 +55,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
+        <div class="col-12 col-sm-6 col-md-3">
             <div class="dashboard-card cart">
                 <div class="card-icon">
                     <i class="fas fa-shopping-cart"></i>
@@ -71,7 +71,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
+        <div class="col-12 col-sm-6 col-md-3">
             <div class="dashboard-card notifications">
                 <div class="card-icon">
                     <i class="fas fa-bell"></i>
@@ -90,12 +90,12 @@
     </div>
 
     <!-- Phone Numbers & Addresses Section -->
-    <div class="row g-4 mb-4">
+    <div class="row g-3 g-md-4 mb-4">
         <!-- Phone Numbers -->
-        <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>أرقام الهاتف</h5>
+        <div class="col-12 col-xl-6">
+            <div class="card h-100">
+                <div class="card-header d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                    <h5 class="mb-0">أرقام الهاتف</h5>
                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addPhoneModal">
                         <i class="fas fa-plus ms-1"></i>إضافة رقم
                     </button>
@@ -156,10 +156,10 @@
         </div>
 
         <!-- Addresses -->
-        <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>العناوين</h5>
+        <div class="col-12 col-xl-6">
+            <div class="card h-100">
+                <div class="card-header d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                    <h5 class="mb-0">العناوين</h5>
                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">
                         <i class="fas fa-plus ms-1"></i>إضافة عنوان
                     </button>
@@ -221,12 +221,12 @@
     </div>
 
     <!-- Recent Orders & Upcoming Appointments -->
-    <div class="row g-4">
+    <div class="row g-3 g-md-4">
         <!-- Recent Orders -->
-        <div class="col-lg-6">
-            <div class="section-card">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2>آخر الطلبات</h2>
+        <div class="col-12 col-xl-6">
+            <div class="section-card h-100">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
+                    <h2 class="mb-0">آخر الطلبات</h2>
                     <a href="/orders" class="btn btn-outline-primary btn-sm">
                         عرض الكل <i class="fas fa-arrow-left me-1"></i>
                     </a>
@@ -272,10 +272,10 @@
         </div>
 
         <!-- Upcoming Appointments -->
-        <div class="col-lg-6">
-            <div class="section-card">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2>المواعيد القادمة</h2>
+        <div class="col-12 col-xl-6">
+            <div class="section-card h-100">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
+                    <h2 class="mb-0">المواعيد القادمة</h2>
                     <a href="/appointments" class="btn btn-outline-primary btn-sm">
                         عرض الكل <i class="fas fa-arrow-left me-1"></i>
                     </a>

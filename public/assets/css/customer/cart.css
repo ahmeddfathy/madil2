@@ -7,7 +7,7 @@
     --glass-background: rgba(255, 255, 255, 0.75);      /* شفافية أكثر وضوحًا */
     --glass-background-dark: rgba(255, 255, 255, 0.65);  /* شفافية معتدلة ومريحة */
     --glass-border: 1px solid rgba(255, 255, 255, 0.55); /* حدود خفيفة وواضحة */
-    --card-shadow: 0 12px 40px 0 rgba(74, 58, 255, 0.3); /* ظل أكثر عمقًا وتأثيرًا */
+    --card-shadow: none; /* تم إزالة الظل */
     --text-color: #1E2A38;        /* نص داكن واضح للقراءة */
     --text-light: #2C3E50;        /* نص رمادي مائل للأزرق مع وضوح */
     --danger-color: #FF4D4D;      /* أحمر صارخ وواضح */
@@ -58,13 +58,13 @@ body {
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    box-shadow: none;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .cart-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
+    box-shadow: none;
 }
 
 .cart-item-image {
@@ -73,7 +73,7 @@ body {
     object-fit: cover;
     border-radius: 15px;
     border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    box-shadow: none;
     transition: transform 0.5s ease;
 }
 
@@ -115,7 +115,7 @@ body {
     padding: 0.5rem 1.5rem;
     border-radius: 15px;
     border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    box-shadow: none;
 }
 
 /* Quantity Controls */
@@ -127,7 +127,7 @@ body {
     padding: 0.5rem;
     border-radius: 20px;
     border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    box-shadow: none;
     max-width: fit-content;
 }
 
@@ -170,7 +170,7 @@ body {
     border-radius: 25px;
     padding: 2rem;
     border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    box-shadow: none;
     position: sticky;
     top: 2rem;
 }
@@ -252,13 +252,13 @@ body {
     margin-top: 1.5rem;
     font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
+    box-shadow: none;
 }
 
 .checkout-btn:hover {
     background: var(--secondary-color);
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
+    box-shadow: none;
 }
 
 /* Continue Shopping */
@@ -294,7 +294,7 @@ body {
     backdrop-filter: blur(8px);
     border-radius: 30px;
     border: var(--glass-border);
-    box-shadow: var(--card-shadow);
+    box-shadow: none;
 }
 
 .empty-cart-icon {
@@ -329,7 +329,7 @@ body {
 .empty-cart .btn:hover {
     background: var(--secondary-color);
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
+    box-shadow: none;
 }
 
 /* Animations */

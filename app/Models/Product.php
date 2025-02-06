@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -45,6 +46,27 @@ class Product extends Model
     'image_url',
     'all_images'
   ];
+
+  protected static function boot()
+  {
+    parent::boot();
+
+    static::creating(function ($product) {
+      $product->slug = Str::slug($product->name);
+
+      // Ensure unique slug
+      $count = 1;
+      while (static::where('slug', $product->slug)->exists()) {
+        $product->slug = Str::slug($product->name) . '-' . $count;
+        $count++;
+      }
+    });
+  }
+
+  public function getRouteKeyName()
+  {
+    return 'slug';
+  }
 
   public function category(): BelongsTo
   {

@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'تفاصيل الطلب #' . $order->id)
+@section('title', 'تفاصيل الطلب #' . $order->order_number)
 
 @section('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -11,7 +11,7 @@
 <header class="header-container">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="page-title">تفاصيل الطلب #{{ $order->id }}</h2>
+            <h2 class="page-title">تفاصيل الطلب #{{ $order->order_number }}</h2>
             <a href="/orders" class="btn btn-secondary">
                 <i class="bi bi-arrow-right"></i>
                 العودة للطلبات
