@@ -227,21 +227,40 @@
                     {{ session('success') }}
                 </div>
               @endif
-              <form method="POST" action="{{ route('contact.send') }}">
+              <form method="POST" action="{{ route('contact.send') }}" class="contact-form-inner">
                 @csrf
                 <div class="form-group">
-                  <input type="text" name="name" class="form-control" placeholder="الاسم الكامل" required />
+                  <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
+                         placeholder="الاسم الكامل" required value="{{ old('name') }}" />
+                  @error('name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
                 </div>
                 <div class="form-group">
-                  <input type="email" name="email" class="form-control" placeholder="البريد الإلكتروني" required />
+                  <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                         placeholder="البريد الإلكتروني" required value="{{ old('email') }}" />
+                  @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
                 </div>
                 <div class="form-group">
-                  <input type="tel" name="phone" class="form-control" placeholder="رقم الجوال" required />
+                  <input type="tel" name="phone" class="form-control @error('phone') is-invalid @enderror"
+                         placeholder="رقم الجوال" required value="{{ old('phone') }}" />
+                  @error('phone')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
                 </div>
                 <div class="form-group">
-                  <textarea name="message" class="form-control" rows="4" placeholder="رسالتك" required></textarea>
+                  <textarea name="message" class="form-control @error('message') is-invalid @enderror"
+                            rows="4" placeholder="رسالتك" required>{{ old('message') }}</textarea>
+                  @error('message')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
                 </div>
-                <button type="submit" class="btn btn-primary w-100">إرسال الرسالة</button>
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="fas fa-paper-plane me-2"></i>
+                  إرسال الرسالة
+                </button>
               </form>
             </div>
           </div>
