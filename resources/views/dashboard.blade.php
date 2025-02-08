@@ -19,6 +19,84 @@
                 <span class="badge bg-primary">{{ Auth::user()->role === 'admin' ? 'مدير' : 'عميل' }}</span>
             </div>
         </div>
+        <!-- Guide Hint -->
+        <div class="guide-hint mt-3">
+            <div class="alert alert-info d-flex align-items-center border-0" role="alert">
+                <i class="fas fa-lightbulb me-2 text-warning"></i>
+                <span>تحتاج مساعدة؟ اضغط على زر <i class="fas fa-question-circle mx-1 text-primary"></i> في أسفل يسار الشاشة لعرض دليل استخدام لوحة التحكم</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guide Toggle Button -->
+    <button class="guide-toggle-btn" id="guideToggle" title="دليل الاستخدام">
+        <i class="fas fa-question"></i>
+    </button>
+
+    <!-- User Guide Section -->
+    <div class="user-guide-section" id="userGuide">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-4">
+                    <i class="fas fa-book-reader me-2 text-primary"></i>
+                    دليل استخدام لوحة التحكم
+                </h5>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="guide-item">
+                            <h6>
+                                <i class="fas fa-phone-alt text-primary me-2"></i>
+                                إدارة أرقام الهاتف
+                            </h6>
+                            <ul class="text-muted small">
+                                <li>اضغط على "إضافة رقم" لتسجيل رقم هاتف جديد</li>
+                                <li>يمكنك تعيين رقم كرقم رئيسي باستخدام أيقونة النجمة</li>
+                                <li>استخدم أيقونة التعديل لتحديث رقم موجود</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="guide-item">
+                            <h6>
+                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                إدارة العناوين
+                            </h6>
+                            <ul class="text-muted small">
+                                <li>اضغط على "إضافة عنوان" لتسجيل عنوان جديد</li>
+                                <li>أدخل تفاصيل العنوان كاملة للتوصيل السريع</li>
+                                <li>يمكنك تحديد عنوان رئيسي للطلبات المستقبلية</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="guide-item">
+                            <h6>
+                                <i class="fas fa-shopping-bag text-primary me-2"></i>
+                                متابعة الطلبات
+                            </h6>
+                            <ul class="text-muted small">
+                                <li>راقب آخر طلباتك وحالتها في قسم "آخر الطلبات"</li>
+                                <li>اضغط على أيقونة العين لعرض تفاصيل أي طلب</li>
+                                <li>تابع حالة طلبك من خلال الألوان المميزة</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="guide-item">
+                            <h6>
+                                <i class="fas fa-calendar-check text-primary me-2"></i>
+                                إدارة المواعيد
+                            </h6>
+                            <ul class="text-muted small">
+                                <li>تابع مواعيدك القادمة في قسم "المواعيد القادمة"</li>
+                                <li>اضغط على "التفاصيل" لمعرفة المزيد عن أي موعد</li>
+                                <li>راقب الوقت والتاريخ لكل موعد بدقة</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Stats Cards -->
@@ -114,9 +192,9 @@
                                 <div>
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-phone me-2"></i>
-                                        <span class="phone-number">{{ $phone['phone'] }}</span>
+                                        <span class="phone-number" dir="ltr">{{ substr($phone['phone'], 0, 4) }} {{ substr($phone['phone'], 4, 3) }} {{ substr($phone['phone'], 7) }}</span>
                                         @if($phone['is_primary'])
-                                        <span class="badge bg-warning ms-2">رئيسي</span>
+                                        <span class="badge bg-warning ms-2 primary-badge">رئيسي</span>
                                         @endif
                                         <span class="badge bg-{{ $phone['type_color'] }} ms-2">{{ $phone['type_text'] }}</span>
                                     </div>
@@ -245,15 +323,16 @@
                         <tbody>
                             @foreach($recent_orders as $order)
                             <tr>
-                                <td>#{{ $order->id }}</td>
-                                <td>{{ $order->created_at->format('Y/m/d') }}</td>
+                                <td>#{{ $order['order_number'] }}</td>
+                                <td>{{ $order['created_at']->format('Y/m/d') }}</td>
                                 <td>
-                                    <span class="badge bg-{{ $order->status_color }}">
-                                        {{ $order->status_text }}
+                                    <span class="badge bg-{{ $order['status_color'] }}">
+                                        {{ $order['status_text'] }}
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="/orders/{{ $order->id }}" class="btn btn-sm btn-primary">
+                                    <a href="{{ route('orders.show', $order['uuid']) }}"
+                                       class="btn btn-sm btn-primary">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                 </td>

@@ -130,7 +130,20 @@ class AddressController extends Controller
     public function destroy($id)
     {
         $address = Address::where('user_id', Auth::id())->findOrFail($id);
-        $address->delete();
+
+        // إذا كان هذا العنوان رئيسياً، نقوم بتعيين عنوان آخر كعنوان رئيسي
+        if ($address->is_primary) {
+            $newPrimary = Address::where('user_id', Auth::id())
+                ->where('id', '!=', $id)
+                ->first();
+
+            if ($newPrimary) {
+                $newPrimary->setAsPrimary();
+            }
+        }
+
+        // حذف نهائي للعنوان
+        $address->forceDelete(); // not needed anymore since we removed SoftDeletes, but kept for clarity
 
         return response()->json(['message' => 'تم حذف العنوان بنجاح']);
     }

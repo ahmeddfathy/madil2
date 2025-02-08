@@ -16,7 +16,8 @@ class ReportService
     $startDate = $this->getStartDate($period);
     $endDate = now();
 
-    $salesData = Order::where('order_status', '!=', Order::ORDER_STATUS_CANCELLED)
+    $salesData = Order::where('order_status', Order::ORDER_STATUS_COMPLETED)
+      ->where('payment_status', Order::PAYMENT_STATUS_PAID)
       ->whereBetween('created_at', [$startDate, $endDate])
       ->select(
         DB::raw('DATE(created_at) as date'),
@@ -41,7 +42,8 @@ class ReportService
     }
 
     // Get sales by payment method
-    $salesByPaymentMethod = Order::where('order_status', '!=', Order::ORDER_STATUS_CANCELLED)
+    $salesByPaymentMethod = Order::where('order_status', Order::ORDER_STATUS_COMPLETED)
+      ->where('payment_status', Order::PAYMENT_STATUS_PAID)
       ->whereBetween('created_at', [$startDate, $endDate])
       ->select('payment_method', DB::raw('SUM(total_amount) as total'))
       ->groupBy('payment_method')
@@ -50,7 +52,8 @@ class ReportService
       ->toArray();
 
     // Add peak hours analysis
-    $peakHours = Order::where('order_status', '!=', Order::ORDER_STATUS_CANCELLED)
+    $peakHours = Order::where('order_status', Order::ORDER_STATUS_COMPLETED)
+        ->where('payment_status', Order::PAYMENT_STATUS_PAID)
         ->whereBetween('created_at', [$startDate, $endDate])
         ->select(DB::raw('HOUR(created_at) as hour'), DB::raw('COUNT(*) as count'))
         ->groupBy('hour')
@@ -59,7 +62,8 @@ class ReportService
         ->get();
 
     // Add customer analysis
-    $customerAnalysis = Order::where('order_status', '!=', Order::ORDER_STATUS_CANCELLED)
+    $customerAnalysis = Order::where('order_status', Order::ORDER_STATUS_COMPLETED)
+        ->where('payment_status', Order::PAYMENT_STATUS_PAID)
         ->whereBetween('created_at', [$startDate, $endDate])
         ->select('user_id', DB::raw('COUNT(*) as orders'), DB::raw('SUM(total_amount) as total'))
         ->groupBy('user_id')
@@ -71,13 +75,15 @@ class ReportService
     // Add top products analysis
     $topProducts = Product::withCount(['orderItems as total_quantity' => function ($query) use ($startDate, $endDate) {
         $query->whereHas('order', function ($q) use ($startDate, $endDate) {
-            $q->where('order_status', '!=', Order::ORDER_STATUS_CANCELLED)
+            $q->where('order_status', Order::ORDER_STATUS_COMPLETED)
+                ->where('payment_status', Order::PAYMENT_STATUS_PAID)
                 ->whereBetween('created_at', [$startDate, $endDate]);
         });
     }])
     ->withSum(['orderItems as total_revenue' => function ($query) use ($startDate, $endDate) {
         $query->whereHas('order', function ($q) use ($startDate, $endDate) {
-            $q->where('order_status', '!=', Order::ORDER_STATUS_CANCELLED)
+            $q->where('order_status', Order::ORDER_STATUS_COMPLETED)
+                ->where('payment_status', Order::PAYMENT_STATUS_PAID)
                 ->whereBetween('created_at', [$startDate, $endDate]);
         });
     }], 'subtotal')
@@ -86,7 +92,8 @@ class ReportService
         $previousEnd = $startDate->subDay();
 
         $query->whereHas('order', function ($q) use ($previousStart, $previousEnd) {
-            $q->where('order_status', '!=', Order::ORDER_STATUS_CANCELLED)
+            $q->where('order_status', Order::ORDER_STATUS_COMPLETED)
+                ->where('payment_status', Order::PAYMENT_STATUS_PAID)
                 ->whereBetween('created_at', [$previousStart, $previousEnd]);
         });
     }], 'subtotal')
@@ -132,14 +139,16 @@ class ReportService
 
     $query = Product::withCount(['orderItems as total_quantity' => function ($query) use ($startDate, $endDate) {
       $query->whereHas('order', function ($q) use ($startDate, $endDate) {
-        $q->where('order_status', '!=', Order::ORDER_STATUS_CANCELLED)
+        $q->where('order_status', Order::ORDER_STATUS_COMPLETED)
+          ->where('payment_status', Order::PAYMENT_STATUS_PAID)
           ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
           ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate));
       });
     }])
     ->withSum(['orderItems as total_revenue' => function ($query) use ($startDate, $endDate) {
       $query->whereHas('order', function ($q) use ($startDate, $endDate) {
-        $q->where('order_status', '!=', Order::ORDER_STATUS_CANCELLED)
+        $q->where('order_status', Order::ORDER_STATUS_COMPLETED)
+          ->where('payment_status', Order::PAYMENT_STATUS_PAID)
           ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
           ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate));
       });
@@ -298,11 +307,13 @@ class ReportService
     $previousEndDate = $currentStartDate->copy()->subDay();
     $previousStartDate = $previousEndDate->copy()->subDays($periodInDays);
 
-    $currentPeriod = Order::where('order_status', '!=', Order::ORDER_STATUS_CANCELLED)
+    $currentPeriod = Order::where('order_status', Order::ORDER_STATUS_COMPLETED)
+        ->where('payment_status', Order::PAYMENT_STATUS_PAID)
         ->whereBetween('created_at', [$currentStartDate, $currentEndDate])
         ->sum('total_amount');
 
-    $previousPeriod = Order::where('order_status', '!=', Order::ORDER_STATUS_CANCELLED)
+    $previousPeriod = Order::where('order_status', Order::ORDER_STATUS_COMPLETED)
+        ->where('payment_status', Order::PAYMENT_STATUS_PAID)
         ->whereBetween('created_at', [$previousStartDate, $previousEndDate])
         ->sum('total_amount');
 

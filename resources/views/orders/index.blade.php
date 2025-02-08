@@ -39,10 +39,10 @@
                 </div>
                 <div class="ms-3">
                     <h3 class="order-number">طلب #{{ $order->order_number }}</h3>
-                    <span class="status-badge status-{{ $order->status }}">
-                        {{ $order->status === 'completed' ? 'مكتمل' :
-                               ($order->status === 'cancelled' ? 'ملغي' :
-                               ($order->status === 'processing' ? 'قيد المعالجة' : 'معلق')) }}
+                    <span class="status-badge status-{{ $order->order_status }}">
+                        {{ $order->order_status === 'completed' ? 'مكتمل' :
+                               ($order->order_status === 'cancelled' ? 'ملغي' :
+                               ($order->order_status === 'processing' ? 'قيد المعالجة' : 'معلق')) }}
                     </span>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                 <div class="order-total">
                     {{ $order->total_amount }} ريال
                 </div>
-                <a href="{{ route('orders.show', $order->id) }}" class="btn btn-primary">
+                <a href="{{ route('orders.show', $order->uuid) }}" class="btn btn-primary">
                     <i class="bi bi-eye"></i>
                     عرض التفاصيل
                 </a>
@@ -84,7 +84,7 @@
 
             @if($order->items->count() > 4)
             <div class="text-center mt-3">
-                <a href="{{ route('orders.show', $order->id) }}" class="btn btn-link">
+                <a href="{{ route('orders.show', $order->uuid) }}" class="btn btn-link">
                     عرض {{ $order->items->count() - 4 }} منتجات إضافية
                 </a>
             </div>

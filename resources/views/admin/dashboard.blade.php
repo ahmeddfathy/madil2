@@ -187,7 +187,7 @@
                     <tbody>
                         @forelse($recentOrders as $order)
                         <tr>
-                            <td data-label="الطلب">{{ $order['id'] }}</td>
+                            <td data-label="الطلب">#{{ $order['order_number'] }}</td>
                             <td data-label="العميل">{{ $order['user_name'] }}</td>
                             <td data-label="المنتجات">
                                 <div class="small products-list">
@@ -214,7 +214,7 @@
                             <td data-label="المبلغ">{{ $order['total'] }} ريال</td>
                             <td data-label="التاريخ">{{ $order['created_at'] }}</td>
                             <td data-label="الإجراءات">
-                                <a href="{{ route('admin.orders.show', $order['id']) }}"
+                                <a href="{{ route('admin.orders.show', $order['uuid']) }}"
                                    class="btn btn-sm btn-primary"
                                    title="عرض تفاصيل الطلب">
                                     <i class="fas fa-eye"></i>

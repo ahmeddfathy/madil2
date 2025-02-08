@@ -60,10 +60,9 @@ class OrderController extends Controller
                 $total += $product->price * $quantity;
             }
 
-            // Create order
+            // Create order - UUID and order_number will be auto-generated
             $order = Order::create([
                 'user_id' => Auth::id(),
-                'uuid' => (string) Str::uuid(),
                 'total_amount' => $total,
                 'shipping_address' => $validated['shipping_address'],
                 'phone' => $validated['phone'],

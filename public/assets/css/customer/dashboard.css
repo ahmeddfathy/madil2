@@ -4,7 +4,7 @@
     --secondary-color: #7B6EFF;   /* درجة فاتحة مع تباين واضح */
 
     /* خلفية مشرقة وواضحة */
-    --background-color: #F8FAFF;  /* خلفية فاتحة مائلة للأزرق */
+    --background-color: #F0F4FF;  /* خلفية مشرقة وناعمة */
 
     /* تأثير زجاجي أكثر وضوحًا */
     --glass-background: rgba(255, 255, 255, 0.75);
@@ -24,14 +24,13 @@
     --danger-color: #FF4D4D;      /* أحمر صارخ وواضح */
     --success-color: #2ECC71;     /* أخضر مشرق وحيوي */
 }
-
 body {
-
+    background: linear-gradient(135deg, var(--background-color), #fff);
     min-height: 100vh;
     font-family: 'Tajawal', sans-serif;
     color: var(--text-color);
     font-weight: 500;
-    }
+}
 
 /* Glassmorphism Effects */
 .glass-effect {
@@ -909,4 +908,146 @@ body {
     .btn-group .btn {
         padding: 0.25rem 0.5rem;
     }
+}
+
+/* User Guide Styles */
+.user-guide-section {
+    transition: all 0.3s ease;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.user-guide-section.show {
+    max-height: 1000px;
+    opacity: 1;
+    margin-bottom: 2rem;
+}
+
+.user-guide-section .card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
+    border: 2px solid rgba(74, 58, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(74, 58, 255, 0.05);
+}
+
+.guide-item {
+    padding: 1rem;
+    border-radius: 10px;
+    background: rgba(74, 58, 255, 0.03);
+    border: 1px solid rgba(74, 58, 255, 0.1);
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.guide-item:hover {
+    background: rgba(74, 58, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+.guide-item h6 {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.guide-item ul {
+    padding-right: 1.2rem;
+    margin-bottom: 0;
+}
+
+.guide-item li {
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.guide-item li:last-child {
+    margin-bottom: 0;
+}
+
+.guide-toggle-btn {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    z-index: 1000;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(74, 58, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.guide-toggle-btn:hover {
+    transform: scale(1.1);
+    background: var(--secondary-color);
+}
+
+.guide-toggle-btn i {
+    transition: all 0.3s ease;
+}
+
+.guide-toggle-btn.active i {
+    transform: rotate(180deg);
+}
+
+/* Guide Hint Styles */
+.guide-hint .alert {
+    background: rgba(74, 58, 255, 0.05);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+}
+
+.guide-hint .alert i.fa-lightbulb {
+    font-size: 1.2rem;
+    animation: glow 2s infinite;
+}
+
+.guide-hint .alert i.fa-question-circle {
+    font-size: 1.1rem;
+    background: white;
+    border-radius: 50%;
+    padding: 2px;
+}
+
+@keyframes glow {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Phone Number Styles */
+.phone-number {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--text-color);
+}
+
+/* Primary Badge Styles */
+.primary-badge {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+    font-weight: 600;
+    padding: 0.4em 0.8em;
+    border-radius: 50px;
+    display: inline-block;
+}
+
+/* Active List Item with Primary Phone */
+.list-group-item.active {
+    background-color: rgba(74, 58, 255, 0.05) !important;
+    border-color: rgba(74, 58, 255, 0.2) !important;
+}
+
+.list-group-item.active .phone-number {
+    color: var(--primary-color);
+    font-weight: 700;
 }

@@ -143,19 +143,10 @@
                                 </div>
                                 <p class="product-price">{{ number_format($product->price, 2) }} ر.س</p>
                                 <div class="product-actions">
-                                    @auth
-                                        <a href="{{ route('products.show', $product->slug) }}" class="order-product-btn">
-                                            <i class="fas fa-shopping-cart me-2"></i>
-                                            طلب المنتج
-                                        </a>
-                                    @else
-                                        <a href="{{ route('login') }}" class="order-product-btn"
-                                           onclick="event.preventDefault();
-                                                    showLoginPrompt('{{ route('login') }}');">
-                                            <i class="fas fa-shopping-cart me-2"></i>
-                                            طلب المنتج
-                                        </a>
-                                    @endauth
+                                    <a href="{{ route('products.show', $product->slug) }}" class="order-product-btn">
+                                        <i class="fas fa-shopping-cart me-2"></i>
+                                        طلب المنتج
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -583,15 +574,29 @@
             sort: 'newest'
         };
 
-        // Initialize price range slider
+        // Initialize price range slider with debounce
         const priceRange = document.getElementById('priceRange');
         const priceValue = document.getElementById('priceValue');
+        let priceUpdateTimeout;
 
         if (priceRange) {
             priceRange.addEventListener('input', function() {
+                // Update display value immediately
                 priceValue.textContent = Number(this.value).toLocaleString() + ' ر.س';
+
+                // Update filter with debounce
+                clearTimeout(priceUpdateTimeout);
+                priceUpdateTimeout = setTimeout(() => {
+                    activeFilters.maxPrice = Number(this.value);
+                    applyFilters();
+                }, 500); // Wait 500ms after user stops moving the slider
+            });
+
+            // Add touchend/mouseup event to ensure filter is applied when user releases slider
+            priceRange.addEventListener('change', function() {
+                clearTimeout(priceUpdateTimeout);
                 activeFilters.maxPrice = Number(this.value);
-                debounce(applyFilters, 500)();
+                applyFilters();
             });
         }
 

@@ -13,8 +13,8 @@
     --primary-color: #6c5ce7;
     --secondary-color: #a8a6ff;
     --background-color: #f0f3ff;
-    --glass-background: rgba(255, 255, 255, 0.25);
-    --glass-background-dark: rgba(255, 255, 255, 0.15);
+    --glass-background: rgba(255, 255, 255, 0.35);
+    --glass-background-dark: rgba(255, 255, 255, 0.25);
     --glass-border: 1px solid rgba(255, 255, 255, 0.18);
     --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
     --text-color: #2d3436;
@@ -22,7 +22,7 @@
 }
 
 body {
-    background: linear-gradient(135deg, var(--background-color), #fff);
+    background: linear-gradient(135deg, #f5f7ff, #f0f3ff, #ffffff);
     min-height: 100vh;
     font-family: 'Cairo', sans-serif;
 }
@@ -54,11 +54,15 @@ body {
 
 .form-card {
     padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 /* Enhanced Form Elements */
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
+    position: relative;
 }
 
 .form-label {
@@ -67,33 +71,37 @@ body {
     margin-bottom: 0.75rem;
     display: block;
     font-size: 0.95rem;
+    padding-left: 0.5rem;
 }
 
 .input-group {
-    background: var(--glass-background);
-    border: var(--glass-border);
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(108, 92, 231, 0.1);
     border-radius: 12px;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 .input-group:focus-within {
-    background: var(--glass-background-dark);
-    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.1);
+    border-color: var(--primary-color);
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.1);
 }
 
 .input-group-text {
     background: transparent;
     border: none;
     color: var(--primary-color);
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
 }
 
 .form-control {
     background: transparent;
     border: none;
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
     color: var(--text-color);
-    font-size: 0.95rem;
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 .form-control:focus {
@@ -102,14 +110,15 @@ body {
 }
 
 .form-control::placeholder {
-    color: var(--text-light);
+    color: #a0a0a0;
+    font-weight: 400;
 }
 
 /* Enhanced Button */
 .btn-signup {
     background: var(--primary-color);
     color: white;
-    border: none;
+    border: 2px solid var(--primary-color);
     padding: 1rem 2rem;
     border-radius: 12px;
     font-weight: 600;
@@ -118,12 +127,16 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-size: 0.95rem;
+    position: relative;
+    overflow: hidden;
+    margin-top: 1rem;
 }
 
 .btn-signup:hover {
     background: var(--secondary-color);
+    border-color: var(--secondary-color);
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+    box-shadow: 0 8px 20px rgba(108, 92, 231, 0.2);
 }
 
 /* Decorative Elements */
@@ -201,17 +214,28 @@ body {
 
 /* Form Check Styles */
 .form-check {
-    margin: 1rem 0;
+    margin: 1.2rem 0;
+    padding-left: 1.8rem;
+}
+
+.form-check-input {
+    border: 2px solid var(--primary-color);
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 0.2rem;
+    cursor: pointer;
 }
 
 .form-check-input:checked {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
 }
 
 .form-check-label {
     color: var(--text-color);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    cursor: pointer;
 }
 
 /* Validation Styles */
@@ -219,6 +243,12 @@ body {
     color: #e74c3c;
     font-size: 0.85rem;
     margin-top: 0.5rem;
+    padding-left: 0.5rem;
+    font-weight: 500;
+}
+
+.input-group.is-invalid {
+    border-color: #e74c3c;
 }
 
 /* Responsive Design */

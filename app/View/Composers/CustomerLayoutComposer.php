@@ -5,7 +5,6 @@ namespace App\View\Composers;
 use App\Models\CartItem;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Notifications\DatabaseNotification;
 
 class CustomerLayoutComposer
 {

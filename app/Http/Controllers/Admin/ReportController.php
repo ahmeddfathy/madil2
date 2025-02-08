@@ -4,19 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\ReportService;
-use App\Services\ExportService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
   protected $reportService;
-  protected $exportService;
 
-  public function __construct(ReportService $reportService, ExportService $exportService)
+  public function __construct(ReportService $reportService)
   {
     $this->reportService = $reportService;
-    $this->exportService = $exportService;
   }
 
   public function index(Request $request)
@@ -35,20 +31,5 @@ class ReportController extends Controller
       'inventoryReport',
       'period'
     ));
-  }
-
-  public function export(Request $request)
-  {
-    $request->validate([
-      'type' => 'required|in:sales,products,inventory',
-      'period' => 'required|in:week,month,year',
-      'format' => 'required|in:excel,pdf'
-    ]);
-
-    $filename = $request->format === 'excel'
-      ? $this->exportService->exportToExcel($request->type, $request->period)
-      : $this->exportService->exportToPDF($request->type, $request->period);
-
-    return Storage::download("public/exports/{$filename}");
   }
 }

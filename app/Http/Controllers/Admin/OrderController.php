@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Notifications\OrderStatusUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -15,6 +16,11 @@ class OrderController extends Controller
     try {
         $query = Order::with(['user', 'items.product'])
             ->latest();
+
+        // Filter by order number
+        if ($request->order_number) {
+            $query->where('order_number', 'like', "%{$request->order_number}%");
+        }
 
         // Filter by status
         if ($request->order_status) {
@@ -34,11 +40,14 @@ class OrderController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
-        // Search by customer name or email
+        // Search by customer name, email or order number
         if ($request->search) {
-            $query->whereHas('user', function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->search}%")
-                    ->orWhere('email', 'like', "%{$request->search}%");
+            $query->where(function($q) use ($request) {
+                $q->where('order_number', 'like', "%{$request->search}%")
+                  ->orWhereHas('user', function ($userQuery) use ($request) {
+                      $userQuery->where('name', 'like', "%{$request->search}%")
+                               ->orWhere('email', 'like', "%{$request->search}%");
+                  });
             });
         }
 
@@ -53,9 +62,11 @@ class OrderController extends Controller
         $orders = $query->paginate(10);
 
         // Transform orders data
-        $orders->getCollection()->transform(function ($order) {
+        $orders->through(function ($order) {
             return [
                 'id' => $order->id,
+                'uuid' => $order->uuid,
+                'order_number' => $order->order_number,
                 'customer_name' => $order->user->name,
                 'customer_phone' => $order->user->phone ?? '-',
                 'items_count' => $order->items->count(),
@@ -117,7 +128,7 @@ class OrderController extends Controller
 
         return view('admin.orders.index', compact('orders', 'orderStatuses', 'paymentStatuses', 'stats'));
     } catch (\Exception $e) {
-        \Log::error('Error in orders index: ' . $e->getMessage());
+        Log::error('Error in orders index: ' . $e->getMessage());
         return back()->with('error', 'حدث خطأ أثناء تحميل الطلبات');
     }
   }

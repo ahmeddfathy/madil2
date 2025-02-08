@@ -42,7 +42,8 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        // Basic validation rules that are always required
+        $rules = [
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
@@ -50,24 +51,36 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
             'is_primary.*' => 'boolean',
-            'colors' => 'array|nullable',
-            'colors.*' => 'string|max:255',
-            'color_available' => 'array|nullable',
-            'color_available.*' => 'boolean',
-            'sizes' => 'array|nullable',
-            'sizes.*' => 'string|max:255',
-            'size_available' => 'array|nullable',
-            'size_available.*' => 'boolean',
-        ]);
+            'is_available' => 'boolean'
+        ];
+
+        // Add color validation rules only if colors are enabled
+        if ($request->has('has_colors')) {
+            $rules['colors'] = 'required|array|min:1';
+            $rules['colors.*'] = 'required|string|max:255';
+            $rules['color_available'] = 'array';
+            $rules['color_available.*'] = 'boolean';
+        }
+
+        // Add size validation rules only if sizes are enabled
+        if ($request->has('has_sizes')) {
+            $rules['sizes'] = 'required|array|min:1';
+            $rules['sizes.*'] = 'required|string|max:255';
+            $rules['size_available'] = 'array';
+            $rules['size_available.*'] = 'boolean';
+        }
+
+        $validatedData = $request->validate($rules);
 
         try {
             DB::beginTransaction();
 
             $validatedData['slug'] = Str::slug($validatedData['name']);
+            $validatedData['is_available'] = $request->has('is_available');
             $product = Product::create($validatedData);
 
-            // Store colors
-            if ($request->has('colors')) {
+            // Store colors if enabled
+            if ($request->has('has_colors') && $request->has('colors')) {
                 foreach ($request->colors as $index => $color) {
                     if (!empty($color)) {
                         $product->colors()->create([
@@ -78,8 +91,8 @@ class ProductController extends Controller
                 }
             }
 
-            // Store sizes
-            if ($request->has('sizes')) {
+            // Store sizes if enabled
+            if ($request->has('has_sizes') && $request->has('sizes')) {
                 foreach ($request->sizes as $index => $size) {
                     if (!empty($size)) {
                         $product->sizes()->create([
@@ -118,39 +131,74 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
-            'new_images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'is_primary.*' => 'boolean',
-            'remove_images.*' => 'exists:product_images,id',
-            'colors' => 'array|nullable',
-            'colors.*' => 'string|max:255',
-            'color_ids.*' => 'nullable|exists:product_colors,id',
-            'color_available.*' => 'boolean',
-            'sizes' => 'array|nullable',
-            'sizes.*' => 'string|max:255',
-            'size_ids.*' => 'nullable|exists:product_sizes,id',
-            'size_available.*' => 'boolean',
-        ]);
-
         try {
+            // Basic validation rules
+            $rules = [
+                'name' => 'required|string|max:255',
+                'description' => 'required|string',
+                'price' => 'required|numeric|min:0',
+                'stock' => 'required|integer|min:0',
+                'category_id' => 'required|exists:categories,id',
+                'new_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'is_primary' => 'nullable|exists:product_images,id',
+                'is_primary_new.*' => 'nullable|boolean',
+                'remove_images.*' => 'nullable|exists:product_images,id',
+                'is_available' => 'boolean'
+            ];
+
+            // Add color validation rules only if colors are enabled
+            if ($request->has('has_colors')) {
+                $rules['colors'] = 'required|array|min:1';
+                $rules['colors.*'] = 'required|string|max:255';
+                $rules['color_ids.*'] = 'nullable|exists:product_colors,id';
+                $rules['color_available.*'] = 'nullable|boolean';
+            }
+
+            // Add size validation rules only if sizes are enabled
+            if ($request->has('has_sizes')) {
+                $rules['sizes'] = 'required|array|min:1';
+                $rules['sizes.*'] = 'required|string|max:255';
+                $rules['size_ids.*'] = 'nullable|exists:product_sizes,id';
+                $rules['size_available.*'] = 'nullable|boolean';
+            }
+
+            $validated = $request->validate($rules);
+
             DB::beginTransaction();
 
-            $validated['slug'] = Str::slug($validated['name']);
-            $product->update($validated);
+            // Generate new slug only if name has changed
+            $newSlug = Str::slug($validated['name']);
+            if ($newSlug !== $product->slug) {
+                // Check if the new slug already exists for another product
+                $slugExists = Product::where('slug', $newSlug)
+                    ->where('id', '!=', $product->id)
+                    ->exists();
 
-            // Update colors
-            if ($request->has('colors')) {
-                // Get current color IDs for later comparison
+                if ($slugExists) {
+                    // Append a unique identifier if slug exists
+                    $newSlug = $newSlug . '-' . uniqid();
+                }
+            }
+
+            // Update basic product information
+            $product->fill([
+                'name' => $validated['name'],
+                'description' => $validated['description'],
+                'price' => $validated['price'],
+                'stock' => $validated['stock'],
+                'category_id' => $validated['category_id'],
+                'is_available' => $request->has('is_available'),
+                'slug' => $newSlug
+            ]);
+            $product->save();
+
+            // Handle colors
+            if ($request->has('has_colors')) {
+                // Delete colors that are not in the new list
                 $currentColorIds = $product->colors->pluck('id')->toArray();
                 $updatedColorIds = array_filter($request->color_ids ?? []);
-
-                // Remove colors that are no longer present
                 $deletedColorIds = array_diff($currentColorIds, $updatedColorIds);
+
                 if (!empty($deletedColorIds)) {
                     $product->colors()->whereIn('id', $deletedColorIds)->delete();
                 }
@@ -164,23 +212,24 @@ class ProductController extends Controller
                             'is_available' => $request->color_available[$index] ?? true
                         ];
 
-                        if ($colorId) {
+                        if ($colorId && in_array($colorId, $currentColorIds)) {
                             $product->colors()->where('id', $colorId)->update($colorData);
                         } else {
                             $product->colors()->create($colorData);
                         }
                     }
                 }
+            } else {
+                $product->colors()->delete();
             }
 
-            // Update sizes
-            if ($request->has('sizes')) {
-                // Get current size IDs for later comparison
+            // Handle sizes
+            if ($request->has('has_sizes')) {
+                // Delete sizes that are not in the new list
                 $currentSizeIds = $product->sizes->pluck('id')->toArray();
                 $updatedSizeIds = array_filter($request->size_ids ?? []);
-
-                // Remove sizes that are no longer present
                 $deletedSizeIds = array_diff($currentSizeIds, $updatedSizeIds);
+
                 if (!empty($deletedSizeIds)) {
                     $product->sizes()->whereIn('id', $deletedSizeIds)->delete();
                 }
@@ -194,13 +243,15 @@ class ProductController extends Controller
                             'is_available' => $request->size_available[$index] ?? true
                         ];
 
-                        if ($sizeId) {
+                        if ($sizeId && in_array($sizeId, $currentSizeIds)) {
                             $product->sizes()->where('id', $sizeId)->update($sizeData);
                         } else {
                             $product->sizes()->create($sizeData);
                         }
                     }
                 }
+            } else {
+                $product->sizes()->delete();
             }
 
             // Handle image removals
@@ -220,17 +271,24 @@ class ProductController extends Controller
                     $path = $this->uploadFile($image, 'products');
                     $product->images()->create([
                         'image_path' => $path,
-                        'is_primary' => $request->input('is_primary.' . $index, false)
+                        'is_primary' => $request->input('is_primary_new.' . $index, false)
                     ]);
                 }
             }
 
+            // Update primary image
+            if ($request->has('is_primary')) {
+                $product->images()->update(['is_primary' => false]);
+                $product->images()->where('id', $request->is_primary)->update(['is_primary' => true]);
+            }
+
             DB::commit();
             return redirect()->route('admin.products.index')
-                ->with('success', 'Product updated successfully.');
+                ->with('success', 'تم تحديث المنتج بنجاح.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Failed to update product. ' . $e->getMessage());
+            return back()->withInput()
+                ->with('error', 'فشل تحديث المنتج. ' . $e->getMessage());
         }
     }
 
@@ -239,19 +297,26 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
 
-            // Delete all associated images
+            // Delete all associated records first
+            $product->colors()->delete();
+            $product->sizes()->delete();
+            $product->orderItems()->delete();
+
+            // Delete all associated images and their files
             foreach ($product->images as $image) {
                 $this->deleteFile($image->image_path);
+                $image->delete();
             }
 
-            $product->delete();
+            // Finally delete the product
+            $product->forceDelete(); // not needed anymore since we removed SoftDeletes, but kept for clarity
 
             DB::commit();
             return redirect()->route('admin.products.index')
-                ->with('success', 'Product deleted successfully.');
+                ->with('success', 'تم حذف المنتج بنجاح');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Failed to delete product. ' . $e->getMessage());
+            return back()->with('error', 'فشل حذف المنتج. ' . $e->getMessage());
         }
     }
 

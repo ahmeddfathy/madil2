@@ -111,7 +111,7 @@ Route::middleware([
         // Orders
         Route::prefix('orders')->name('orders.')->group(function () {
             Route::get('/', [OrderController::class, 'index'])->name('index');
-            Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+            Route::get('/{order:uuid}', [OrderController::class, 'show'])->name('show');
         });
 
         // Appointments
@@ -141,10 +141,10 @@ Route::middleware([
             // Orders Management
             Route::middleware(['permission:manage orders'])->group(function () {
                 Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
-                Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
-                Route::put('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])
+                Route::get('/orders/{order:uuid}', [AdminOrderController::class, 'show'])->name('orders.show');
+                Route::put('/orders/{order:uuid}/status', [AdminOrderController::class, 'updateStatus'])
                     ->name('orders.update-status');
-                Route::put('/orders/{order}/payment-status', [AdminOrderController::class, 'updatePaymentStatus'])
+                Route::put('/orders/{order:uuid}/payment-status', [AdminOrderController::class, 'updatePaymentStatus'])
                     ->name('orders.update-payment-status');
             });
 
@@ -157,7 +157,6 @@ Route::middleware([
             // Reports Management
             Route::middleware(['permission:manage reports'])->group(function () {
                 Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
-                Route::get('/reports/export', [AdminReportController::class, 'export'])->name('reports.export');
             });
         });
 });

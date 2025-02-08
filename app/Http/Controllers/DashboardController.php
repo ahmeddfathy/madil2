@@ -17,7 +17,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        
+
         return $this->clientDashboard($user);
 
     }
@@ -42,9 +42,14 @@ class DashboardController extends Controller
             ->take(5)
             ->get()
             ->map(function ($order) {
-                $order->status_color = $this->getStatusColor($order->order_status);
-                $order->status_text = $this->getStatusText($order->order_status);
-                return $order;
+                return [
+                    'id' => $order->id,
+                    'uuid' => $order->uuid,
+                    'order_number' => $order->order_number,
+                    'created_at' => $order->created_at,
+                    'status_color' => $this->getStatusColor($order->order_status),
+                    'status_text' => $this->getStatusText($order->order_status)
+                ];
             });
 
         // المواعيد القادمة

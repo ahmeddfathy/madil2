@@ -118,7 +118,7 @@ class CheckoutController extends Controller
         $totalAmount = $cart->total_amount;
 
         // إنشاء الطلب
-        $orderData = [
+        $order = Order::create([
           'user_id' => Auth::id(),
           'total_amount' => $totalAmount,
           'shipping_address' => $validated['shipping_address'],
@@ -127,13 +127,7 @@ class CheckoutController extends Controller
           'payment_status' => Order::PAYMENT_STATUS_PENDING,
           'order_status' => Order::ORDER_STATUS_PENDING,
           'notes' => $validated['notes'] ?? null
-        ];
-
-        Log::info('Creating order', [
-          'order_data' => $orderData
         ]);
-
-        $order = Order::create($orderData);
 
         Log::info('Order created', [
           'order_id' => $order->id

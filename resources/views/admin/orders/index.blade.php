@@ -108,38 +108,70 @@
                             <div class="col-12">
                                 <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                                        <form action="{{ route('admin.orders.index') }}" method="GET">
+                                        <form action="{{ route('admin.orders.index') }}" method="GET" id="filters-form">
                                             <div class="row g-3">
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
+                                                    <div class="search-wrapper">
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-0">
+                                                                <i class="fas fa-hashtag text-muted"></i>
+                                                            </span>
+                                                            <input type="text"
+                                                                   name="order_number"
+                                                                   class="form-control border-0 shadow-none ps-0"
+                                                                   placeholder="البحث برقم الطلب..."
+                                                                   value="{{ request('order_number') }}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-3">
                                                     <div class="search-wrapper">
                                                         <div class="input-group">
                                                             <span class="input-group-text bg-light border-0">
                                                                 <i class="fas fa-search text-muted"></i>
                                                             </span>
-                                                            <input type="text" name="search" class="form-control border-0 shadow-none ps-0"
-                                                                placeholder="البحث في الطلبات..."
-                                                                value="{{ request('search') }}">
+                                                            <input type="text"
+                                                                   name="search"
+                                                                   class="form-control border-0 shadow-none ps-0"
+                                                                   placeholder="البحث في العملاء..."
+                                                                   value="{{ request('search') }}">
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
-                                                    <select name="status" class="form-select border-0 shadow-none bg-light">
+
+                                                <div class="col-md-2">
+                                                    <select name="order_status" class="form-select border-0 shadow-none bg-light">
                                                         <option value="">كل الحالات</option>
-                                                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>قيد الانتظار</option>
-                                                        <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>قيد التنفيذ</option>
-                                                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>مكتمل</option>
-                                                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>ملغي</option>
+                                                        @foreach($orderStatuses as $value => $label)
+                                                            <option value="{{ $value }}" {{ request('order_status') == $value ? 'selected' : '' }}>
+                                                                {{ $label }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
-                                                <div class="col-md-3">
-                                                    <input type="date" name="date" class="form-control border-0 shadow-none bg-light"
+
+                                                <div class="col-md-2">
+                                                    <input type="date"
+                                                           name="date"
+                                                           class="form-control border-0 shadow-none bg-light"
                                                            value="{{ request('date') }}">
                                                 </div>
+
                                                 <div class="col-md-2">
-                                                    <button type="submit" class="btn btn-primary btn-wave w-100">
-                                                        <i class="fas fa-filter me-2"></i>
-                                                        تصفية
-                                                    </button>
+                                                    <div class="filter-buttons">
+                                                        <button type="submit" class="btn btn-primary btn-wave">
+                                                            <i class="fas fa-filter me-2"></i>
+                                                            تصفية
+                                                        </button>
+                                                        @if(request()->hasAny(['order_number', 'search', 'order_status', 'date']))
+                                                            <a href="{{ route('admin.orders.index') }}"
+                                                               class="btn btn-light-danger btn-wave"
+                                                               title="إزالة الفلتر">
+                                                                <i class="fas fa-times"></i>
+                                                            </a>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
                                         </form>
@@ -170,7 +202,7 @@
                                 <tbody>
                                     @forelse($orders as $order)
                                     <tr>
-                                        <td class="text-center">{{ $order['id'] }}</td>
+                                        <td class="text-center">{{ $order['order_number'] }}</td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-circle bg-primary text-white me-2">
@@ -208,7 +240,7 @@
                                         <td>{{ $order['created_at_formatted'] }}</td>
                                         <td>
                                             <div class="action-buttons">
-                                                <a href="{{ route('admin.orders.show', $order['id']) }}"
+                                                <a href="{{ route('admin.orders.show', $order['uuid']) }}"
                                                    class="btn btn-light-info btn-sm me-2"
                                                    title="عرض التفاصيل">
                                                     <i class="fas fa-eye"></i>

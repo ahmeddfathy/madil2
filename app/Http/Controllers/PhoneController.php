@@ -93,7 +93,8 @@ class PhoneController extends Controller
             }
         }
 
-        $phone->delete();
+        // حذف نهائي للرقم
+        $phone->forceDelete(); // not needed anymore since we removed SoftDeletes, but kept for clarity
 
         return response()->json(['message' => 'تم حذف رقم الهاتف بنجاح']);
     }

@@ -12,7 +12,7 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="page-title">تفاصيل الطلب #{{ $order->order_number }}</h2>
-            <a href="/orders" class="btn btn-secondary">
+            <a href="{{ route('orders.index') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-right"></i>
                 العودة للطلبات
             </a>
@@ -30,6 +30,9 @@
                            ($order->order_status === 'cancelled' ? 'ملغي' :
                            ($order->order_status === 'processing' ? 'قيد المعالجة' : 'معلق')) }}
                 </span>
+            </div>
+            <div class="order-info mt-3">
+                <p class="order-date">تاريخ الطلب: {{ $order->created_at->format('Y/m/d') }}</p>
             </div>
             @if($order->notes)
             <div class="order-notes mt-3">

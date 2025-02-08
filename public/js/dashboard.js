@@ -196,4 +196,109 @@ $(document).ready(function() {
             e.preventDefault();
         }
     });
+
+    // User Guide Toggle Functionality
+    // استرجاع حالة دليل الاستخدام من localStorage
+    const guideState = localStorage.getItem('userGuideVisible') === 'true';
+
+    // تطبيق الحالة المحفوظة عند تحميل الصفحة
+    if (guideState) {
+        $('#userGuide').addClass('show');
+        $('#guideToggle').addClass('active');
+    }
+
+    // معالجة النقر على زر التبديل
+    $('#guideToggle').click(function() {
+        const $guide = $('#userGuide');
+        const $button = $(this);
+
+        // تبديل الحالة مع تأثير حركي
+        $button.toggleClass('active');
+
+        if ($guide.hasClass('show')) {
+            $guide.removeClass('show');
+            // تخزين الحالة
+            localStorage.setItem('userGuideVisible', 'false');
+
+            // تدوير الأيقونة
+            $button.find('i').css('transform', 'rotate(0deg)');
+        } else {
+            $guide.addClass('show');
+            // تخزين الحالة
+            localStorage.setItem('userGuideVisible', 'true');
+
+            // تدوير الأيقونة
+            $button.find('i').css('transform', 'rotate(180deg)');
+
+            // تمرير سلس إلى قسم الإرشادات
+            $('html, body').animate({
+                scrollTop: $guide.offset().top - 20
+            }, 500);
+        }
+    });
+
+    // إضافة تأثير حركي عند التحويم على عناصر الإرشادات
+    $('.guide-item').hover(
+        function() {
+            $(this).find('i').addClass('fa-bounce');
+        },
+        function() {
+            $(this).find('i').removeClass('fa-bounce');
+        }
+    );
+
+    // إغلاق الدليل عند النقر خارجه
+    $(document).on('click', function(event) {
+        const $guide = $('#userGuide');
+        const $button = $('#guideToggle');
+
+        if ($guide.hasClass('show') &&
+            !$(event.target).closest('#userGuide').length &&
+            !$(event.target).closest('#guideToggle').length) {
+
+            $guide.removeClass('show');
+            $button.removeClass('active');
+            $button.find('i').css('transform', 'rotate(0deg)');
+            localStorage.setItem('userGuideVisible', 'false');
+        }
+    });
+
+    // إضافة تأثير ظهور تدريجي للعناصر
+    if ($('#userGuide').hasClass('show')) {
+        $('.guide-item').each(function(index) {
+            $(this).css({
+                'animation': `fadeInUp 0.5s ease forwards ${index * 0.1}s`,
+                'opacity': '0'
+            });
+        });
+    }
+
+    // تحديث حالة الدليل عند تغيير حجم النافذة
+    let resizeTimer;
+    $(window).on('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            if ($('#userGuide').hasClass('show')) {
+                $('html, body').animate({
+                    scrollTop: $('#userGuide').offset().top - 20
+                }, 300);
+            }
+        }, 250);
+    });
 });
+
+// إضافة تأثيرات حركية CSS
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+`;
+document.head.appendChild(style);

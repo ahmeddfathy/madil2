@@ -18,6 +18,7 @@ class ProductController extends Controller
     {
         $query = Product::query()
             ->with(['category', 'images', 'colors', 'sizes'])
+            ->where('is_available', true)
             ->when($request->search, function (Builder $query, $search) {
                 $query->where(function($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -97,11 +98,16 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
+        if (!$product->is_available) {
+            abort(404, 'المنتج غير متوفر حالياً');
+        }
+
         $product->load(['category', 'images', 'colors', 'sizes']);
 
-        // Get related products from same category
+        // Get related products from same category (only available ones)
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
+            ->where('is_available', true)
             ->with(['category', 'images'])
             ->take(4)
             ->get();
@@ -112,7 +118,8 @@ class ProductController extends Controller
     public function filter(Request $request)
     {
         try {
-            $query = Product::with(['category', 'images', 'colors', 'sizes']);
+            $query = Product::with(['category', 'images', 'colors', 'sizes'])
+                ->where('is_available', true);
 
             // Filter by categories
             if ($request->has('categories') && !empty($request->categories)) {
@@ -147,6 +154,7 @@ class ProductController extends Controller
                     return [
                         'id' => $product->id,
                         'name' => $product->name,
+                        'slug' => $product->slug,
                         'category' => $product->category->name,
                         'price' => $product->price,
                         'image_url' => $product->images->first() ?
@@ -176,6 +184,13 @@ class ProductController extends Controller
 
     public function getProductDetails(Product $product)
     {
+        if (!$product->is_available) {
+            return response()->json([
+                'success' => false,
+                'message' => 'المنتج غير متوفر حالياً'
+            ], 404);
+        }
+
         $product->load(['category', 'images', 'colors', 'sizes']);
 
         return response()->json([
@@ -210,19 +225,25 @@ class ProductController extends Controller
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
-            'color' => 'nullable|string',
-            'size' => 'nullable|string',
+            'color' => 'nullable|string|max:50',
+            'size' => 'nullable|string|max:50',
             'needs_appointment' => 'required|boolean'
         ]);
 
         $product = Product::findOrFail($request->product_id);
 
+        if (!$product->is_available) {
+            return response()->json([
+                'success' => false,
+                'message' => 'عذراً، هذا المنتج غير متاح حالياً'
+            ], 422);
+        }
+
         // Check if appointment is needed
         $needs_appointment = $request->needs_appointment;
 
-        // Validate if appointment is required
+        // تعديل التحقق من المقاس ليكون أكثر مرونة
         if (!$needs_appointment) {
-            // If not requesting appointment, size must be selected for products with sizes
             if ($product->sizes()->count() > 0 && !$request->size) {
                 return response()->json([
                     'success' => false,
@@ -250,12 +271,18 @@ class ProductController extends Controller
             );
         }
 
-        // Check if product already exists in cart
+        // تعديل التحقق من العنصر في السلة ليشمل الحالة الجديدة
         $cartItem = CartItem::where('cart_id', $cart->id)
             ->where('product_id', $product->id)
             ->where('needs_appointment', $needs_appointment)
-            ->where('color', $request->color)
-            ->where('size', $request->size)
+            ->where(function($query) use ($request) {
+                $query->where('color', $request->color)
+                      ->orWhereNull('color');
+            })
+            ->where(function($query) use ($request) {
+                $query->where('size', $request->size)
+                      ->orWhereNull('size');
+            })
             ->first();
 
         if ($cartItem) {

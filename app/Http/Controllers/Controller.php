@@ -45,10 +45,7 @@ class Controller extends BaseController
      * @param float $price
      * @return int
      */
-    protected function formatPrice(float $price): int
-    {
-        return (int) ($price * 100);
-    }
+
 
     /**
      * Format price for display (converts from cents to dollars)
@@ -56,8 +53,5 @@ class Controller extends BaseController
      * @param int $price
      * @return float
      */
-    protected function displayPrice(int $price): float
-    {
-        return $price / 100;
-    }
+
 }

@@ -238,7 +238,6 @@
           <div class="p-6">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-medium text-gray-900">Top Products</h3>
-              <x-report-export-buttons type="products" :period="$period" />
             </div>
             <div class="flow-root">
               <ul role="list" class="-my-5 divide-y divide-gray-200">
@@ -249,12 +248,6 @@
                       <p class="text-sm font-medium text-gray-900 truncate">
                         {{ $product->name }}
                       </p>
-                      <p class="text-sm text-gray-500">
-                        {{ $product->total_quantity }} units sold
-                      </p>
-                    </div>
-                    <div class="text-sm text-gray-900 tabular-nums">
-                      ${{ number_format($product->total_revenue, 2) }}
                     </div>
                   </div>
                 </li>
@@ -269,7 +262,6 @@
           <div class="p-6">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-medium text-gray-900">Inventory Status</h3>
-              <x-report-export-buttons type="inventory" :period="$period" />
             </div>
             <dl class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div class="px-4 py-5 bg-gray-50 rounded-lg overflow-hidden sm:p-6">
@@ -366,23 +358,6 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="flex justify-end space-x-2 mb-4">
-        <button onclick="exportReport('excel')"
-          class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-          <svg class="mr-2 h-5 w-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-            <!-- Excel icon -->
-          </svg>
-          Export Excel
-        </button>
-        <button onclick="exportReport('pdf')"
-          class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-          <svg class="mr-2 h-5 w-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-            <!-- PDF icon -->
-          </svg>
-          Export PDF
-        </button>
       </div>
     </div>
   </div>

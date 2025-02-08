@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Order extends Model
 {
@@ -32,12 +33,24 @@ class Order extends Model
         'payment_method',
         'payment_status',
         'order_status',
-        'notes'
+        'notes',
+        'uuid',
+        'order_number',
     ];
 
     protected $casts = [
         'total_amount' => 'integer'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($order) {
+            $order->uuid = (string) Str::uuid();
+            $order->order_number = 'ORD-' . str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
+        });
+    }
 
     public function user(): BelongsTo
     {
@@ -83,5 +96,11 @@ class Order extends Model
     public function isPaymentFailed(): bool
     {
         return $this->payment_status === self::PAYMENT_STATUS_FAILED;
+    }
+
+    // Add this method to use uuid in routes
+    public function getRouteKeyName()
+    {
+        return 'uuid';
     }
 }

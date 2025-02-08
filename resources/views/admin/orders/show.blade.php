@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الطلب #' . $order->id)
-@section('page_title', 'تفاصيل الطلب #' . $order->id)
+@section('title', 'تفاصيل الطلب #' . $order->order_number)
+@section('page_title', 'تفاصيل الطلب #' . $order->order_number)
 
 @section('content')
 <div class="content-wrapper">
@@ -20,7 +20,7 @@
                                                 <span class="icon-circle bg-primary text-white me-2">
                                                     <i class="fas fa-info-circle"></i>
                                                 </span>
-                                                تفاصيل الطلب #{{ $order->id }}
+                                                تفاصيل الطلب #{{ $order->order_number }}
                                             </h5>
                                             <p class="text-muted mb-0 fs-sm">عرض تفاصيل الطلب والمنتجات والمواعيد</p>
                 </div>
@@ -50,7 +50,7 @@
                         </div>
                                             <div>
                                                 <h6 class="text-white mb-1">رقم الطلب</h6>
-                                                <h3 class="text-white mb-0">#{{ $order->id }}</h3>
+                                                <h3 class="text-white mb-0">#{{ $order->order_number }}</h3>
                             </div>
                         </div>
                     </div>

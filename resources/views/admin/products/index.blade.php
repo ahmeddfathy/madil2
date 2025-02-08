@@ -123,6 +123,13 @@
                                                 <div class="product-price fw-bold text-primary">
                                                     {{ number_format($product->price, 0) }} ريال
                                                 </div>
+                                                <div class="product-status mt-2">
+                                                    @if($product->is_available)
+                                                        <span class="badge bg-success">متاح للبيع</span>
+                                                    @else
+                                                        <span class="badge bg-danger">غير متاح</span>
+                                                    @endif
+                                                </div>
                                             </div>
 
                                             <div class="card-footer bg-light border-top p-3">

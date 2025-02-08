@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
@@ -14,7 +13,7 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
-  use HasFactory, SoftDeletes, Searchable;
+  use HasFactory, Searchable;
 
   protected $fillable = [
     'name',
@@ -22,11 +21,13 @@ class Product extends Model
     'description',
     'price',
     'stock',
+    'is_available',
     'category_id'
   ];
 
   protected $casts = [
-    'stock' => 'integer'
+    'stock' => 'integer',
+    'is_available' => 'boolean'
   ];
 
   protected $searchableFields = [

@@ -34,6 +34,28 @@
                             </div>
                         </div>
 
+                        <!-- Add this after the form opening tag -->
+                        @if($errors->any())
+                            <div class="alert alert-danger mb-4">
+                                <h5 class="alert-heading mb-2">يوجد أخطاء في النموذج:</h5>
+                                <ul class="mb-0 ps-3">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+
+                            <!-- Debug information -->
+                            @if(config('app.debug'))
+                                <div class="alert alert-info mb-4">
+                                    <h6>Debug Information:</h6>
+                                    <pre>{{ print_r($errors->toArray(), true) }}</pre>
+                                    <h6>Request Data:</h6>
+                                    <pre>{{ print_r(request()->all(), true) }}</pre>
+                                </div>
+                            @endif
+                        @endif
+
                         <!-- Form -->
                         <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">
                             @csrf
@@ -50,26 +72,28 @@
                                             </h5>
                                             <div class="mb-3">
                                                 <label class="form-label">اسم المنتج</label>
-                                                <input type="text" name="name" class="form-control shadow-sm"
+                                                <input type="text" name="name"
+                                                       class="form-control shadow-sm @error('name') is-invalid @enderror"
                                                        value="{{ old('name', $product->name) }}">
                                                 @error('name')
-                                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
 
                                             <div class="mb-3">
                                                 <label class="form-label">التصنيف</label>
-                                                <select name="category_id" class="form-select shadow-sm">
+                                                <select name="category_id"
+                                                        class="form-select shadow-sm @error('category_id') is-invalid @enderror">
                                                     <option value="">اختر التصنيف</option>
                                                     @foreach($categories as $category)
                                                         <option value="{{ $category->id }}"
-                                                            @selected(old('category_id', $product->category_id) == $category->id)>
+                                                                @selected(old('category_id', $product->category_id) == $category->id)>
                                                             {{ $category->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                                 @error('category_id')
-                                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
 
@@ -89,6 +113,14 @@
                                                 @error('stock')
                                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                                 @enderror
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="isAvailable"
+                                                           name="is_available" value="1" {{ old('is_available', $product->is_available) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="isAvailable">متاح للبيع</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -147,6 +179,12 @@
                                             <!-- New Images -->
                                             <div class="mb-3">
                                                 <label class="form-label">إضافة صور جديدة</label>
+                                                @error('new_images.*')
+                                                    <div class="alert alert-danger">{{ $message }}</div>
+                                                @enderror
+                                                @error('is_primary.*')
+                                                    <div class="alert alert-danger">{{ $message }}</div>
+                                                @enderror
                                                 <div id="newImagesContainer">
                                                     <div class="mb-2">
                                                         <div class="input-group shadow-sm">
@@ -173,44 +211,54 @@
                                 <div class="col-md-6">
                                     <div class="card border-0 shadow-sm">
                                         <div class="card-body">
-                                            <h5 class="card-title mb-4">
-                                                <i class="fas fa-palette text-primary me-2"></i>
-                                                الألوان المتاحة
-                                            </h5>
-                                            <div id="colorsContainer">
-                                                @forelse($product->colors as $color)
-                                                <div class="input-group mb-2 shadow-sm">
-                                                    <input type="text" name="colors[]" class="form-control"
-                                                           value="{{ $color->color }}" placeholder="اسم اللون">
-                                                    <input type="hidden" name="color_ids[]" value="{{ $color->id }}">
-                                                    <div class="input-group-text">
-                                                        <label class="mb-0">
-                                                            <input type="checkbox" name="color_available[]" value="1"
-                                                                   @checked($color->is_available) class="me-1">
-                                                            متوفر
-                                                        </label>
-                                                    </div>
-                                                    <button type="button" class="btn btn-light-danger"
-                                                            onclick="this.closest('.input-group').remove()">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
+                                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                                <h5 class="card-title mb-0">
+                                                    <i class="fas fa-palette text-primary me-2"></i>
+                                                    الألوان المتاحة
+                                                </h5>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input"
+                                                           type="checkbox"
+                                                           id="hasColors"
+                                                           name="has_colors"
+                                                           value="1"
+                                                           {{ $product->colors->count() > 0 || old('has_colors') ? 'checked' : '' }}
+                                                           onchange="toggleColorsSection(this)">
+                                                    <label class="form-check-label" for="hasColors">تفعيل الألوان</label>
                                                 </div>
-                                                @empty
-                                                <div class="input-group mb-2 shadow-sm">
-                                                    <input type="text" name="colors[]" class="form-control" placeholder="اسم اللون">
-                                                    <div class="input-group-text">
-                                                        <label class="mb-0">
-                                                            <input type="checkbox" name="color_available[]" value="1" checked class="me-1">
-                                                            متوفر
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                @endforelse
                                             </div>
-                                            <button type="button" class="btn btn-light-secondary btn-sm" onclick="addColorInput()">
-                                                <i class="fas fa-plus"></i>
-                                                إضافة لون
-                                            </button>
+                                            <div id="colorsSection" style="display: {{ $product->colors->count() > 0 ? 'block' : 'none' }}">
+                                                @error('colors.*')
+                                                    <div class="alert alert-danger">{{ $message }}</div>
+                                                @enderror
+                                                @error('color_ids.*')
+                                                    <div class="alert alert-danger">{{ $message }}</div>
+                                                @enderror
+                                                @error('color_available.*')
+                                                    <div class="alert alert-danger">{{ $message }}</div>
+                                                @enderror
+                                                <div id="colorsContainer">
+                                                    @foreach($product->colors as $color)
+                                                    <div class="input-group mb-2 shadow-sm">
+                                                        <input type="hidden" name="color_ids[]" value="{{ $color->id }}">
+                                                        <input type="text" name="colors[]" class="form-control" placeholder="اسم اللون" value="{{ $color->color }}">
+                                                        <div class="input-group-text">
+                                                            <label class="mb-0">
+                                                                <input type="checkbox" name="color_available[]" value="1" {{ $color->is_available ? 'checked' : '' }} class="me-1">
+                                                                متوفر
+                                                            </label>
+                                                        </div>
+                                                        <button type="button" class="btn btn-light-danger" onclick="this.closest('.input-group').remove()">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                    @endforeach
+                                                </div>
+                                                <button type="button" class="btn btn-light-secondary btn-sm" onclick="addColorInput()">
+                                                    <i class="fas fa-plus"></i>
+                                                    إضافة لون
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -219,44 +267,54 @@
                                 <div class="col-md-6">
                                     <div class="card border-0 shadow-sm">
                                         <div class="card-body">
-                                            <h5 class="card-title mb-4">
-                                                <i class="fas fa-ruler text-primary me-2"></i>
-                                                المقاسات المتاحة
-                                            </h5>
-                                            <div id="sizesContainer">
-                                                @forelse($product->sizes as $size)
-                                                <div class="input-group mb-2 shadow-sm">
-                                                    <input type="text" name="sizes[]" class="form-control"
-                                                           value="{{ $size->size }}" placeholder="المقاس">
-                                                    <input type="hidden" name="size_ids[]" value="{{ $size->id }}">
-                                                    <div class="input-group-text">
-                                                        <label class="mb-0">
-                                                            <input type="checkbox" name="size_available[]" value="1"
-                                                                   @checked($size->is_available) class="me-1">
-                                                            متوفر
-                                                        </label>
-                                                    </div>
-                                                    <button type="button" class="btn btn-light-danger"
-                                                            onclick="this.closest('.input-group').remove()">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
+                                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                                <h5 class="card-title mb-0">
+                                                    <i class="fas fa-ruler text-primary me-2"></i>
+                                                    المقاسات المتاحة
+                                                </h5>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input"
+                                                           type="checkbox"
+                                                           id="hasSizes"
+                                                           name="has_sizes"
+                                                           value="1"
+                                                           {{ $product->sizes->count() > 0 || old('has_sizes') ? 'checked' : '' }}
+                                                           onchange="toggleSizesSection(this)">
+                                                    <label class="form-check-label" for="hasSizes">تفعيل المقاسات</label>
                                                 </div>
-                                                @empty
-                                                <div class="input-group mb-2 shadow-sm">
-                                                    <input type="text" name="sizes[]" class="form-control" placeholder="المقاس">
-                                                    <div class="input-group-text">
-                                                        <label class="mb-0">
-                                                            <input type="checkbox" name="size_available[]" value="1" checked class="me-1">
-                                                            متوفر
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                @endforelse
                                             </div>
-                                            <button type="button" class="btn btn-light-secondary btn-sm" onclick="addSizeInput()">
-                                                <i class="fas fa-plus"></i>
-                                                إضافة مقاس
-                                            </button>
+                                            <div id="sizesSection" style="display: {{ $product->sizes->count() > 0 ? 'block' : 'none' }}">
+                                                @error('sizes.*')
+                                                    <div class="alert alert-danger">{{ $message }}</div>
+                                                @enderror
+                                                @error('size_ids.*')
+                                                    <div class="alert alert-danger">{{ $message }}</div>
+                                                @enderror
+                                                @error('size_available.*')
+                                                    <div class="alert alert-danger">{{ $message }}</div>
+                                                @enderror
+                                                <div id="sizesContainer">
+                                                    @foreach($product->sizes as $size)
+                                                    <div class="input-group mb-2 shadow-sm">
+                                                        <input type="hidden" name="size_ids[]" value="{{ $size->id }}">
+                                                        <input type="text" name="sizes[]" class="form-control" placeholder="المقاس" value="{{ $size->size }}">
+                                                        <div class="input-group-text">
+                                                            <label class="mb-0">
+                                                                <input type="checkbox" name="size_available[]" value="1" {{ $size->is_available ? 'checked' : '' }} class="me-1">
+                                                                متوفر
+                                                            </label>
+                                                        </div>
+                                                        <button type="button" class="btn btn-light-danger" onclick="this.closest('.input-group').remove()">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                    @endforeach
+                                                </div>
+                                                <button type="button" class="btn btn-light-secondary btn-sm" onclick="addSizeInput()">
+                                                    <i class="fas fa-plus"></i>
+                                                    إضافة مقاس
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -317,8 +375,8 @@ function addColorInput() {
     const div = document.createElement('div');
     div.className = 'input-group mb-2 shadow-sm';
     div.innerHTML = `
-        <input type="text" name="colors[]" class="form-control" placeholder="اسم اللون">
         <input type="hidden" name="color_ids[]" value="">
+        <input type="text" name="colors[]" class="form-control" placeholder="اسم اللون">
         <div class="input-group-text">
             <label class="mb-0">
                 <input type="checkbox" name="color_available[]" value="1" checked class="me-1">
@@ -337,8 +395,8 @@ function addSizeInput() {
     const div = document.createElement('div');
     div.className = 'input-group mb-2 shadow-sm';
     div.innerHTML = `
-        <input type="text" name="sizes[]" class="form-control" placeholder="المقاس">
         <input type="hidden" name="size_ids[]" value="">
+        <input type="text" name="sizes[]" class="form-control" placeholder="المقاس">
         <div class="input-group-text">
             <label class="mb-0">
                 <input type="checkbox" name="size_available[]" value="1" checked class="me-1">
@@ -351,5 +409,6 @@ function addSizeInput() {
     `;
     container.appendChild(div);
 }
+
 </script>
 @endsection

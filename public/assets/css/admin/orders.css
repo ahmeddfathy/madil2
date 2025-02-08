@@ -166,14 +166,27 @@
 }
 
 .btn-light-danger {
-    background-color: rgba(var(--danger-rgb), 0.1);
+    background-color: rgba(239, 68, 68, 0.1);
     color: var(--danger);
     border: none;
+    width: 40px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
 }
 
 .btn-light-danger:hover {
     background-color: var(--danger);
     color: white;
+    transform: rotate(90deg);
+}
+
+.btn-light-danger i {
+    font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
 .btn-light-success {
@@ -212,6 +225,24 @@
     justify-content: center;
 }
 
+/* Filter Button Group Styles */
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.filter-buttons .btn {
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary {
+    min-width: 120px;
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
     .orders-container {
@@ -230,4 +261,42 @@
     .table-responsive {
         font-size: 0.875rem;
     }
+
+    .filter-buttons {
+        width: 100%;
+    }
+
+    .filter-buttons .btn {
+        flex: 1;
+    }
+
+    .btn-light-danger {
+        width: 48px;
+        flex: 0 0 48px;
+    }
+}
+
+/* Animation for filter reset */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.btn-light-danger:active i {
+    animation: spin 0.3s ease-in-out;
+}
+
+/* Hover effect for filter buttons */
+.filter-buttons .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.filter-buttons .btn:active {
+    transform: translateY(0);
+    box-shadow: none;
 }

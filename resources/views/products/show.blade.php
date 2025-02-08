@@ -153,6 +153,31 @@
                         <p>{{ $product->description }}</p>
                     </div>
 
+                    <!-- Product Features Guide -->
+                    <div class="features-guide mb-4">
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading mb-3">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                ميزات الطلب المتاحة
+                            </h6>
+                            <ul class="features-list mb-0">
+                                    <li class="mb-2">
+                                        <i class="fas fa-palette me-2"></i>
+                                        يمكنك اختيار لون من الألوان المتاحة أو إضافة لون مخصص حسب رغبتك
+                                    </li>
+
+                                    <li class="mb-2">
+                                        <i class="fas fa-ruler me-2"></i>
+                                        يمكنك اختيار مقاس من المقاسات المتاحة أو إضافة مقاس مخصص حسب رغبتك
+                                    </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-tape me-2"></i>
+                                    يمكنك طلب موعد لأخذ المقاسات إذا كنت غير متأكد من المقاس المناسب
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
                     <!-- Colors Section -->
                     @if($product->colors && $product->colors->isNotEmpty())
                         <div class="colors-section mb-4">
@@ -160,7 +185,7 @@
                                 <i class="fas fa-palette me-2"></i>
                                 الألوان المتاحة
                             </h5>
-                            <div class="colors-grid">
+                            <div class="colors-grid mb-3">
                                 @foreach($product->colors as $color)
                                     <div class="color-item {{ $color->is_available ? 'available' : 'unavailable' }}"
                                         data-color="{{ $color->color }}"
@@ -179,6 +204,29 @@
                                     </div>
                                 @endforeach
                             </div>
+                            <!-- إضافة حقل لون مخصص -->
+                            <div class="custom-color-input mt-3">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="useCustomColor">
+                                    <label class="form-check-label" for="useCustomColor">
+                                        <i class="fas fa-edit me-1"></i>
+                                        إضافة لون مخصص
+                                    </label>
+                                </div>
+                                <div class="input-group d-none" id="customColorGroup">
+                                    <input type="text" class="form-control" id="customColor" placeholder="اكتب اللون المطلوب">
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="custom-color-section mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-palette me-2"></i>
+                                اللون المطلوب
+                            </h5>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="customColor" placeholder="اكتب اللون المطلوب">
+                            </div>
                         </div>
                     @endif
 
@@ -189,7 +237,7 @@
                                 <i class="fas fa-ruler me-2"></i>
                                 المقاسات المتاحة
                             </h5>
-                            <div class="sizes-grid">
+                            <div class="sizes-grid mb-3">
                                 @foreach($product->sizes as $size)
                                     <div class="size-item {{ $size->is_available ? 'available' : 'unavailable' }}"
                                         data-size="{{ $size->size }}"
@@ -207,6 +255,29 @@
                                         </span>
                                     </div>
                                 @endforeach
+                            </div>
+                            <!-- إضافة حقل مقاس مخصص -->
+                            <div class="custom-size-input mt-3">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="useCustomSize">
+                                    <label class="form-check-label" for="useCustomSize">
+                                        <i class="fas fa-edit me-1"></i>
+                                        إضافة مقاس مخصص
+                                    </label>
+                                </div>
+                                <div class="input-group d-none" id="customSizeGroup">
+                                    <input type="text" class="form-control" id="customSize" placeholder="اكتب المقاس المطلوب">
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="custom-size-section mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-ruler me-2"></i>
+                                المقاس المطلوب
+                            </h5>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="customSize" placeholder="اكتب المقاس المطلوب">
                             </div>
                         </div>
                     @endif
@@ -600,6 +671,44 @@
         font-size: 1.25rem;
     }
 
+    .custom-color-section,
+    .custom-size-section {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .custom-color-section input,
+    .custom-size-section input {
+        border: 2px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .custom-color-section input:focus,
+    .custom-size-section input:focus {
+        border-color: #6c5ce7;
+        box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.25);
+    }
+
+    .custom-color-input,
+    .custom-size-input {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .form-check-label {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .form-check-input:checked + .form-check-label {
+        color: #6c5ce7;
+    }
+
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -621,6 +730,14 @@
         function selectColor(element) {
             if (!element.classList.contains('available')) return;
 
+            // Uncheck custom color checkbox if exists
+            const useCustomColorCheckbox = document.getElementById('useCustomColor');
+            if (useCustomColorCheckbox) {
+                useCustomColorCheckbox.checked = false;
+                document.getElementById('customColorGroup').classList.add('d-none');
+                document.getElementById('customColor').value = '';
+            }
+
             // Remove active class from all colors
             document.querySelectorAll('.color-item').forEach(item => {
                 item.classList.remove('active');
@@ -633,6 +750,14 @@
 
         function selectSize(element) {
             if (!element.classList.contains('available')) return;
+
+            // Uncheck custom size checkbox if exists
+            const useCustomSizeCheckbox = document.getElementById('useCustomSize');
+            if (useCustomSizeCheckbox) {
+                useCustomSizeCheckbox.checked = false;
+                document.getElementById('customSizeGroup').classList.add('d-none');
+                document.getElementById('customSize').value = '';
+            }
 
             // Remove active class from all sizes
             document.querySelectorAll('.size-item').forEach(item => {
@@ -680,8 +805,30 @@
             const quantity = document.getElementById('quantity').value;
             const errorMessage = document.getElementById('errorMessage');
 
-            // Validate selection
-            if (!needsAppointment && {{ $product->sizes->count() }} > 0 && !selectedSize) {
+            // Get color value
+            let colorValue = selectedColor;
+            const customColorInput = document.getElementById('customColor');
+            const useCustomColor = document.getElementById('useCustomColor');
+            if (customColorInput && (!useCustomColor || useCustomColor.checked)) {
+                const customColorValue = customColorInput.value.trim();
+                if (customColorValue) {
+                    colorValue = customColorValue;
+                }
+            }
+
+            // Get size value
+            let sizeValue = selectedSize;
+            const customSizeInput = document.getElementById('customSize');
+            const useCustomSize = document.getElementById('useCustomSize');
+            if (customSizeInput && (!useCustomSize || useCustomSize.checked)) {
+                const customSizeValue = customSizeInput.value.trim();
+                if (customSizeValue) {
+                    sizeValue = customSizeValue;
+                }
+            }
+
+            // Validate selection only if sizes exist and no appointment is needed
+            if (!needsAppointment && {{ $product->sizes->count() }} > 0 && !sizeValue) {
                 showNotification('يرجى اختيار المقاس أو تحديد موعد لأخذ المقاسات', 'error');
                 return;
             }
@@ -693,8 +840,8 @@
             const data = {
                 product_id: {{ $product->id }},
                 quantity: quantity,
-                color: selectedColor,
-                size: selectedSize,
+                color: colorValue,
+                size: sizeValue,
                 needs_appointment: needsAppointment
             };
 
@@ -729,6 +876,11 @@
                     document.querySelectorAll('.color-item, .size-item').forEach(item => {
                         item.classList.remove('active');
                     });
+
+                    // Reset custom inputs if they exist
+                    if (customColorInput) customColorInput.value = '';
+                    if (customSizeInput) customSizeInput.value = '';
+
                     document.getElementById('quantity').value = 1;
                     document.getElementById('needsAppointment').checked = false;
 
@@ -921,6 +1073,46 @@
             // Setup event listeners
             document.getElementById('closeCart').addEventListener('click', closeCart);
             document.getElementById('cartToggle').addEventListener('click', openCart);
+
+            // Custom Color Toggle
+            const useCustomColorCheckbox = document.getElementById('useCustomColor');
+            const customColorGroup = document.getElementById('customColorGroup');
+
+            if (useCustomColorCheckbox) {
+                useCustomColorCheckbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        customColorGroup.classList.remove('d-none');
+                        // Clear existing color selection
+                        document.querySelectorAll('.color-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        selectedColor = null;
+                    } else {
+                        customColorGroup.classList.add('d-none');
+                        document.getElementById('customColor').value = '';
+                    }
+                });
+            }
+
+            // Custom Size Toggle
+            const useCustomSizeCheckbox = document.getElementById('useCustomSize');
+            const customSizeGroup = document.getElementById('customSizeGroup');
+
+            if (useCustomSizeCheckbox) {
+                useCustomSizeCheckbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        customSizeGroup.classList.remove('d-none');
+                        // Clear existing size selection
+                        document.querySelectorAll('.size-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        selectedSize = null;
+                    } else {
+                        customSizeGroup.classList.add('d-none');
+                        document.getElementById('customSize').value = '';
+                    }
+                });
+            }
         });
 
         // Cart Functions
@@ -1040,8 +1232,9 @@
         });
 
         function showLoginPrompt(loginUrl) {
+            const currentUrl = window.location.href;
             const modal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
-            document.getElementById('loginButton').href = loginUrl;
+            document.getElementById('loginButton').href = `${loginUrl}?redirect=${encodeURIComponent(currentUrl)}`;
             modal.show();
         }
     </script>
