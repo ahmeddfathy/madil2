@@ -81,7 +81,7 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
                 <li class="breadcrumb-item"><a href="/products">المنتجات</a></li>
-                <li class="breadcrumb-item"><a href="/products?category={{ $product->category->id }}">{{ $product->category->name }}</a></li>
+                <li class="breadcrumb-item"><a href="/products?category={{ $product->category->slug }}">{{ $product->category->name }}</a></li>
                 <li class="breadcrumb-item active">{{ $product->name }}</li>
             </ol>
         </nav>
@@ -339,53 +339,72 @@
     </div>
 
     <!-- Footer -->
-    <footer class="glass-footer mt-5">
-        <div class="container py-4">
-            <div class="row">
-                <div class="col-lg-4 mb-4">
-                    <h5>عن Madil</h5>
-                    <p>متجرك المفضل للمنتجات المميزة بأفضل الأسعار وأعلى جودة.</p>
-                </div>
-                <div class="col-lg-4 mb-4">
-                    <h5>روابط سريعة</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="/privacy">سياسة الخصوصية</a></li>
-                        <li><a href="/terms">الشروط والأحكام</a></li>
-                        <li><a href="/shipping">معلومات الشحن</a></li>
-                        <li><a href="/faq">الأسئلة الشائعة</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-4 mb-4">
-                    <h5>تواصل معنا</h5>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
-                    </div>
-                </div>
+    <footer class="glass-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="footer-about">
+              <h5>عن المتجر</h5>
+              <p>نقدم خدمات التفصيل والخياطة بأعلى جودة وأفضل الأسعار مع الالتزام بالمواعيد</p>
+              <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
+              </div>
             </div>
-        </div>
-        <div class="footer-bottom">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <p class="mb-0">&copy; {{ date('Y') }} Madil. جميع الحقوق محفوظة</p>
-                    </div>
-                </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="footer-links">
+              <h5>روابط سريعة</h5>
+              <ul>
+                <li><a href="/">الرئيسية</a></li>
+                <li><a href="/products">المنتجات</a></li>
+                <li><a href="/about">من نحن</a></li>
+                <li><a href="#contact">تواصل معنا</a></li>
+              </ul>
             </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="footer-contact">
+              <h5>معلومات التواصل</h5>
+              <ul class="list-unstyled">
+                <li class="mb-2 d-flex align-items-center">
+                  <i class="fas fa-phone-alt ms-2"></i>
+                  <span dir="ltr">054 315 4437</span>
+                </li>
+                <li class="mb-2 d-flex align-items-center">
+                  <i class="fas fa-envelope ms-2"></i>
+                  <a href="mailto:info@madil-sa.com" class="text-decoration-none">info@madil-sa.com</a>
+                </li>
+                <li class="d-flex align-items-center">
+                  <i class="fas fa-map-marker-alt ms-2"></i>
+                  <span>شارع الملك فهد، الرياض، المملكة العربية السعودية</span>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} Madil</p>
+        </div>
+      </div>
     </footer>
 
     <!-- Modal for Appointment -->
-    <div class="modal fade" id="appointmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="appointmentModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal" aria-label="Close"></button>
                     <h5 class="modal-title">حجز موعد للمقاسات</h5>
                 </div>
                 <div class="modal-body">
+                    <div class="alert alert-warning mb-4">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        يجب حجز موعد لأخذ المقاسات لإتمام الطلب. إذا أغلقت هذه النافذة بدون حجز موعد، سيتم إلغاء إضافة المنتج للسلة.
+                    </div>
                     <form id="appointmentForm" class="appointment-form">
                         @csrf
                         <input type="hidden" name="service_type" value="new_abaya">
@@ -451,10 +470,15 @@
 
                         <div id="appointmentErrors" class="alert alert-danger d-none"></div>
 
-                        <button type="submit" class="btn btn-primary btn-lg w-100" id="submitAppointment">
-                            <span class="spinner-border spinner-border-sm d-none me-2" role="status" aria-hidden="true"></span>
-                            تأكيد الحجز
-                        </button>
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg flex-grow-1" id="submitAppointment">
+                                <span class="spinner-border spinner-border-sm d-none me-2" role="status" aria-hidden="true"></span>
+                                تأكيد الحجز
+                            </button>
+                            <button type="button" class="btn btn-danger btn-lg" id="cancelAppointment">
+                                إلغاء
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -1149,6 +1173,39 @@
         });
 
         // Add event listener to appointment form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const appointmentModal = document.getElementById('appointmentModal');
+            const modal = new bootstrap.Modal(appointmentModal, {
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            // Handle cancel button click
+            document.getElementById('cancelAppointment').addEventListener('click', function() {
+                if (confirm('هل أنت متأكد من إلغاء حجز الموعد؟ سيتم إزالة المنتج من السلة.')) {
+                    const cartItemId = document.getElementById('cart_item_id').value;
+                    // Remove item from cart
+                    removeCartItem(cartItemId);
+                    // Allow modal to be closed
+                    appointmentModal.setAttribute('data-allow-close', 'true');
+                    // Hide modal using Bootstrap's hide method
+                    bootstrap.Modal.getInstance(appointmentModal).hide();
+                    // Show notification
+                    showNotification('تم إلغاء الموعد وإزالة المنتج من السلة', 'warning');
+                }
+            });
+
+            // Prevent modal from being closed by clicking outside
+            appointmentModal.addEventListener('hide.bs.modal', function (event) {
+                // If modal is being closed programmatically after successful appointment, allow it
+                if (event.target.getAttribute('data-allow-close') === 'true') {
+                    return;
+                }
+                // Otherwise prevent closing
+                event.preventDefault();
+            });
+        });
+
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -1177,6 +1234,9 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // Allow modal to be closed
+                    document.getElementById('appointmentModal').setAttribute('data-allow-close', 'true');
+
                     // Hide modal
                     const appointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
                     appointmentModal.hide();

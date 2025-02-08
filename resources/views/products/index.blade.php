@@ -80,11 +80,19 @@
                     <div class="filter-section">
                         <h4>الفئات</h4>
                         @foreach($categories as $category)
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="{{ $category->id }}" id="category_{{ $category->id }}">
-                            <label class="form-check-label" for="category_{{ $category->id }}">
-                                {{ $category->name }} ({{ $category->products_count }})
-                            </label>
+                        <div class="category-item mb-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                    value="{{ $category->slug }}"
+                                    id="category-{{ $category->id }}"
+                                    name="categories[]"
+                                    {{ request('category') == $category->slug ? 'checked' : '' }}>
+                                <label class="form-check-label d-flex justify-content-between align-items-center"
+                                    for="category-{{ $category->id }}">
+                                    {{ $category->name }}
+                                    <span class="badge bg-primary rounded-pill">{{ $category->products_count }}</span>
+                                </label>
+                            </div>
                         </div>
                         @endforeach
                     </div>
@@ -109,12 +117,16 @@
             <div class="col-lg-9">
                 <div class="section-header mb-4">
                     <h2>جميع المنتجات</h2>
-                    <div class="sort-options">
+                    <div class="d-flex gap-3 align-items-center">
                         <select class="form-select glass-select" id="sortSelect">
                             <option value="newest">الأحدث</option>
                             <option value="price-low">السعر: من الأقل للأعلى</option>
                             <option value="price-high">السعر: من الأعلى للأقل</option>
                         </select>
+                        <button onclick="resetFilters()" class="btn btn-outline-primary" id="resetFiltersBtn">
+                            <i class="fas fa-filter-circle-xmark me-2"></i>
+                            إزالة الفلتر
+                        </button>
                     </div>
                 </div>
                 <div class="row g-4" id="productGrid">
@@ -268,42 +280,58 @@
     </div>
 
     <!-- Footer -->
-    <footer class="glass-footer mt-5">
-        <div class="container py-4">
-            <div class="row">
-                <div class="col-lg-4 mb-4">
-                    <h5>عن Madil</h5>
-                    <p>متجرك المفضل للمنتجات المميزة بأفضل الأسعار وأعلى جودة.</p>
-                </div>
-                <div class="col-lg-4 mb-4">
-                    <h5>روابط سريعة</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="/privacy">سياسة الخصوصية</a></li>
-                        <li><a href="/terms">الشروط والأحكام</a></li>
-                        <li><a href="/shipping">معلومات الشحن</a></li>
-                        <li><a href="/faq">الأسئلة الشائعة</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-4 mb-4">
-                    <h5>تواصل معنا</h5>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
-                    </div>
-                </div>
+    <footer class="glass-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="footer-about">
+              <h5>عن المتجر</h5>
+              <p>نقدم خدمات التفصيل والخياطة بأعلى جودة وأفضل الأسعار مع الالتزام بالمواعيد</p>
+              <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
+              </div>
             </div>
-        </div>
-        <div class="footer-bottom">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <p class="mb-0">&copy; {{ date('Y') }} Madil. جميع الحقوق محفوظة</p>
-                    </div>
-                </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="footer-links">
+              <h5>روابط سريعة</h5>
+              <ul>
+                <li><a href="/">الرئيسية</a></li>
+                <li><a href="/products">المنتجات</a></li>
+                <li><a href="/about">من نحن</a></li>
+                <li><a href="#contact">تواصل معنا</a></li>
+              </ul>
             </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="footer-contact">
+              <h5>معلومات التواصل</h5>
+              <ul class="list-unstyled">
+                <li class="mb-2 d-flex align-items-center">
+                  <i class="fas fa-phone-alt ms-2"></i>
+                  <span dir="ltr">054 315 4437</span>
+                </li>
+                <li class="mb-2 d-flex align-items-center">
+                  <i class="fas fa-envelope ms-2"></i>
+                  <a href="mailto:info@madil-sa.com" class="text-decoration-none">info@madil-sa.com</a>
+                </li>
+                <li class="d-flex align-items-center">
+                  <i class="fas fa-map-marker-alt ms-2"></i>
+                  <span>شارع الملك فهد، الرياض، المملكة العربية السعودية</span>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} Madil</p>
+        </div>
+      </div>
     </footer>
 
     <!-- Scripts -->
@@ -569,8 +597,8 @@
         // Filter and Sort Functions
         let activeFilters = {
             categories: [],
-            minPrice: {{ $priceRange['min'] }},
-            maxPrice: {{ $priceRange['max'] }},
+            minPrice: {{ $priceRange['min'] ?? 0 }},
+            maxPrice: {{ $priceRange['max'] ?? 1000 }},
             sort: 'newest'
         };
 
@@ -603,13 +631,13 @@
         // Category filter handlers
         document.querySelectorAll('.form-check-input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
-                const categoryId = Number(this.value);
+                const categorySlug = this.value;
                 if (this.checked) {
-                    if (!activeFilters.categories.includes(categoryId)) {
-                        activeFilters.categories.push(categoryId);
+                    if (!activeFilters.categories.includes(categorySlug)) {
+                        activeFilters.categories.push(categorySlug);
                     }
                 } else {
-                    activeFilters.categories = activeFilters.categories.filter(id => id !== categoryId);
+                    activeFilters.categories = activeFilters.categories.filter(slug => slug !== categorySlug);
                 }
                 applyFilters();
             });
@@ -685,12 +713,16 @@
             const productGrid = document.getElementById('productGrid');
             productGrid.innerHTML = '';
 
-            if (products.length === 0) {
+            if (!products || products.length === 0) {
                 productGrid.innerHTML = `
                     <div class="col-12 text-center py-5">
                         <i class="fas fa-box-open fa-3x mb-3 text-muted"></i>
                         <h3>لا توجد منتجات</h3>
                         <p class="text-muted">لم يتم العثور على منتجات تطابق معايير البحث</p>
+                        <button onclick="resetFilters()" class="btn btn-primary mt-3">
+                            <i class="fas fa-sync-alt me-2"></i>
+                            إعادة ضبط الفلتر
+                        </button>
                     </div>
                 `;
                 return;
@@ -734,6 +766,46 @@
         function showLoginPrompt(loginUrl) {
             const modal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
             modal.show();
+        }
+
+        // Add reset filters function
+        function resetFilters() {
+            // Reset checkboxes
+            document.querySelectorAll('.form-check-input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            // Reset price range
+            const priceRangeInput = document.getElementById('priceRange');
+            if (priceRangeInput) {
+                priceRangeInput.value = priceRangeInput.max;
+                document.getElementById('priceValue').textContent = Number(priceRangeInput.max).toLocaleString() + ' ر.س';
+            }
+
+            // Reset sort
+            document.getElementById('sortSelect').value = 'newest';
+
+            // Reset active filters
+            activeFilters = {
+                categories: [],
+                minPrice: {{ $priceRange['min'] ?? 0 }},
+                maxPrice: {{ $priceRange['max'] ?? 1000 }},
+                sort: 'newest'
+            };
+
+            // Clear URL parameters
+            const url = new URL(window.location.href);
+            url.searchParams.delete('category');
+            url.searchParams.delete('sort');
+            url.searchParams.delete('min_price');
+            url.searchParams.delete('max_price');
+            window.history.replaceState({}, '', url.toString());
+
+            // Show notification
+            showNotification('تم إعادة تعيين الفلتر بنجاح', 'success');
+
+            // Apply reset filters
+            applyFilters();
         }
     </script>
 
@@ -1418,6 +1490,25 @@
             .glass-modal {
                 border-radius: 12px;
             }
+        }
+
+        /* Reset Filter Button Styles */
+        #resetFiltersBtn {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        #resetFiltersBtn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(108, 92, 231, 0.2);
+        }
+
+        #resetFiltersBtn i {
+            font-size: 1.1rem;
         }
     </style>
 

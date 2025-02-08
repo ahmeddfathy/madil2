@@ -344,6 +344,9 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('dashboard*') ? 'active' : '' }}" href="/dashboard"><i class="fas fa-user ms-1"></i>حسابي</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('appointments*') ? 'active' : '' }}" href="{{ route('appointments.index') }}"><i class="fas fa-calendar-alt ms-1"></i>المواعيد</a>
+                    </li>
                 </ul>
                 <div class="nav-buttons d-flex align-items-center">
                     <a href="/cart" class="btn btn-link position-relative me-3">

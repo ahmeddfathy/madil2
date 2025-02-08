@@ -48,7 +48,7 @@ class AppointmentController extends Controller
         try {
             $validated = $this->validateAppointment($request);
 
-            if (!$this->validateCartItem($validated['cart_item_id'])) {
+            if ($validated['service_type'] !== 'custom_design' && !$this->validateCartItem($validated['cart_item_id'])) {
                 return response()->json([
                     'success' => false,
                     'message' => 'لا يمكنك حجز موعد لهذا المنتج'
@@ -113,14 +113,14 @@ class AppointmentController extends Controller
     private function validateAppointment(Request $request): array
     {
         return $request->validate([
-            'service_type' => ['required', 'string', 'in:new_abaya,alteration,repair'],
+            'service_type' => ['required', 'string', 'in:new_abaya,alteration,repair,custom_design'],
             'appointment_date' => ['required', 'date', 'after_or_equal:today'],
             'appointment_time' => ['required'],
             'phone' => ['required', 'string', 'max:20'],
-            'notes' => ['nullable', 'string', 'max:1000'],
+            'notes' => ['required_if:service_type,custom_design', 'nullable', 'string', 'max:1000'],
             'location' => ['required', 'string', 'in:store,client_location'],
             'address' => ['required_if:location,client_location', 'nullable', 'string', 'max:500'],
-            'cart_item_id' => ['required', 'exists:cart_items,id']
+            'cart_item_id' => ['nullable', 'exists:cart_items,id']
         ]);
     }
 
@@ -140,12 +140,14 @@ class AppointmentController extends Controller
     {
         $appointment = new Appointment();
         $appointment->user_id = Auth::id();
-        $appointment->cart_item_id = $data['cart_item_id'];
+        $appointment->cart_item_id = $data['cart_item_id'] ?? null;
         $appointment->service_type = $data['service_type'];
         $appointment->appointment_date = Carbon::parse($data['appointment_date']);
         $appointment->appointment_time = Carbon::parse($data['appointment_time']);
         $appointment->phone = $data['phone'];
-        $appointment->notes = $data['notes'];
+        $appointment->notes = $data['service_type'] === 'custom_design'
+            ? 'تصميم مخصص: ' . $data['notes']
+            : $data['notes'];
         $appointment->status = Appointment::STATUS_PENDING;
         $appointment->location = $data['location'];
         $appointment->address = $data['address'];

@@ -355,6 +355,22 @@
                 </div>
                 <div class="col-lg-4 mb-4">
                     <h5>تواصل معنا</h5>
+                    <div class="contact-info">
+                        <ul class="list-unstyled">
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="fas fa-phone-alt ms-2"></i>
+                                <span dir="ltr">054 315 4437</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="fas fa-envelope ms-2"></i>
+                                <a href="mailto:info@madil-sa.com" class="text-decoration-none">info@madil-sa.com</a>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <i class="fas fa-map-marker-alt ms-2"></i>
+                                <span>شارع الملك فهد، الرياض، المملكة العربية السعودية</span>
+                            </li>
+                        </ul>
+                    </div>
                     <div class="social-links">
                         <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>

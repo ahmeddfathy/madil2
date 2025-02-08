@@ -5,6 +5,31 @@
 @section('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 <link rel="stylesheet" href="{{ asset('assets/css/customer/appointments.css') }}">
+<style>
+    .custom-design-badge {
+        background-color: #6c5ce7;
+        color: white;
+        padding: 0.35em 0.65em;
+        font-size: 0.85em;
+        font-weight: 600;
+        border-radius: 0.25rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .custom-design-badge i {
+        font-size: 1.1em;
+    }
+
+    .appointment-card.custom-design {
+        border-top: 4px solid #6c5ce7;
+    }
+
+    .appointment-card.custom-design .info-icon {
+        color: #6c5ce7;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -18,7 +43,7 @@
     </div>
 
     <div class="appointment-container">
-        <div class="appointment-card">
+        <div class="appointment-card {{ $appointment->service_type === 'custom_design' ? 'custom-design' : '' }}">
             <div class="appointment-header">
                 <h4 class="mb-0">#{{ $appointment->id }}</h4>
                 <span class="appointment-status status-{{ $appointment->status }}">
@@ -39,7 +64,16 @@
                             </div>
                             <div>
                                 <div class="info-label">نوع الخدمة</div>
-                                <div class="info-value">{{ $appointment->service }}</div>
+                                <div class="info-value">
+                                    @if($appointment->service_type === 'custom_design')
+                                        <span class="custom-design-badge">
+                                            <i class="bi bi-brush"></i>
+                                            تصميم مخصص
+                                        </span>
+                                    @else
+                                        {{ $appointment->service }}
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -5,6 +5,31 @@
 @section('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 <link rel="stylesheet" href="{{ asset('assets/css/customer/appointments.css') }}">
+<style>
+    .custom-design-badge {
+        background-color: #6c5ce7;
+        color: white;
+        padding: 0.35em 0.65em;
+        font-size: 0.85em;
+        font-weight: 600;
+        border-radius: 0.25rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .custom-design-badge i {
+        font-size: 1.1em;
+    }
+
+    .appointment-item.custom-design {
+        border-right: 4px solid #6c5ce7;
+    }
+
+    .appointment-item.custom-design .appointment-icon {
+        color: #6c5ce7;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -30,13 +55,22 @@
 
   <div class="appointments-container">
     @forelse($appointments as $appointment)
-    <div class="appointment-item">
+    <div class="appointment-item {{ $appointment->service_type === 'custom_design' ? 'custom-design' : '' }}">
       <div class="appointment-content">
         <div class="appointment-header">
           <div class="appointment-icon">
             <i class="bi bi-calendar-check"></i>
           </div>
-          <h5 class="appointment-title">{{ $appointment->service }}</h5>
+          <h5 class="appointment-title">
+            @if($appointment->service_type === 'custom_design')
+              <span class="custom-design-badge">
+                <i class="bi bi-brush"></i>
+                تصميم مخصص
+              </span>
+            @else
+              {{ $appointment->service }}
+            @endif
+          </h5>
         </div>
 
         <div class="appointment-meta">

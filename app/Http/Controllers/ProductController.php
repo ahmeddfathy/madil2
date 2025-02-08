@@ -27,7 +27,7 @@ class ProductController extends Controller
             })
             ->when($request->category, function (Builder $query, $category) {
                 $query->whereHas('category', function($q) use ($category) {
-                    $q->where('name', $category);
+                    $q->where('slug', $category);
                 });
             })
             ->when($request->max_price, function (Builder $query, $maxPrice) {
@@ -46,7 +46,7 @@ class ProductController extends Controller
 
         $products = $query->paginate($request->per_page ?? 12);
 
-        $categories = Category::select('id', 'name')
+        $categories = Category::select('id', 'name', 'slug')
             ->withCount('products')
             ->get();
 
@@ -62,7 +62,11 @@ class ProductController extends Controller
                     return [
                         'id' => $product->id,
                         'name' => $product->name,
-                        'category' => $product->category->name,
+                        'slug' => $product->slug,
+                        'category' => [
+                            'name' => $product->category->name,
+                            'slug' => $product->category->slug
+                        ],
                         'price' => $product->price,
                         'image_url' => $product->images->first() ? asset('storage/' . $product->images->first()->image_path) : asset('images/placeholder.jpg'),
                         'images' => collect($product->images)->map(function($image) {
@@ -123,7 +127,9 @@ class ProductController extends Controller
 
             // Filter by categories
             if ($request->has('categories') && !empty($request->categories)) {
-                $query->whereIn('category_id', $request->categories);
+                $query->whereHas('category', function($q) use ($request) {
+                    $q->whereIn('slug', $request->categories);
+                });
             }
 
             // Filter by price range
@@ -156,7 +162,7 @@ class ProductController extends Controller
                         'name' => $product->name,
                         'slug' => $product->slug,
                         'category' => $product->category->name,
-                        'price' => $product->price,
+                        'price' => number_format($product->price, 2),
                         'image_url' => $product->images->first() ?
                             asset('storage/' . $product->images->first()->image_path) :
                             asset('images/placeholder.jpg'),

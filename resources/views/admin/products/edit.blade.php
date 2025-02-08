@@ -348,6 +348,22 @@
 <script>
 let newImageCount = 1;
 
+function toggleColorsSection(checkbox) {
+    const colorsSection = document.getElementById('colorsSection');
+    colorsSection.style.display = checkbox.checked ? 'block' : 'none';
+    if (checkbox.checked && !document.querySelector('#colorsContainer .input-group')) {
+        addColorInput();
+    }
+}
+
+function toggleSizesSection(checkbox) {
+    const sizesSection = document.getElementById('sizesSection');
+    sizesSection.style.display = checkbox.checked ? 'block' : 'none';
+    if (checkbox.checked && !document.querySelector('#sizesContainer .input-group')) {
+        addSizeInput();
+    }
+}
+
 function addNewImageInput() {
     const container = document.getElementById('newImagesContainer');
     const div = document.createElement('div');

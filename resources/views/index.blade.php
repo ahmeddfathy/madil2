@@ -207,14 +207,14 @@
                   <i class="fas fa-phone-alt"></i>
                   <div class="info-content">
                     <h5>اتصل بنا</h5>
-                    <p>+966 50 123 4567</p>
+                    <p dir="ltr">  054 315 4437</p>
                   </div>
                 </div>
                 <div class="info-item">
                   <i class="fas fa-envelope"></i>
                   <div class="info-content">
                     <h5>البريد الإلكتروني</h5>
-                    <p>info@madil.com</p>
+                    <p><a href="mailto:info@madil-sa.com" class="text-decoration-none">info@madil-sa.com</a></p>
                   </div>
                 </div>
               </div>
@@ -288,27 +288,37 @@
             <div class="footer-links">
               <h5>روابط سريعة</h5>
               <ul>
-                <li><a href="#">الرئيسية</a></li>
-                <li><a href="#">خدماتنا</a></li>
-                <li><a href="#">المنتجات</a></li>
-                <li><a href="#">تواصل معنا</a></li>
+                <li><a href="/">الرئيسية</a></li>
+                <li><a href="/products">المنتجات</a></li>
+                <li><a href="/about">من نحن</a></li>
+                <li><a href="#contact">تواصل معنا</a></li>
               </ul>
             </div>
           </div>
           <div class="col-lg-4">
-            <div class="newsletter">
-              <h6>اشترك في نشرتنا البريدية</h6>
-              <div class="input-group">
-                <input type="email" placeholder="البريد الإلكتروني" />
-                <button class="btn">اشتراك</button>
-              </div>
+            <div class="footer-contact">
+              <h5>معلومات التواصل</h5>
+              <ul class="list-unstyled">
+                <li class="mb-2 d-flex align-items-center">
+                  <i class="fas fa-phone-alt ms-2"></i>
+                  <span dir="ltr">054 315 4437</span>
+                </li>
+                <li class="mb-2 d-flex align-items-center">
+                  <i class="fas fa-envelope ms-2"></i>
+                  <a href="mailto:info@madil-sa.com" class="text-decoration-none">info@madil-sa.com</a>
+                </li>
+                <li class="d-flex align-items-center">
+                  <i class="fas fa-map-marker-alt ms-2"></i>
+                  <span>شارع الملك فهد، الرياض، المملكة العربية السعودية</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
       <div class="footer-bottom">
         <div class="container">
-          <p>جميع الحقوق محفوظة &copy; 2024 المتجر الحديث</p>
+          <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} المتجر الحديث</p>
         </div>
       </div>
     </footer>
