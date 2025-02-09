@@ -69,13 +69,13 @@
                 <form action="{{ route('cart.update', $item->id) }}" method="POST" class="d-inline update-quantity-form">
                   @csrf
                   @method('PATCH')
-                  <button type="button" class="quantity-btn decrease">
-                    <i class="bi bi-dash"></i>
-                  </button>
-                  <input type="number" name="quantity" value="{{ $item->quantity }}" min="1"
-                    class="quantity-input" readonly>
                   <button type="button" class="quantity-btn increase">
                     <i class="bi bi-plus"></i>
+                  </button>
+                  <input type="number" name="quantity" value="{{ $item->quantity }}" min="1"
+                  class="quantity-input" >
+                  <button type="button" class="quantity-btn decrease">
+                    <i class="bi bi-dash"></i>
                   </button>
                 </form>
               </div>

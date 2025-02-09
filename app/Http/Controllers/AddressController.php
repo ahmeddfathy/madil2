@@ -131,7 +131,6 @@ class AddressController extends Controller
     {
         $address = Address::where('user_id', Auth::id())->findOrFail($id);
 
-        // إذا كان هذا العنوان رئيسياً، نقوم بتعيين عنوان آخر كعنوان رئيسي
         if ($address->is_primary) {
             $newPrimary = Address::where('user_id', Auth::id())
                 ->where('id', '!=', $id)

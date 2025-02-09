@@ -394,18 +394,44 @@ class ProductController extends Controller
 
     public function removeCartItem(CartItem $cartItem)
     {
-        $cart = $cartItem->cart;
-        $cartItem->delete();
+        try {
+            // التحقق من أن العنصر ينتمي للمستخدم الحالي
+            if ($cartItem->cart->user_id !== auth()->id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'غير مصرح بهذا الإجراء'
+                ], 403);
+            }
 
-        // Update cart total
-        $cart->total_amount = $cart->items()->sum('subtotal');
-        $cart->save();
+            $cart = $cartItem->cart;
+            $cartItem->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'تم حذف المنتج من السلة',
-            'cart_total' => $cart->total_amount,
-            'cart_count' => $cart->items()->sum('quantity')
-        ]);
+            // تحديث إجمالي السلة
+            $cart->updateTotals();
+
+            // إرجاع البيانات المحدثة للسلة
+            return response()->json([
+                'success' => true,
+                'message' => 'تم حذف المنتج من السلة بنجاح',
+                'count' => $cart->items->count(),
+                'total' => number_format($cart->total_amount, 2) . ' ر.س',
+                'items' => $cart->items->map(function($item) {
+                    return [
+                        'id' => $item->id,
+                        'name' => $item->product->name,
+                        'price' => number_format($item->price, 2),
+                        'quantity' => $item->quantity,
+                        'subtotal' => number_format($item->subtotal, 2),
+                        'image' => $item->product->image_url
+                    ];
+                })
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء حذف المنتج'
+            ], 500);
+        }
     }
 }

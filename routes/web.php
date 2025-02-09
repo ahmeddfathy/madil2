@@ -30,11 +30,8 @@ use App\Http\Controllers\Admin\{
 
 // Public Routes
 Route::get('/', function () {
-    $products = \App\Models\Product::with('images')
-        ->latest()
-        ->take(3)
-        ->get();
-    return view('index', compact('products'));
+
+    return view('index');
 })->name('home');
 
 // Static Pages Routes
@@ -169,7 +166,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::post('/cart/add', [ProductController::class, 'addToCart'])->name('cart.add');
     Route::get('/cart/items', [ProductController::class, 'getCartItems'])->name('cart.items');
     Route::patch('/cart/items/{cartItem}', [ProductController::class, 'updateCartItem'])->name('cart.update-item');
-    Route::delete('/cart/items/{cartItem}', [ProductController::class, 'removeCartItem'])->name('cart.remove-item');
+    Route::delete('/cart/remove/{cartItem}', [ProductController::class, 'removeCartItem'])->name('cart.remove-item');
 });
 
 // مسارات لوحة تحكم العميل

@@ -1,17 +1,16 @@
-/* Variables */
 :root {
-    --primary-color: #4A3AFF;     /* أزرق نابض بالحياة مع عمق أكبر */
-    --secondary-color: #7B6EFF;   /* درجة فاتحة مع تباين واضح */
-    --background-color: #F0F4FF;  /* خلفية مشرقة وناعمة */
-    --glass-background: rgba(255, 255, 255, 0.75);      /* شفافية أكثر وضوحًا */
-    --glass-background-dark: rgba(255, 255, 255, 0.65);  /* شفافية معتدلة ومريحة */
-    --glass-border: 1px solid rgba(255, 255, 255, 0.55); /* حدود خفيفة وواضحة */
-    --card-shadow: none; /* تم إزالة الظل */
-    --text-color: #1E2A38;        /* نص داكن واضح للقراءة */
-    --text-light: #2C3E50;        /* نص رمادي مائل للأزرق مع وضوح */
-    --text-muted: #4A5F6E;        /* رمادي مائل للأزرق أكثر حيوية */
-    --danger-color: #FF4D4D;      /* أحمر صارخ وواضح */
-    --success-color: #2ECC71;     /* أخضر مشرق وحيوي */
+    --primary-color: #4A3AFF;
+    --secondary-color: #7B6EFF;
+    --background-color: #F0F4FF;
+    --glass-background: rgba(255, 255, 255, 0.75);
+    --glass-background-dark: rgba(255, 255, 255, 0.65);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.55);
+    --card-shadow: none;
+    --text-color: #1E2A38;
+    --text-light: #2C3E50;
+    --text-muted: #4A5F6E;
+    --danger-color: #FF4D4D;
+    --success-color: #2ECC71;
 }
 
 /* General Styles */
@@ -59,42 +58,26 @@ body {
     border-radius: 20px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-    border: var(--glass-border);
-    box-shadow: none;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid rgba(74, 58, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(74, 58, 255, 0.08);
     display: grid;
     grid-template-columns: 1fr auto auto;
     gap: 1.5rem;
     align-items: center;
 }
 
-.appointment-item:hover {
-    transform: translateY(-5px);
-    box-shadow: none;
-}
-
-.appointment-content {
-    display: grid;
-    gap: 1.25rem;
-}
-
-.appointment-header {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-
 .appointment-icon {
     width: 50px;
     height: 50px;
-    background: rgba(115, 103, 240, 0.1);
+    background: rgba(74, 58, 255, 0.08);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--primary-color);
     font-size: 1.4rem;
-    border: 2px solid rgba(115, 103, 240, 0.2);
+    border: 2px solid rgba(74, 58, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(74, 58, 255, 0.08);
 }
 
 .appointment-title {
@@ -118,7 +101,8 @@ body {
     background: rgba(255, 255, 255, 0.1);
     padding: 0.75rem 1rem;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(74, 58, 255, 0.15);
+    box-shadow: 0 2px 8px rgba(74, 58, 255, 0.05);
 }
 
 .meta-item i {
@@ -146,25 +130,25 @@ body {
     min-width: 120px;
     text-align: center;
     margin: 0;
-    box-shadow: none;
+    box-shadow: 0 2px 8px rgba(74, 58, 255, 0.05);
 }
 
 .status-pending {
     background: #fff8eb;
     color: #ff9f43;
-    border: 1px solid #ffd5a2;
+    border: 2px solid #ffd5a2;
 }
 
 .status-confirmed {
     background: #e8f5e9;
     color: #00b894;
-    border: 1px solid #b7dfbd;
+    border: 2px solid #b7dfbd;
 }
 
 .status-cancelled {
     background: #fee8e7;
     color: #e74c3c;
-    border: 1px solid #f5b4ae;
+    border: 2px solid #f5b4ae;
 }
 
 /* Filters */
@@ -175,8 +159,8 @@ body {
     border-radius: 20px;
     padding: 1.25rem;
     margin-bottom: 2rem;
-    border: var(--glass-border);
-    box-shadow: none;
+    border: 2px solid rgba(74, 58, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(74, 58, 255, 0.08);
     display: flex;
     justify-content: center;
     gap: 1rem;
@@ -188,22 +172,13 @@ body {
     font-size: 0.95rem;
     font-weight: 500;
     background: var(--glass-background-dark);
-    border: var(--glass-border);
+    border: 2px solid rgba(74, 58, 255, 0.15);
     color: var(--text-color);
-    transition: all 0.3s ease;
-}
-
-.filter-btn:hover {
-    background: var(--primary-color);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: none;
 }
 
 .filter-btn.active {
     background: var(--primary-color);
     color: white;
-    box-shadow: none;
 }
 
 /* Buttons */
@@ -279,8 +254,8 @@ body {
     background: var(--glass-background);
     backdrop-filter: blur(8px);
     border-radius: 30px;
-    border: var(--glass-border);
-    box-shadow: none;
+    border: 2px solid rgba(74, 58, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(74, 58, 255, 0.08);
     margin: 2rem auto;
     max-width: 600px;
 }

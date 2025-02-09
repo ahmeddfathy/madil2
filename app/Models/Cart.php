@@ -30,4 +30,10 @@ class Cart extends Model
   {
     return $this->hasMany(CartItem::class);
   }
+
+  public function updateTotals()
+  {
+    $this->total_amount = $this->items->sum('subtotal');
+    $this->save();
+  }
 }

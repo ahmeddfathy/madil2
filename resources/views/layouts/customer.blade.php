@@ -27,41 +27,78 @@
             -webkit-backdrop-filter: blur(10px) !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 0.5rem 0;
-            padding-right: 4rem !important;
+            padding: 1.5rem 0;
+            padding-right: 300px !important;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
         }
 
         .navbar-brand img {
-            height: 50px;
+            height: 100px;
             width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover img {
+            transform: scale(1.05);
         }
 
         .navbar-nav .nav-link {
             color: #333;
-            padding: 0.5rem 1rem;
+            padding: 1rem 2rem;
             transition: all 0.3s;
             border-radius: 8px;
             margin: 0.25rem;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1.2rem;
         }
 
         .navbar-nav .nav-link:hover,
         .navbar-nav .nav-link.active {
             background: rgba(108, 92, 231, 0.1);
             color: var(--primary-color);
+            transform: translateY(-2px);
         }
 
         .nav-buttons .btn-link {
-            padding: 0.5rem;
+            padding: 0.8rem;
             color: #333;
             transition: all 0.3s;
             border-radius: 8px;
             position: relative;
+            font-size: 1.2rem;
         }
 
         .nav-buttons .btn-link:hover {
             background: rgba(108, 92, 231, 0.1);
             color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* تحسين شكل الأزرار في Navbar */
+        .nav-buttons .btn-outline-primary {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-width: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-buttons .btn-outline-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.2);
+        }
+
+        /* تحسين شكل البادج في Navbar */
+        .nav-buttons .badge {
+            padding: 0.45em 0.75em;
+            font-size: 0.85em;
+            font-weight: 600;
+            border: 2px solid #fff;
         }
 
         /* Sidebar Styles */
@@ -75,7 +112,7 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+            z-index: 1001;
             transition: all 0.3s ease;
             overflow-y: auto;
         }
@@ -84,6 +121,17 @@
             padding: 1rem;
             text-align: center;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-header img {
+            height: 80px;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header img:hover {
+            transform: scale(1.05);
         }
 
         .sidebar-user-info {
@@ -131,7 +179,7 @@
         .main-content {
             margin-right: 280px;
             padding: 1rem;
-            padding-top: 76px;
+            padding-top: 160px;
             min-height: 100vh;
             transition: all 0.3s ease;
         }
@@ -143,6 +191,9 @@
             }
             .main-content {
                 margin-right: 250px;
+            }
+            .glass-navbar {
+                padding-right: 270px !important;
             }
         }
 
@@ -156,6 +207,9 @@
             .main-content {
                 margin-right: 0;
             }
+            .glass-navbar {
+                padding-right: 4rem !important;
+            }
             .sidebar-toggle {
                 display: block !important;
             }
@@ -163,56 +217,43 @@
 
         @media (max-width: 768px) {
             .navbar-brand img {
-                height: 40px;
+                height: 80px;
+            }
+            .glass-navbar {
+                padding: 1rem 4rem 1rem 1rem !important;
             }
             .nav-buttons {
                 margin-top: 1rem;
                 justify-content: center !important;
             }
             .nav-buttons .btn-link {
-                padding: 0.4rem;
-            }
-            .sidebar {
-                width: 100%;
-                max-width: 300px;
-            }
-            .main-content {
-                padding: 0.75rem;
-                padding-top: 70px;
-            }
-            .sidebar-menu .nav-link {
-                padding: 0.6rem 0.75rem;
-                margin: 0.25rem 0.5rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .navbar {
-                padding: 0.5rem 0;
-            }
-            .navbar-brand img {
-                height: 35px;
-            }
-            .nav-buttons .btn-link {
-                padding: 0.3rem;
-                font-size: 0.9rem;
+                padding: 0.5rem;
+                font-size: 1rem;
             }
             .sidebar-user-info {
                 padding: 1rem;
             }
-            .user-avatar {
-                width: 60px;
+            .main-content {
+                padding-top: 140px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-brand img {
                 height: 60px;
             }
-            .sidebar-menu .nav-link {
-                font-size: 0.9rem;
+            .glass-navbar {
+                padding: 0.8rem 3.5rem 0.8rem 1rem !important;
             }
             .main-content {
-                padding: 0.5rem;
-                padding-top: 65px;
+                padding-top: 130px;
             }
-            .glass-navbar {
-                padding-right: 3.5rem !important;
+            .nav-buttons .btn-link {
+                padding: 0.5rem;
+                font-size: 1rem;
+            }
+            .sidebar-user-info {
+                padding: 1rem;
             }
         }
 
@@ -328,7 +369,7 @@
     <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Madil" height="100">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="Madil" height="120" >
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -357,39 +398,14 @@
                         </span>
                         @endif
                     </a>
-                    <div class="dropdown me-3">
-                        <button class="btn btn-link position-relative" type="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-bell fa-lg"></i>
-                            @if($stats['unread_notifications'] > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {{ $stats['unread_notifications'] }}
-                            </span>
-                            @endif
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
-                            @forelse($recent_notifications as $notification)
-                            <li>
-                                <a class="dropdown-item {{ !$notification->read_at ? 'unread' : '' }}" href="#">
-                                    <i class="fas {{ $notification->icon }} me-2"></i>
-                                    <div class="notification-content">
-                                        <p class="mb-1">{{ $notification->data['message'] }}</p>
-                                        <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
-                                    </div>
-                                </a>
-                            </li>
-                            @empty
-                            <li>
-                                <div class="dropdown-item text-center">لا توجد إشعارات</div>
-                            </li>
-                            @endforelse
-                            @if(count($recent_notifications) > 0)
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item text-center" href="/notifications">عرض كل الإشعارات</a></li>
-                            @endif
-                        </ul>
-                    </div>
+                    <a href="/notifications" class="btn btn-link position-relative me-3">
+                        <i class="fas fa-bell fa-lg"></i>
+                        @if($stats['unread_notifications'] > 0)
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ $stats['unread_notifications'] }}
+                        </span>
+                        @endif
+                    </a>
                     <a href="{{ route('logout') }}" class="btn btn-outline-primary"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="fas fa-sign-out-alt ms-1"></i>تسجيل الخروج
@@ -405,8 +421,8 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <a href="/">
-                <!-- <img src="{{ asset('images/logo.png') }}" alt="Madil" height="40"> -->
+            <a href="/" class="d-block">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="Madil" class="img-fluid">
             </a>
         </div>
         <div class="sidebar-user-info">
@@ -476,7 +492,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="main-content">
+    <div class="main-content" style="margin-top: 60px;">
         @yield('content')
     </div>
 

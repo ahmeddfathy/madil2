@@ -20,43 +20,37 @@
   </head>
   <body>
     <!-- Navbar -->
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg glass-navbar sticky-top">
-  <div class="container">
-      <a class="navbar-brand" href="#">
-       Madil
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          <img src="{{ asset('assets/images/logo.png') }}" alt="Madil" height="70">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                  <a class="nav-link" href="/">الرئيسية</a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" href="/about">من نحن</a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" href="/products">المنتجات</a>
-              </li>
-
-
-
+            <li class="nav-item">
+              <a class="nav-link" href="/">الرئيسية</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/about">من نحن</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/products">المنتجات</a>
+            </li>
           </ul>
           <div class="nav-buttons">
-              @auth
-                  <a href="{{ route('dashboard') }}" class="btn btn-primary">لوحة التحكم</a>
-              @else
-                  <a href="/login" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
-                  <a href="/register" class="btn btn-primary">إنشاء حساب</a>
-              @endauth
+            @auth
+              <a href="{{ route('dashboard') }}" class="btn btn-primary">لوحة التحكم</a>
+            @else
+              <a href="/login" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
+              <a href="/register" class="btn btn-primary">إنشاء حساب</a>
+            @endauth
           </div>
+        </div>
       </div>
-  </div>
-</nav>
-
+    </nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -131,7 +125,8 @@
               <div class="card-icon">
                 <i class="fas fa-ruler"></i>
               </div>
-<img src="https://th.bing.com/th/id/OIP.8DI5HCPocmh1DLXBecDzLwHaNj?rs=1&pid=ImgDetMain" alt="تعديلات وإصلاحات" class="img-fluid mb-3    ">              <h3>تعديلات وإصلاحات</h3>
+              <img src="https://th.bing.com/th/id/OIP.8DI5HCPocmh1DLXBecDzLwHaNj?rs=1&pid=ImgDetMain" alt="تعديلات وإصلاحات" class="img-fluid mb-3    ">
+              <h3>تعديلات وإصلاحات</h3>
               <p>خدمات التعديل والإصلاح لجميع أنواع الملابس</p>
               <a href="#" class="card-link">اكتشف المزيد <i class="fas fa-arrow-left"></i></a>
             </div>
