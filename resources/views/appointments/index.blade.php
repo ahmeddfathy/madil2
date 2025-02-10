@@ -36,6 +36,10 @@
 <div class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="page-title mb-0">المواعيد</h2>
+    <a href="{{ route('appointments.create') }}" class="btn btn-primary">
+      <i class="bi bi-plus-lg"></i>
+      حجز موعد جديد
+    </a>
   </div>
 
   <div class="filters d-flex justify-content-center gap-2">

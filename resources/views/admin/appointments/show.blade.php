@@ -29,17 +29,72 @@
                                             معلومات العميل
                                         </h5>
                                         <div class="customer-details">
-                                            <div class="detail-item">
+                                            <!-- Basic Info -->
+                                            <div class="detail-item mb-4">
                                                 <dt><i class="fas fa-user"></i> الاسم</dt>
                                                 <dd>{{ $appointment->user->name }}</dd>
                                             </div>
-                                            <div class="detail-item">
+                                            <div class="detail-item mb-4">
                                                 <dt><i class="fas fa-envelope"></i> البريد الإلكتروني</dt>
                                                 <dd>{{ $appointment->user->email }}</dd>
                                             </div>
-                                            <div class="detail-item">
-                                                <dt><i class="fas fa-phone"></i> رقم الهاتف</dt>
-                                                <dd>{{ $appointment->user->phone ?? 'غير محدد' }}</dd>
+
+                                            <!-- Phone Numbers -->
+                                            <div class="detail-section mb-4">
+                                                <h6 class="section-title mb-3">
+                                                    <i class="fas fa-phone-alt text-primary me-2"></i>
+                                                    أرقام الهواتف
+                                                </h6>
+                                                @forelse($appointment->user->phoneNumbers as $phone)
+                                                    <div class="phone-item mb-2 p-2 rounded {{ $phone->is_primary ? 'bg-light border' : '' }}">
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="phone-number">
+                                                                {{ $phone->phone }}
+                                                            </span>
+                                                            @if($phone->is_primary)
+                                                                <span class="badge bg-primary ms-2">رئيسي</span>
+                                                            @endif
+                                                            <span class="phone-type text-muted ms-2">
+                                                                ({{ $phone->type_text }})
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @empty
+                                                    <p class="text-muted">لا توجد أرقام هواتف مسجلة</p>
+                                                @endforelse
+                                            </div>
+
+                                            <!-- Addresses -->
+                                            <div class="detail-section">
+                                                <h6 class="section-title mb-3">
+                                                    <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                                    العناوين
+                                                </h6>
+                                                @forelse($appointment->user->addresses as $address)
+                                                    <div class="address-item mb-3 p-3 border rounded {{ $address->is_primary ? 'border-primary' : '' }}">
+                                                        <div class="d-flex justify-content-between">
+                                                            <div class="address-type">
+                                                                <span class="fw-bold">{{ $address->type_text }}</span>
+                                                                @if($address->is_primary)
+                                                                    <span class="badge bg-primary ms-2">رئيسي</span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                        <div class="address-details mt-2">
+                                                            <p class="mb-1"><i class="fas fa-city me-2"></i>{{ $address->city }}</p>
+                                                            <p class="mb-1"><i class="fas fa-map me-2"></i>{{ $address->area }}</p>
+                                                            <p class="mb-1"><i class="fas fa-road me-2"></i>{{ $address->street }}</p>
+                                                            @if($address->building_no)
+                                                                <p class="mb-1"><i class="fas fa-building me-2"></i>مبنى {{ $address->building_no }}</p>
+                                                            @endif
+                                                            @if($address->details)
+                                                                <p class="mb-0 text-muted"><i class="fas fa-info-circle me-2"></i>{{ $address->details }}</p>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                @empty
+                                                    <p class="text-muted">لا توجد عناوين مسجلة</p>
+                                                @endforelse
                                             </div>
                                         </div>
                                     </div>
@@ -113,18 +168,18 @@
                                                 </div>
                                                 <div class="col-md-6 text-md-end mt-3 mt-md-0">
                                                     @if($appointment->status == 'pending')
-                                                    <form action="{{ route('admin.appointments.updateStatus', $appointment) }}" method="POST" class="d-inline-block">
+                                                    <form action="{{ route('admin.appointments.update-status', $appointment) }}" method="POST" class="d-inline-block">
                                                         @csrf
-                                                        @method('PUT')
+                                                        @method('PATCH')
                                                         <input type="hidden" name="status" value="approved">
                                                         <button type="submit" class="btn btn-success me-2">
                                                             <i class="fas fa-check me-1"></i>
                                                             قبول الموعد
                                                         </button>
                                                     </form>
-                                                    <form action="{{ route('admin.appointments.updateStatus', $appointment) }}" method="POST" class="d-inline-block">
+                                                    <form action="{{ route('admin.appointments.update-status', $appointment) }}" method="POST" class="d-inline-block">
                                                         @csrf
-                                                        @method('PUT')
+                                                        @method('PATCH')
                                                         <input type="hidden" name="status" value="cancelled">
                                                         <button type="submit" class="btn btn-danger">
                                                             <i class="fas fa-times me-1"></i>

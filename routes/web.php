@@ -147,8 +147,16 @@ Route::middleware([
 
             // Appointments Management
             Route::middleware(['permission:manage appointments'])->group(function () {
-                Route::resource('appointments', AdminAppointmentController::class)->except(['create', 'store', 'edit', 'update']);
-                Route::patch('/appointments/{appointment}/status', [AdminAppointmentController::class, 'updateStatus'])->name('appointments.update-status');
+                Route::resource('appointments', AdminAppointmentController::class)
+                    ->except(['create', 'store', 'edit', 'update']);
+
+                // تحديث حالة الموعد
+                Route::patch('/appointments/{appointment}/update-status', [AdminAppointmentController::class, 'updateStatus'])
+                    ->name('appointments.update-status');
+
+                // إلغاء الموعد
+                Route::patch('/appointments/{appointment}/cancel', [AdminAppointmentController::class, 'cancel'])
+                    ->name('appointments.cancel');
             });
 
             // Reports Management

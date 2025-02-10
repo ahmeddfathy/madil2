@@ -39,48 +39,33 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {
         if (!Auth::check()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'يجب تسجيل الدخول أولاً لحجز موعد'
-            ], 401);
+            return redirect()->route('login')
+                ->with('error', 'يجب تسجيل الدخول أولاً لحجز موعد');
         }
 
         try {
             $validated = $this->validateAppointment($request);
 
             if ($validated['service_type'] !== 'custom_design' && !$this->validateCartItem($validated['cart_item_id'])) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'لا يمكنك حجز موعد لهذا المنتج'
-                ], 403);
+                return back()
+                    ->with('error', 'لا يمكنك حجز موعد لهذا المنتج');
             }
 
             $appointment = $this->createAppointment($validated);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'تم حجز الموعد بنجاح',
-                'appointment' => [
-                    'id' => $appointment->id,
-                    'date' => $appointment->appointment_date->format('Y-m-d'),
-                    'time' => $appointment->appointment_time->format('H:i'),
-                    'status' => $appointment->status,
-                    'url' => route('appointments.show', $appointment)
-                ]
-            ]);
+            return redirect()
+                ->route('appointments.show', $appointment)
+                ->with('success', 'تم حجز الموعد بنجاح');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'بيانات غير صحيحة',
-                'errors' => $e->errors()
-            ], 422);
+            return back()
+                ->withErrors($e->errors())
+                ->withInput();
         } catch (\Exception $e) {
             Log::error('خطأ في حجز الموعد: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'حدث خطأ أثناء حجز الموعد. الرجاء المحاولة مرة أخرى.'
-            ], 500);
+            return back()
+                ->with('error', 'حدث خطأ أثناء حجز الموعد. الرجاء المحاولة مرة أخرى.')
+                ->withInput();
         }
     }
 
@@ -166,5 +151,72 @@ class AppointmentController extends Controller
         }
     }
 
+    /**
+     * تحديث الموعد
+     */
+    public function update(Request $request, Appointment $appointment)
+    {
+        $this->authorizeAccess($appointment);
 
+        try {
+            $validated = $request->validate([
+                'appointment_date' => ['required', 'date', 'after_or_equal:today'],
+                'appointment_time' => ['required'],
+                'phone' => ['required', 'string', 'max:20'],
+                'notes' => ['nullable', 'string', 'max:1000'],
+                'location' => ['required', 'string', 'in:store,client_location'],
+                'address' => ['required_if:location,client_location', 'nullable', 'string', 'max:500'],
+            ]);
+
+            $appointment->update([
+                'appointment_date' => Carbon::parse($validated['appointment_date']),
+                'appointment_time' => Carbon::parse($validated['appointment_time']),
+                'phone' => $validated['phone'],
+                'notes' => $validated['notes'],
+                'location' => $validated['location'],
+                'address' => $validated['address'],
+            ]);
+
+            return redirect()
+                ->route('appointments.show', $appointment)
+                ->with('success', 'تم تحديث الموعد بنجاح');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (\Exception $e) {
+            Log::error('خطأ في تحديث الموعد: ' . $e->getMessage());
+            return back()
+                ->with('error', 'حدث خطأ أثناء تحديث الموعد. الرجاء المحاولة مرة أخرى.')
+                ->withInput();
+        }
+    }
+
+    /**
+     * إلغاء الموعد
+     */
+    public function cancel(Appointment $appointment)
+    {
+        $this->authorizeAccess($appointment);
+
+        try {
+            if ($appointment->status !== Appointment::STATUS_PENDING) {
+                return back()->with('error', 'لا يمكن إلغاء هذا الموعد في الوقت الحالي');
+            }
+
+            $appointment->update([
+                'status' => Appointment::STATUS_CANCELLED,
+            ]);
+
+            return redirect()
+                ->route('appointments.show', $appointment)
+                ->with('success', 'تم إلغاء الموعد بنجاح');
+
+        } catch (\Exception $e) {
+            Log::error('خطأ في إلغاء الموعد: ' . $e->getMessage());
+            return back()
+                ->with('error', 'حدث خطأ أثناء إلغاء الموعد. الرجاء المحاولة مرة أخرى.');
+        }
+    }
 }

@@ -11,7 +11,7 @@ class AppointmentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Appointment::with('user')
+        $query = Appointment::with(['user', 'user.phoneNumbers', 'user.addresses'])
             ->latest();
 
         // Filter by status
@@ -22,6 +22,11 @@ class AppointmentController extends Controller
         // Filter by date
         if ($request->date) {
             $query->whereDate('appointment_date', $request->date);
+        }
+
+        // Filter by service type
+        if ($request->service_type) {
+            $query->where('service_type', $request->service_type);
         }
 
         // Search by customer
@@ -39,7 +44,7 @@ class AppointmentController extends Controller
 
     public function show(Appointment $appointment)
     {
-        $appointment->load(['user', 'orderItems.order']);
+        $appointment->load(['user', 'user.phoneNumbers', 'user.addresses', 'orderItems.order']);
         return view('admin.appointments.show', compact('appointment'));
     }
 

@@ -33,8 +33,21 @@
                                         </select>
                                     </div>
 
-                                    <!-- Date Filter -->
+                                    <!-- Service Type Filter -->
                                     <div class="col-md-3">
+                                        <label for="service_type" class="form-label">
+                                            <i class="fas fa-briefcase me-1 text-primary"></i>
+                                            نوع الخدمة
+                                        </label>
+                                        <select name="service_type" id="service_type" class="form-select shadow-sm">
+                                            <option value="">كل الخدمات</option>
+                                            <option value="custom_design" {{ request('service_type') == 'custom_design' ? 'selected' : '' }}>تصميم مخصص</option>
+                                            <!-- يمكنك إضافة المزيد من الخدمات هنا -->
+                                        </select>
+                                    </div>
+
+                                    <!-- Date Filter -->
+                                    <div class="col-md-2">
                                         <label for="date" class="form-label">
                                             <i class="fas fa-calendar me-1 text-primary"></i>
                                             التاريخ
@@ -43,22 +56,28 @@
                                     </div>
 
                                     <!-- Search Filter -->
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                         <label for="search" class="form-label">
                                             <i class="fas fa-search me-1 text-primary"></i>
                                             بحث
                                         </label>
                                         <input type="text" class="form-control shadow-sm" id="search" name="search"
-                                               placeholder="ابحث باسم العميل أو البريد الإلكتروني..."
+                                               placeholder="ابحث باسم العميل..."
                                                value="{{ request('search') }}">
                                     </div>
 
-                                    <!-- Filter Button -->
-                                    <div class="col-md-2 d-flex align-items-end">
-                                        <button type="submit" class="btn btn-primary w-100 shadow-sm">
-                                            <i class="fas fa-filter me-2"></i>
+                                    <!-- Filter Buttons -->
+                                    <div class="col-md-2 d-flex align-items-end gap-2">
+                                        <button type="submit" class="btn btn-primary flex-grow-1 shadow-sm">
+                                            <i class="fas fa-filter me-1"></i>
                                             تصفية
                                         </button>
+                                        @if(request()->hasAny(['status', 'date', 'search', 'service_type']))
+                                        <a href="{{ route('admin.appointments.index') }}" class="btn btn-secondary shadow-sm">
+                                            <i class="fas fa-times me-1"></i>
+                                            مسح
+                                        </a>
+                                        @endif
                                     </div>
                                 </form>
                             </div>
@@ -168,9 +187,9 @@
                                                             عرض التفاصيل
                                                         </a>
                                                         @if($appointment->status == 'pending')
-                                                        <form action="{{ route('admin.appointments.updateStatus', $appointment) }}" method="POST">
+                                                        <form action="{{ route('admin.appointments.update-status', $appointment) }}" method="POST">
                                                             @csrf
-                                                            @method('PUT')
+                                                            @method('PATCH')
                                                             <input type="hidden" name="status" value="approved">
                                                             <button type="submit" class="btn btn-sm btn-light-success w-100">
                                                                 <i class="fas fa-check me-1"></i>
