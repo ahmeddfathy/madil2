@@ -113,8 +113,9 @@
             -webkit-backdrop-filter: blur(10px);
             box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
             z-index: 1001;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
             overflow-y: auto;
+            visibility: visible;
         }
 
         .sidebar-header {
@@ -200,9 +201,11 @@
         @media (max-width: 992px) {
             .sidebar {
                 transform: translateX(100%);
+                visibility: hidden;
             }
             .sidebar.show {
                 transform: translateX(0);
+                visibility: visible;
             }
             .main-content {
                 margin-right: 0;

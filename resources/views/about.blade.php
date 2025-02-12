@@ -67,8 +67,13 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="hero-image glass-effect">
-                        <img src="https://images.unsplash.com/photo-1528578950694-9f79b45a3397" alt="خياطة وتفصيل" class="img-fluid rounded-circle">
+                    <div class="hero-image">
+                        <img src="https://th.bing.com/th/id/OIP.8a3oE0p9Dg0ZMHdihf7hJQHaE7?w=1400&h=933&rs=1&pid=ImgDetMain"
+                             alt="خياطة وتفصيل"
+                             class="img-fluid rounded-circle">
+                        <div class="image-placeholder">
+                            <i class="fas fa-scissors"></i>
+                        </div>
                     </div>
                 </div>
             </div>

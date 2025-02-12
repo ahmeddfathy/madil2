@@ -44,7 +44,7 @@ function selectSize(element) {
     }
 
     // Remove active class from all sizes
-    document.querySelectorAll('.size-item').forEach(item => {
+    document.querySelectorAll('.size-option').forEach(item => {
         item.classList.remove('active');
     });
 
@@ -68,6 +68,9 @@ function updatePageQuantity(change) {
 
 function showAppointmentModal(cartItemId) {
     document.getElementById('cart_item_id').value = cartItemId;
+    document.getElementById('appointmentForm').reset();
+    document.getElementById('addressField').classList.add('d-none');
+    document.getElementById('appointmentErrors').classList.add('d-none');
     const modal = new bootstrap.Modal(document.getElementById('appointmentModal'));
     modal.show();
 }
@@ -75,13 +78,15 @@ function showAppointmentModal(cartItemId) {
 function toggleAddress() {
     const location = document.getElementById('location').value;
     const addressField = document.getElementById('addressField');
+    const addressInput = document.getElementById('address');
 
     if (location === 'client_location') {
         addressField.classList.remove('d-none');
-        document.getElementById('address').setAttribute('required', 'required');
+        addressInput.setAttribute('required', 'required');
     } else {
         addressField.classList.add('d-none');
-        document.getElementById('address').removeAttribute('required');
+        addressInput.removeAttribute('required');
+        addressInput.value = '';
     }
 }
 
@@ -316,16 +321,20 @@ function updateCartQuantity(itemId, change, newValue = null) {
 }
 
 function removeFromCart(button, cartItemId) {
-    // منع السلوك الافتراضي للزر
-    event.preventDefault();
+    // Prevent default button behavior if event is passed
+    if (event) {
+        event.preventDefault();
+    }
 
     // تأكيد الحذف
     if (!confirm('هل أنت متأكد من حذف هذا المنتج من السلة؟')) {
         return;
     }
 
-    const cartItem = button.closest('.cart-item');
-    cartItem.style.opacity = '0.5';
+    const cartItem = button.closest('.cart-item') || document.querySelector(`[data-item-id="${cartItemId}"]`);
+    if (cartItem) {
+        cartItem.style.opacity = '0.5';
+    }
 
     fetch(`/cart/remove/${cartItemId}`, {
         method: 'DELETE',
@@ -337,22 +346,33 @@ function removeFromCart(button, cartItemId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            cartItem.style.opacity = '0';
-            cartItem.style.transform = 'translateX(50px)';
+            if (cartItem) {
+                cartItem.style.opacity = '0';
+                cartItem.style.transform = 'translateX(50px)';
+            }
 
-            setTimeout(() => {
-                // تحديث عرض السلة
-                updateCartDisplay(data);
-                showNotification('تم حذف المنتج من السلة بنجاح', 'success');
-            }, 300);
+            // تحديث عرض السلة
+            updateCartDisplay(data);
+            showNotification('تم حذف المنتج من السلة بنجاح', 'success');
+
+            // If appointment modal is open, close it
+            const appointmentModal = document.getElementById('appointmentModal');
+            if (appointmentModal && bootstrap.Modal.getInstance(appointmentModal)) {
+                appointmentModal.setAttribute('data-allow-close', 'true');
+                bootstrap.Modal.getInstance(appointmentModal).hide();
+            }
         } else {
-            cartItem.style.opacity = '1';
+            if (cartItem) {
+                cartItem.style.opacity = '1';
+            }
             showNotification(data.message || 'حدث خطأ أثناء حذف المنتج', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        cartItem.style.opacity = '1';
+        if (cartItem) {
+            cartItem.style.opacity = '1';
+        }
         showNotification('حدث خطأ أثناء حذف المنتج', 'error');
     });
 }
@@ -486,30 +506,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Setup appointment form
     const appointmentModal = document.getElementById('appointmentModal');
     if (appointmentModal) {
-        const modal = new bootstrap.Modal(appointmentModal, {
-            backdrop: 'static',
-            keyboard: false
-        });
+        const modal = new bootstrap.Modal(appointmentModal);
 
         // Handle cancel button click
         document.getElementById('cancelAppointment').addEventListener('click', function() {
             if (confirm('هل أنت متأكد من إلغاء حجز الموعد؟ سيتم إزالة المنتج من السلة.')) {
                 const cartItemId = document.getElementById('cart_item_id').value;
                 // Remove item from cart
-                removeFromCart(event.target, cartItemId);
-                // Allow modal to be closed
-                appointmentModal.setAttribute('data-allow-close', 'true');
-                // Hide modal using Bootstrap's hide method
-                bootstrap.Modal.getInstance(appointmentModal).hide();
-                // Show notification
-                showNotification('تم إلغاء الموعد وإزالة المنتج من السلة', 'warning');
+                removeFromCart(this, cartItemId);
             }
         });
 
-        // Prevent modal from being closed by clicking outside
+        // Prevent modal from being closed by clicking outside or pressing escape
         appointmentModal.addEventListener('hide.bs.modal', function (event) {
-            // If modal is being closed programmatically after successful appointment, allow it
-            if (event.target.getAttribute('data-allow-close') === 'true') {
+            // If modal is being closed programmatically after successful appointment or cancellation, allow it
+            if (appointmentModal.getAttribute('data-allow-close') === 'true') {
+                appointmentModal.removeAttribute('data-allow-close');
                 return;
             }
             // Otherwise prevent closing
@@ -522,66 +534,114 @@ document.addEventListener('DOMContentLoaded', function() {
             appointmentForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
-                // Show loading state
+                // إظهار حالة التحميل
                 const submitBtn = document.getElementById('submitAppointment');
                 const spinner = submitBtn.querySelector('.spinner-border');
                 submitBtn.disabled = true;
                 spinner.classList.remove('d-none');
 
-                // Clear previous errors
+                // مسح الأخطاء السابقة
                 const errorDiv = document.getElementById('appointmentErrors');
                 errorDiv.classList.add('d-none');
                 errorDiv.textContent = '';
 
+                // تجميع بيانات النموذج
                 const formData = new FormData(this);
+
+                // تنسيق التاريخ والوقت
+                const appointmentDate = formData.get('appointment_date');
+                const appointmentTime = formData.get('appointment_time');
+
+                // التحقق من البيانات
+                if (!appointmentDate || !appointmentTime) {
+                    errorDiv.textContent = 'يرجى تحديد التاريخ والوقت';
+                    errorDiv.classList.remove('d-none');
+                    submitBtn.disabled = false;
+                    spinner.classList.add('d-none');
+                    return;
+                }
+
+                // التحقق من رقم الهاتف
+                const phone = formData.get('phone');
+                if (!phone) {
+                    errorDiv.textContent = 'يرجى إدخال رقم الهاتف';
+                    errorDiv.classList.remove('d-none');
+                    submitBtn.disabled = false;
+                    spinner.classList.add('d-none');
+                    return;
+                }
+
+                // التحقق من الموقع والعنوان
+                const location = formData.get('location');
+                const address = formData.get('address');
+                if (location === 'client_location' && !address) {
+                    errorDiv.textContent = 'يرجى إدخال العنوان';
+                    errorDiv.classList.remove('d-none');
+                    submitBtn.disabled = false;
+                    spinner.classList.add('d-none');
+                    return;
+                }
+
+                // إضافة التوكن CSRF
+                formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+                // التأكد من وجود service_type
+                if (!formData.get('service_type')) {
+                    formData.set('service_type', 'new_abaya');
+                }
 
                 fetch('/appointments', {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest',
                         'Accept': 'application/json'
                     },
                     credentials: 'same-origin'
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'حدث خطأ أثناء حجز الموعد');
+                        });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
-                        // Allow modal to be closed
-                        appointmentModal.setAttribute('data-allow-close', 'true');
+                        // السماح بإغلاق النافذة المنبثقة
+                        document.getElementById('appointmentModal').setAttribute('data-allow-close', 'true');
 
-                        // Hide modal
-                        bootstrap.Modal.getInstance(appointmentModal).hide();
+                        // إخفاء النافذة المنبثقة
+                        bootstrap.Modal.getInstance(document.getElementById('appointmentModal')).hide();
 
-                        // Show success message
+                        // عرض رسالة النجاح
                         showNotification(data.message, 'success');
 
-                        // Redirect to appointment details after 2 seconds
+                        // إعادة توجيه المستخدم بعد ثانيتين
                         setTimeout(() => {
                             window.location.href = data.redirect_url || '/appointments';
                         }, 2000);
                     } else {
-                        // Show error message
-                        errorDiv.textContent = data.message;
-                        if (data.errors) {
-                            const errorList = document.createElement('ul');
-                            Object.values(data.errors).forEach(error => {
-                                const li = document.createElement('li');
-                                li.textContent = error[0];
-                                errorList.appendChild(li);
-                            });
-                            errorDiv.appendChild(errorList);
-                        }
-                        errorDiv.classList.remove('d-none');
+                        throw new Error(data.message || 'حدث خطأ أثناء حجز الموعد');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    errorDiv.textContent = 'حدث خطأ أثناء حجز الموعد. الرجاء المحاولة مرة أخرى.';
+                    errorDiv.textContent = error.message;
+                    if (error.errors) {
+                        const errorList = document.createElement('ul');
+                        Object.values(error.errors).forEach(error => {
+                            const li = document.createElement('li');
+                            li.textContent = error[0];
+                            errorList.appendChild(li);
+                        });
+                        errorDiv.appendChild(errorList);
+                    }
                     errorDiv.classList.remove('d-none');
                 })
                 .finally(() => {
-                    // Reset loading state
+                    // إعادة تعيين حالة الزر
                     submitBtn.disabled = false;
                     spinner.classList.add('d-none');
                 });

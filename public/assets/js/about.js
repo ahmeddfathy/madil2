@@ -199,3 +199,20 @@ const createTiltEffect = () => {
         });
     });
 };
+
+// Image loading handler
+document.addEventListener('DOMContentLoaded', function() {
+    const heroImage = document.querySelector('.hero-image img');
+
+    if (heroImage) {
+        // Add loaded class immediately if image is cached
+        if (heroImage.complete) {
+            heroImage.classList.add('loaded');
+        }
+
+        // Add loaded class when image loads
+        heroImage.addEventListener('load', function() {
+            heroImage.classList.add('loaded');
+        });
+    }
+});

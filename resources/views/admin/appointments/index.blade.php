@@ -55,6 +55,21 @@
                                         <input type="date" class="form-control shadow-sm" id="date" name="date" value="{{ request('date') }}">
                                     </div>
 
+                                    <!-- Reference Number Filter -->
+                                    <div class="col-md-2">
+                                        <label for="reference" class="form-label">
+                                            <i class="fas fa-hashtag me-1 text-primary"></i>
+                                            رقم المرجع
+                                        </label>
+                                        <input type="text"
+                                               class="form-control shadow-sm"
+                                               id="reference"
+                                               name="reference"
+                                               placeholder="AB1234"
+                                               value="{{ request('reference') }}"
+                                               maxlength="6">
+                                    </div>
+
                                     <!-- Search Filter -->
                                     <div class="col-md-2">
                                         <label for="search" class="form-label">
@@ -72,7 +87,7 @@
                                             <i class="fas fa-filter me-1"></i>
                                             تصفية
                                         </button>
-                                        @if(request()->hasAny(['status', 'date', 'search', 'service_type']))
+                                        @if(request()->hasAny(['status', 'date', 'search', 'service_type', 'reference']))
                                         <a href="{{ route('admin.appointments.index') }}" class="btn btn-secondary shadow-sm">
                                             <i class="fas fa-times me-1"></i>
                                             مسح
@@ -181,13 +196,13 @@
                                                 </td>
                                                 <td class="pe-4">
                                                     <div class="d-flex flex-column gap-2">
-                                                        <a href="{{ route('admin.appointments.show', $appointment) }}"
+                                                        <a href="{{ route('admin.appointments.show', $appointment->reference_number) }}"
                                                            class="btn btn-sm btn-light-primary">
                                                             <i class="fas fa-eye me-1"></i>
                                                             عرض التفاصيل
                                                         </a>
                                                         @if($appointment->status == 'pending')
-                                                        <form action="{{ route('admin.appointments.update-status', $appointment) }}" method="POST">
+                                                        <form action="{{ route('admin.appointments.update-status', $appointment->reference_number) }}" method="POST">
                                                             @csrf
                                                             @method('PATCH')
                                                             <input type="hidden" name="status" value="approved">

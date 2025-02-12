@@ -97,6 +97,7 @@ Route::middleware([
             Route::patch('/update/{cartItem}', [CartController::class, 'updateQuantity'])->name('update');
             Route::delete('/remove/{cartItem}', [CartController::class, 'removeItem'])->name('remove');
             Route::post('/clear', [CartController::class, 'clear'])->name('clear');
+
         });
 
         // Checkout
@@ -116,8 +117,8 @@ Route::middleware([
             Route::get('/', [AppointmentController::class, 'index'])->name('index');
             Route::get('/create', [AppointmentController::class, 'create'])->name('create');
             Route::post('/', [AppointmentController::class, 'store'])->name('store');
-            Route::get('/{appointment}', [AppointmentController::class, 'show'])->name('show');
-            Route::delete('/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('cancel');
+            Route::get('/{appointment:reference_number}', [AppointmentController::class, 'show'])->name('show');
+            Route::delete('/{appointment:reference_number}/cancel', [AppointmentController::class, 'cancel'])->name('cancel');
         });
     });
 
@@ -148,15 +149,17 @@ Route::middleware([
             // Appointments Management
             Route::middleware(['permission:manage appointments'])->group(function () {
                 Route::resource('appointments', AdminAppointmentController::class)
-                    ->except(['create', 'store', 'edit', 'update']);
+                    ->except(['create', 'store', 'edit', 'update'])
+                    ->parameters(['appointment' => 'appointment:reference_number']);
 
-                // تحديث حالة الموعد
-                Route::patch('/appointments/{appointment}/update-status', [AdminAppointmentController::class, 'updateStatus'])
+                Route::patch('/appointments/{appointment:reference_number}/update-status', [AdminAppointmentController::class, 'updateStatus'])
                     ->name('appointments.update-status');
 
-                // إلغاء الموعد
-                Route::patch('/appointments/{appointment}/cancel', [AdminAppointmentController::class, 'cancel'])
+                Route::patch('/appointments/{appointment:reference_number}/cancel', [AdminAppointmentController::class, 'cancel'])
                     ->name('appointments.cancel');
+
+                Route::patch('/appointments/{appointment:reference_number}/update-datetime', [AdminAppointmentController::class, 'updateDateTime'])
+                    ->name('appointments.update-datetime');
             });
 
             // Reports Management
@@ -166,8 +169,6 @@ Route::middleware([
         });
 });
 
-Route::post('/appointments', [AppointmentController::class, 'store'])
-    ->name('appointments.store');
 
 // Protected Cart Routes
 Route::middleware(['auth:sanctum'])->group(function() {
@@ -191,3 +192,10 @@ Route::post('/contact', [ContactController::class, 'send'])->name('contact.send'
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
     Route::post('/products/filter', [ProductController::class, 'filter'])->name('products.filter');
+
+// مسارات السلة
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::patch('/cart/items/{cartItem}', [CartController::class, 'updateItem'])->name('cart.items.update');
+    Route::delete('/cart/items/{cartItem}', [CartController::class, 'removeItem'])->name('cart.items.remove');
+});

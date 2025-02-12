@@ -386,7 +386,7 @@
                             </div>
                         </div>
                         <div class="appointment-footer">
-                            <a href="/appointments/{{ $appointment->id }}" class="btn btn-primary btn-sm">
+                            <a href="{{ route('appointments.show', $appointment->reference_number) }}" class="btn btn-primary btn-sm">
                                 التفاصيل <i class="fas fa-arrow-left me-1"></i>
                             </a>
                         </div>
@@ -416,8 +416,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label required">رقم الهاتف</label>
-                        <input type="tel" class="form-control" name="phone" required
-                               pattern="\d{10}" title="يجب أن يتكون رقم الهاتف من 10 أرقام">
+                        <input type="tel" class="form-control" name="phone" required>
                         <div class="form-text">مثال: 0512345678</div>
                     </div>
                     <div class="mb-3">
@@ -451,8 +450,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label required">رقم الهاتف</label>
-                        <input type="tel" class="form-control" name="phone" required
-                               pattern="\d{10}" title="يجب أن يتكون رقم الهاتف من 10 أرقام">
+                        <input type="tel" class="form-control" name="phone" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label required">النوع</label>
@@ -532,8 +530,41 @@
                 <button type="button" class="btn-close ms-0 me-auto" data-bs-dismiss="modal"></button>
             </div>
             <form id="editAddressForm">
-                <!-- نفس محتوى نموذج إضافة العنوان -->
-                <input type="hidden" name="address_id">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label required">النوع</label>
+                        <select class="form-select" name="type" required>
+                            @foreach(App\Models\Address::TYPES as $value => $text)
+                                <option value="{{ $value }}">{{ $text }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label required">المدينة</label>
+                        <input type="text" class="form-control" name="city" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label required">المنطقة</label>
+                        <input type="text" class="form-control" name="area" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label required">الشارع</label>
+                        <input type="text" class="form-control" name="street" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">رقم المبنى</label>
+                        <input type="text" class="form-control" name="building_no">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">تفاصيل إضافية</label>
+                        <textarea class="form-control" name="details" rows="3"></textarea>
+                    </div>
+                    <input type="hidden" name="address_id">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                </div>
             </form>
         </div>
     </div>

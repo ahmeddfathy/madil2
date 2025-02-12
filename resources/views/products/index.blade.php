@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('assets/css/customer/products.css') }}">
 </head>
-<body>
+<body class="{{ auth()->check() ? 'user-logged-in' : '' }}">
     <!-- Fixed Buttons Group -->
     <div class="fixed-buttons-group">
         <button class="fixed-cart-btn" id="fixedCartBtn">

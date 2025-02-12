@@ -29,6 +29,11 @@ class AppointmentController extends Controller
             $query->where('service_type', $request->service_type);
         }
 
+        // Filter by reference number
+        if ($request->reference) {
+            $query->where('reference_number', 'like', '%' . strtoupper($request->reference) . '%');
+        }
+
         // Search by customer
         if ($request->search) {
             $query->whereHas('user', function ($q) use ($request) {
@@ -52,9 +57,11 @@ class AppointmentController extends Controller
     {
         $validated = $request->validate([
             'status' => 'required|in:' . implode(',', [
+                Appointment::STATUS_PENDING,
                 Appointment::STATUS_APPROVED,
                 Appointment::STATUS_COMPLETED,
-                Appointment::STATUS_CANCELLED
+                Appointment::STATUS_CANCELLED,
+                Appointment::STATUS_REJECTED
             ]),
             'notes' => 'nullable|string|max:500'
         ]);
@@ -64,8 +71,25 @@ class AppointmentController extends Controller
         // Notify the customer
         $appointment->user->notify(new AppointmentStatusUpdated($appointment));
 
-        return redirect()->route('admin.appointments.show', $appointment)
-            ->with('success', 'Appointment status updated successfully.');
+        return redirect()->route('admin.appointments.show', $appointment->reference_number)
+            ->with('success', 'تم تحديث حالة الموعد بنجاح');
+    }
+
+    public function updateDateTime(Request $request, Appointment $appointment)
+    {
+        $validated = $request->validate([
+            'appointment_date' => 'required|date|after:today',
+            'appointment_time' => 'required|date_format:H:i',
+            'notes' => 'nullable|string|max:500'
+        ]);
+
+        $appointment->update($validated);
+
+        // Notify the customer
+        $appointment->user->notify(new AppointmentStatusUpdated($appointment));
+
+        return redirect()->route('admin.appointments.show', $appointment->reference_number)
+            ->with('success', 'تم تحديث موعد الزيارة بنجاح.');
     }
 
     public function destroy(Appointment $appointment)

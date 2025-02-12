@@ -70,6 +70,16 @@
         padding: 1rem;
         margin-bottom: 1.5rem;
     }
+
+    #appointmentErrors {
+        display: none;
+        margin-bottom: 1rem;
+    }
+
+    .loading-spinner {
+        display: none;
+        margin-right: 0.5rem;
+    }
 </style>
 @endsection
 
@@ -83,7 +93,9 @@
         </a>
     </div>
 
-    <form id="appointmentForm" action="{{ route('appointments.store') }}" method="POST" class="appointment-form">
+    <div class="alert alert-danger" id="appointmentErrors"></div>
+
+    <form id="appointmentForm" class="appointment-form">
         @csrf
         <input type="hidden" name="service_type" value="custom_design">
 
@@ -106,9 +118,6 @@
                         <label class="form-label" for="appointment_date">التاريخ</label>
                         <input type="date" class="form-control" id="appointment_date" name="appointment_date"
                                min="{{ date('Y-m-d') }}" required>
-                        @error('appointment_date')
-                            <div class="error-feedback">{{ $message }}</div>
-                        @enderror
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -116,9 +125,6 @@
                         <label class="form-label" for="appointment_time">الوقت</label>
                         <input type="time" class="form-control" id="appointment_time" name="appointment_time"
                                min="09:00" max="21:00" required>
-                        @error('appointment_time')
-                            <div class="error-feedback">{{ $message }}</div>
-                        @enderror
                     </div>
                 </div>
             </div>
@@ -133,9 +139,6 @@
                 <label class="form-label" for="notes">وصف التصميم المطلوب</label>
                 <textarea class="form-control" id="notes" name="notes" rows="6"
                           placeholder="يرجى وصف التصميم المطلوب بالتفصيل (الألوان، القصة، التطريز، الأكمام، إلخ...)" required minlength="10"></textarea>
-                @error('notes')
-                    <div class="error-feedback">{{ $message }}</div>
-                @enderror
             </div>
         </div>
 
@@ -161,18 +164,12 @@
                         </label>
                     </div>
                 </div>
-                @error('location')
-                    <div class="error-feedback">{{ $message }}</div>
-                @enderror
             </div>
 
             <div class="mb-4 d-none" id="addressField">
                 <label class="form-label" for="address">العنوان</label>
                 <textarea class="form-control" id="address" name="address" rows="3"
                           placeholder="يرجى إدخال العنوان بالتفصيل"></textarea>
-                @error('address')
-                    <div class="error-feedback">{{ $message }}</div>
-                @enderror
             </div>
         </div>
 
@@ -185,14 +182,12 @@
                 <label class="form-label" for="phone">رقم الهاتف</label>
                 <input type="tel" class="form-control" id="phone" name="phone"
                        value="{{ Auth::user()->phone ?? '' }}" required>
-                @error('phone')
-                    <div class="error-feedback">{{ $message }}</div>
-                @enderror
             </div>
         </div>
 
         <div class="d-grid gap-2 col-md-6 mx-auto mt-4">
-            <button type="submit" class="btn btn-submit">
+            <button type="submit" class="btn btn-submit" id="submitBtn">
+                <span class="loading-spinner spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 <i class="bi bi-calendar-check me-2"></i>
                 تأكيد حجز الموعد
             </button>
@@ -207,6 +202,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const locationStore = document.getElementById('location_store');
     const locationClient = document.getElementById('location_client');
     const addressField = document.getElementById('addressField');
+    const form = document.getElementById('appointmentForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const spinner = document.querySelector('.loading-spinner');
+    const errorDiv = document.getElementById('appointmentErrors');
 
     // Handle location change
     function toggleAddress() {
@@ -216,21 +215,88 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             addressField.classList.add('d-none');
             document.getElementById('address').removeAttribute('required');
+            document.getElementById('address').value = '';
         }
     }
 
     locationStore.addEventListener('change', toggleAddress);
     locationClient.addEventListener('change', toggleAddress);
 
-    // Form validation
-    const form = document.getElementById('appointmentForm');
+    // Form submission
     form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Basic validation
         const notes = document.getElementById('notes');
         if (notes.value.length < 10) {
-            e.preventDefault();
-            alert('يرجى إضافة تفاصيل كافية للتصميم المخصص (10 أحرف على الأقل)');
+            errorDiv.style.display = 'block';
+            errorDiv.textContent = 'يرجى إضافة تفاصيل كافية للتصميم المخصص (10 أحرف على الأقل)';
             notes.focus();
+            return;
         }
+
+        // Show loading state
+        submitBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+
+        // Prepare form data
+        const formData = new FormData(form);
+
+        // Send request
+        fetch('{{ route('appointments.store') }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'حدث خطأ أثناء حجز الموعد');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                const notification = document.createElement('div');
+                notification.className = 'alert alert-success';
+                notification.textContent = data.message;
+                form.insertBefore(notification, form.firstChild);
+
+                // Redirect after delay
+                setTimeout(() => {
+                    window.location.href = data.redirect_url;
+                }, 2000);
+            } else {
+                throw new Error(data.message || 'حدث خطأ أثناء حجز الموعد');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            errorDiv.style.display = 'block';
+            errorDiv.textContent = error.message;
+            if (error.errors) {
+                const errorList = document.createElement('ul');
+                Object.values(error.errors).forEach(error => {
+                    const li = document.createElement('li');
+                    li.textContent = error[0];
+                    errorList.appendChild(li);
+                });
+                errorDiv.appendChild(errorList);
+            }
+        })
+        .finally(() => {
+            // Reset loading state
+            submitBtn.disabled = false;
+            spinner.style.display = 'none';
+        });
     });
 });
 </script>
