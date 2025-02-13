@@ -95,7 +95,7 @@
 
     <div class="alert alert-danger" id="appointmentErrors"></div>
 
-    <form id="appointmentForm" class="appointment-form">
+    <form id="appointmentForm" class="appointment-form" data-url="{{ route('appointments.store') }}">
         @csrf
         <input type="hidden" name="service_type" value="custom_design">
 
@@ -112,19 +112,30 @@
                 <i class="bi bi-calendar-fill"></i>
                 موعد الزيارة
             </h3>
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                مواعيد العمل:
+                <ul class="mb-0">
+                    <li>من السبت إلى الخميس: ١١ صباحاً إلى ٢ ظهراً، و٥ عصراً إلى ١١ مساءً</li>
+                    <li>يوم الجمعة: ٥ عصراً إلى ١١ مساءً</li>
+                </ul>
+            </div>
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="mb-4">
                         <label class="form-label" for="appointment_date">التاريخ</label>
                         <input type="date" class="form-control" id="appointment_date" name="appointment_date"
                                min="{{ date('Y-m-d') }}" required>
+                        <div class="invalid-feedback" id="date-error"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-4">
-                        <label class="form-label" for="appointment_time">الوقت</label>
-                        <input type="time" class="form-control" id="appointment_time" name="appointment_time"
-                               min="09:00" max="21:00" required>
+                        <label class="form-label" for="appointment_time">الوقت المتاح</label>
+                        <select class="form-select" id="appointment_time" name="appointment_time" required disabled>
+                            <option value="">اختر التاريخ أولاً</option>
+                        </select>
+                        <div class="invalid-feedback" id="time-error"></div>
                     </div>
                 </div>
             </div>
@@ -148,28 +159,11 @@
                 مكان المقابلة
             </h3>
             <div class="mb-4">
-                <div class="d-flex gap-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="location" id="location_store"
-                               value="store" checked>
-                        <label class="form-check-label" for="location_store">
-                            في المحل
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="location" id="location_client"
-                               value="client_location">
-                        <label class="form-check-label" for="location_client">
-                            في موقع العميل
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mb-4 d-none" id="addressField">
-                <label class="form-label" for="address">العنوان</label>
-                <textarea class="form-control" id="address" name="address" rows="3"
-                          placeholder="يرجى إدخال العنوان بالتفصيل"></textarea>
+                <p class="text-muted">
+                    <i class="bi bi-info-circle me-2"></i>
+                    للتصاميم المخصصة، تتم المقابلة في المحل فقط لضمان جودة الخدمة وتحقيق أفضل النتائج
+                </p>
+                <input type="hidden" name="location" value="store">
             </div>
         </div>
 
@@ -197,107 +191,5 @@
 @endsection
 
 @section('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const locationStore = document.getElementById('location_store');
-    const locationClient = document.getElementById('location_client');
-    const addressField = document.getElementById('addressField');
-    const form = document.getElementById('appointmentForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const spinner = document.querySelector('.loading-spinner');
-    const errorDiv = document.getElementById('appointmentErrors');
-
-    // Handle location change
-    function toggleAddress() {
-        if (locationClient.checked) {
-            addressField.classList.remove('d-none');
-            document.getElementById('address').setAttribute('required', 'required');
-        } else {
-            addressField.classList.add('d-none');
-            document.getElementById('address').removeAttribute('required');
-            document.getElementById('address').value = '';
-        }
-    }
-
-    locationStore.addEventListener('change', toggleAddress);
-    locationClient.addEventListener('change', toggleAddress);
-
-    // Form submission
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        // Basic validation
-        const notes = document.getElementById('notes');
-        if (notes.value.length < 10) {
-            errorDiv.style.display = 'block';
-            errorDiv.textContent = 'يرجى إضافة تفاصيل كافية للتصميم المخصص (10 أحرف على الأقل)';
-            notes.focus();
-            return;
-        }
-
-        // Show loading state
-        submitBtn.disabled = true;
-        spinner.style.display = 'inline-block';
-        errorDiv.style.display = 'none';
-        errorDiv.textContent = '';
-
-        // Prepare form data
-        const formData = new FormData(form);
-
-        // Send request
-        fetch('{{ route('appointments.store') }}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
-            },
-            credentials: 'same-origin'
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.message || 'حدث خطأ أثناء حجز الموعد');
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Show success message
-                const notification = document.createElement('div');
-                notification.className = 'alert alert-success';
-                notification.textContent = data.message;
-                form.insertBefore(notification, form.firstChild);
-
-                // Redirect after delay
-                setTimeout(() => {
-                    window.location.href = data.redirect_url;
-                }, 2000);
-            } else {
-                throw new Error(data.message || 'حدث خطأ أثناء حجز الموعد');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            errorDiv.style.display = 'block';
-            errorDiv.textContent = error.message;
-            if (error.errors) {
-                const errorList = document.createElement('ul');
-                Object.values(error.errors).forEach(error => {
-                    const li = document.createElement('li');
-                    li.textContent = error[0];
-                    errorList.appendChild(li);
-                });
-                errorDiv.appendChild(errorList);
-            }
-        })
-        .finally(() => {
-            // Reset loading state
-            submitBtn.disabled = false;
-            spinner.style.display = 'none';
-        });
-    });
-});
-</script>
+<script src="{{ asset('assets/js/customer/appointments.js') }}"></script>
 @endsection

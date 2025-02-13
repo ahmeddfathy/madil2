@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\Appointment;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +11,7 @@ use Throwable;
 use Illuminate\Queue\SerializesModels;
 use Carbon\Carbon;
 
-class AppointmentStatusUpdated extends Notification implements ShouldQueue
+class AppointmentStatusUpdated extends Notification
 {
     use Queueable, SerializesModels;
 
