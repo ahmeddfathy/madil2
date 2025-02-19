@@ -22,7 +22,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
       <div class="container">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/">
           <img src="{{ asset('assets/images/logo.png') }}" alt="Madil" height="70">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -31,21 +31,29 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link" href="/">الرئيسية</a>
+              <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">الرئيسية</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/about">من نحن</a>
+              <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}">من نحن</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/products">المنتجات</a>
+              <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">المنتجات</a>
             </li>
+            @auth
+              <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}" href="{{ route('profile.edit') }}">الملف الشخصي</a>
+              </li>
+            @endauth
           </ul>
           <div class="nav-buttons">
             @auth
-              <a href="{{ route('dashboard') }}" class="btn btn-primary">لوحة التحكم</a>
+              <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                @csrf
+                <button type="submit" class="btn btn-outline-primary">تسجيل الخروج</button>
+              </form>
             @else
-              <a href="/login" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
-              <a href="/register" class="btn btn-primary">إنشاء حساب</a>
+              <a href="{{ route('login') }}" class="btn btn-outline-primary">تسجيل الدخول</a>
+              <a href="{{ route('register') }}" class="btn btn-primary">إنشاء حساب</a>
             @endauth
           </div>
         </div>

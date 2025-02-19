@@ -489,18 +489,24 @@
 
     <!-- Login Prompt Modal -->
     <div class="modal fade" id="loginPromptModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">تسجيل الدخول مطلوب</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>يجب عليك تسجيل الدخول أولاً لتتمكن من طلب المنتج</p>
+                    <p>يجب عليك تسجيل الدخول أو إنشاء حساب جديد لتتمكن من طلب المنتج</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
-                    <a href="" class="btn btn-primary" id="loginButton">تسجيل الدخول</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>
+                        إلغاء
+                    </button>
+                    <a href="{{ route('login') }}" class="btn btn-primary" id="loginButton">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        تسجيل الدخول
+                    </a>
                 </div>
             </div>
         </div>

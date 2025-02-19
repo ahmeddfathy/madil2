@@ -8,17 +8,17 @@
 @endsection
 
 @section('content')
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-5">
         <h2 class="page-title mb-0">المواعيد</h2>
-        <a href="{{ route('appointments.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i>
+        <a href="{{ route('appointments.create') }}" class="btn btn-primary btn-lg">
+            <i class="bi bi-plus-lg me-2"></i>
             حجز موعد جديد
         </a>
     </div>
 
-    <div class="filters">
-        <div class="d-flex justify-content-center flex-wrap">
+    <div class="filters mb-5">
+        <div class="d-flex justify-content-center gap-4">
             <a href="{{ route('appointments.index') }}"
                class="filter-btn {{ request('filter') === null ? 'active' : '' }}">
                 الكل
@@ -101,8 +101,8 @@
                 </div>
                 <h3>لا توجد مواعيد</h3>
                 <p>لا توجد مواعيد مسجلة حالياً</p>
-                <a href="{{ route('appointments.create') }}" class="btn btn-primary">
-                    <i class="bi bi-plus-lg"></i>
+                <a href="{{ route('appointments.create') }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-lg me-2"></i>
                     حجز موعد جديد
                 </a>
             </div>

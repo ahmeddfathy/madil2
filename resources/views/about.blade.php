@@ -41,13 +41,12 @@
                 </ul>
                 <div class="nav-buttons">
                     @auth
-
                         <form method="POST" action="{{ route('logout') }}" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-outline-primary">تسجيل الخروج</button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
+                        <a href="{{ route('login') }}" class="btn btn-outline-primary">تسجيل الدخول</a>
                         <a href="{{ route('register') }}" class="btn btn-primary">إنشاء حساب</a>
                     @endauth
                 </div>

@@ -1,5 +1,3 @@
-
-
 /* Product Gallery */
 .product-gallery {
     border-radius: 15px;
@@ -1418,5 +1416,160 @@ body.cart-open {
 
     .size-label {
         font-size: 1rem;
+    }
+}
+
+/* Login Prompt Modal Styles */
+#loginPromptModal .modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+#loginPromptModal .modal-header {
+    background: var(--primary-color);
+    border: none;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+#loginPromptModal .modal-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+    pointer-events: none;
+}
+
+#loginPromptModal .modal-title {
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+#loginPromptModal .modal-title::before {
+    content: '\f023';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 1.2rem;
+}
+
+#loginPromptModal .btn-close {
+    background: none;
+    border: none;
+    color: white;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    padding: 1rem;
+    margin: -1rem;
+}
+
+#loginPromptModal .btn-close:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+
+#loginPromptModal .modal-body {
+    padding: 2rem;
+    text-align: center;
+}
+
+#loginPromptModal .modal-body p {
+    color: var(--text-color);
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    line-height: 1.6;
+}
+
+#loginPromptModal .modal-footer {
+    background: rgba(248, 249, 250, 0.5);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+#loginPromptModal .btn {
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+#loginPromptModal .btn-secondary {
+    background: rgba(108, 117, 125, 0.1);
+    border: none;
+    color: #6c757d;
+}
+
+#loginPromptModal .btn-secondary:hover {
+    background: rgba(108, 117, 125, 0.2);
+    transform: translateY(-2px);
+}
+
+#loginPromptModal .btn-primary {
+    background: var(--primary-color);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+#loginPromptModal .btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+    transition: all 0.3s ease;
+}
+
+#loginPromptModal .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(74, 58, 255, 0.3);
+}
+
+#loginPromptModal .btn-primary:hover::after {
+    opacity: 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 576px) {
+    #loginPromptModal .modal-content {
+        margin: 1rem;
+        border-radius: 15px;
+    }
+
+    #loginPromptModal .modal-header {
+        padding: 1.25rem;
+    }
+
+    #loginPromptModal .modal-body {
+        padding: 1.5rem;
+    }
+
+    #loginPromptModal .modal-footer {
+        padding: 1.25rem;
+        flex-direction: column;
+    }
+
+    #loginPromptModal .btn {
+        width: 100%;
+        padding: 0.875rem;
     }
 }
