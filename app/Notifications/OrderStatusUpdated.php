@@ -52,9 +52,21 @@ class OrderStatusUpdated extends Notification
             $status = match($this->order->order_status) {
                 'pending' => 'قيد الانتظار',
                 'processing' => 'قيد المعالجة',
+                'out_for_delivery' => 'جاري التوصيل',
+                'on_the_way' => 'في الطريق',
+                'delivered' => 'تم التوصيل',
                 'completed' => 'مكتمل',
+                'returned' => 'مرتجع',
                 'cancelled' => 'ملغي',
                 default => $this->order->order_status
+            };
+
+            $message = match($this->order->order_status) {
+                'out_for_delivery' => 'طلبك في طريقه للتوصيل',
+                'on_the_way' => 'المندوب في طريقه إليك',
+                'delivered' => 'تم توصيل طلبك بنجاح',
+                'returned' => 'تم إرجاع طلبك',
+                default => "تم تحديث حالة طلبك إلى {$status}"
             };
 
             Log::info('Preparing order status email', [
@@ -63,14 +75,15 @@ class OrderStatusUpdated extends Notification
                 'user' => $notifiable->toArray()
             ]);
 
-            $url = url("/orders/{$this->order->id}");
+            $url = route('orders.show', $this->order->uuid);
 
             return (new MailMessage)
                 ->subject("تحديث حالة الطلب: {$status}")
                 ->greeting("مرحباً {$notifiable->name}!")
-                ->line("تم تحديث حالة طلبك رقم #{$this->order->id} إلى {$status}.")
-                ->when($this->order->notes, function ($message) {
-                    return $message->line("ملاحظات: {$this->order->notes}");
+                ->line($message)
+                ->line("رقم الطلب: #{$this->order->order_number}")
+                ->when($this->order->notes, function ($mail) {
+                    return $mail->line("ملاحظات: {$this->order->notes}");
                 })
                 ->action('عرض الطلب', $url)
                 ->line('شكراً لتسوقك معنا!');
@@ -94,17 +107,33 @@ class OrderStatusUpdated extends Notification
      */
     public function toArray($notifiable): array
     {
+        $status = match($this->order->order_status) {
+            'pending' => 'قيد الانتظار',
+            'processing' => 'قيد المعالجة',
+            'out_for_delivery' => 'جاري التوصيل',
+            'on_the_way' => 'في الطريق',
+            'delivered' => 'تم التوصيل',
+            'completed' => 'مكتمل',
+            'returned' => 'مرتجع',
+            'cancelled' => 'ملغي',
+            default => $this->order->order_status
+        };
+
+        $message = match($this->order->order_status) {
+            'out_for_delivery' => 'طلبك في طريقه للتوصيل',
+            'on_the_way' => 'المندوب في طريقه إليك',
+            'delivered' => 'تم توصيل طلبك بنجاح',
+            'returned' => 'تم إرجاع طلبك',
+            default => "تم تحديث حالة الطلب إلى {$status}"
+        };
+
         return [
+            'title' => 'تحديث حالة الطلب',
+            'message' => $message,
             'order_id' => $this->order->id,
             'order_number' => $this->order->order_number,
             'status' => $this->order->order_status,
-            'message' => "تم تحديث حالة الطلب {$this->order->order_number} إلى " . match($this->order->order_status) {
-                'pending' => 'قيد الانتظار',
-                'processing' => 'قيد المعالجة',
-                'completed' => 'مكتمل',
-                'cancelled' => 'ملغي',
-                default => $this->order->order_status
-            },
+            'status_text' => $status,
             'created_at' => now()->toDateTimeString()
         ];
     }

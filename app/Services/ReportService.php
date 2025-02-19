@@ -221,38 +221,20 @@ class ReportService
     ];
   }
 
-  public function getInventoryReport(): array
+  public function getInventoryReport()
   {
-    $products = Product::select(
-      DB::raw('COUNT(*) as total_products'),
-      DB::raw('COUNT(CASE WHEN stock <= 5 THEN 1 END) as low_stock_count'),
-      DB::raw('COUNT(CASE WHEN stock = 0 THEN 1 END) as out_of_stock_count'),
-      DB::raw('AVG(stock) as average_stock'),
-      DB::raw('SUM(stock * price) as inventory_value')
-    )->first();
-
-    // Get stock distribution
-    $stockRanges = [
-      '0' => ['min' => 0, 'max' => 0],
-      '1-5' => ['min' => 1, 'max' => 5],
-      '6-20' => ['min' => 6, 'max' => 20],
-      '21-50' => ['min' => 21, 'max' => 50],
-      '50+' => ['min' => 51, 'max' => PHP_INT_MAX]
+    $stock_distribution = [
+        'متوفر' => Product::where('stock', '>', 10)->count(),
+        'منخفض' => Product::whereBetween('stock', [1, 10])->count(),
+        'نفذ' => Product::where('stock', '=', 0)->count()
     ];
 
-    $stockDistribution = [];
-    foreach ($stockRanges as $label => $range) {
-      $count = Product::whereBetween('stock', [$range['min'], $range['max']])->count();
-      $stockDistribution[$label] = $count;
-    }
-
     return [
-      'total_products' => $products->total_products,
-      'low_stock_count' => $products->low_stock_count,
-      'out_of_stock_count' => $products->out_of_stock_count,
-      'average_stock' => round($products->average_stock, 2),
-      'inventory_value' => $products->inventory_value,
-      'stock_distribution' => $stockDistribution
+        'total_products' => Product::count(),
+        'low_stock_count' => $stock_distribution['منخفض'],
+        'out_of_stock_count' => $stock_distribution['نفذ'],
+        'average_stock' => Product::avg('stock') ?? 0,
+        'stock_distribution' => $stock_distribution
     ];
   }
 

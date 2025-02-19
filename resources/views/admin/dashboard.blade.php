@@ -80,6 +80,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Delivery Status Card -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card h-100 p-3 bg-white rounded-3 shadow-sm">
+            <div class="d-flex align-items-center">
+                <div class="icon-wrapper bg-primary me-3">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value h4 mb-1">{{ $stats['out_for_delivery_orders'] ?? 0 }}</div>
+                    <div class="stat-title text-muted">قيد التوصيل</div>
+                    <div class="trend small mt-2">
+                        <span class="me-2">في الطريق: {{ $stats['on_the_way_orders'] ?? 0 }}</span>
+                        <span>تم التوصيل: {{ $stats['delivered_orders'] ?? 0 }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Quick Actions -->
@@ -325,25 +344,37 @@
         {
             type: 'doughnut',
             data: {
-                labels: ['مكتمل', 'قيد المعالجة', 'معلق', 'ملغي'],
+                labels: ['مكتمل', 'قيد المعالجة', 'معلق', 'قيد التوصيل', 'في الطريق', 'تم التوصيل', 'مرتجع', 'ملغي'],
                 datasets: [{
                     data: [
                         chartConfig.orderStats.completed || 0,
                         chartConfig.orderStats.processing || 0,
                         chartConfig.orderStats.pending || 0,
+                        chartConfig.orderStats.out_for_delivery || 0,
+                        chartConfig.orderStats.on_the_way || 0,
+                        chartConfig.orderStats.delivered || 0,
+                        chartConfig.orderStats.returned || 0,
                         chartConfig.orderStats.cancelled || 0
                     ],
                     backgroundColor: [
-                        'rgba(25, 135, 84, 0.9)',
-                        'rgba(13, 202, 240, 0.9)',
-                        'rgba(255, 193, 7, 0.9)',
-                        'rgba(220, 53, 69, 0.9)'
+                        'rgba(25, 135, 84, 0.9)',    // مكتمل
+                        'rgba(13, 202, 240, 0.9)',   // قيد المعالجة
+                        'rgba(255, 193, 7, 0.9)',    // معلق
+                        'rgba(13, 110, 253, 0.9)',   // قيد التوصيل
+                        'rgba(108, 117, 125, 0.9)',  // في الطريق
+                        'rgba(32, 201, 151, 0.9)',   // تم التوصيل
+                        'rgba(255, 128, 0, 0.9)',    // مرتجع
+                        'rgba(220, 53, 69, 0.9)'     // ملغي
                     ],
                     borderColor: [
-                        'rgb(25, 135, 84)',
-                        'rgb(13, 202, 240)',
-                        'rgb(255, 193, 7)',
-                        'rgb(220, 53, 69)'
+                        'rgb(25, 135, 84)',    // مكتمل
+                        'rgb(13, 202, 240)',   // قيد المعالجة
+                        'rgb(255, 193, 7)',    // معلق
+                        'rgb(13, 110, 253)',   // قيد التوصيل
+                        'rgb(108, 117, 125)',  // في الطريق
+                        'rgb(32, 201, 151)',   // تم التوصيل
+                        'rgb(255, 128, 0)',    // مرتجع
+                        'rgb(220, 53, 69)'     // ملغي
                     ],
                     borderWidth: 2
                 }]

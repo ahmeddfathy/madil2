@@ -5,31 +5,6 @@
 @section('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 <link rel="stylesheet" href="{{ asset('assets/css/customer/appointments.css') }}">
-<style>
-    .custom-design-badge {
-        background-color: #6c5ce7;
-        color: white;
-        padding: 0.35em 0.65em;
-        font-size: 0.85em;
-        font-weight: 600;
-        border-radius: 0.25rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .custom-design-badge i {
-        font-size: 1.1em;
-    }
-
-    .appointment-card.custom-design {
-        border-top: 4px solid #6c5ce7;
-    }
-
-    .appointment-card.custom-design .info-icon {
-        color: #6c5ce7;
-    }
-</style>
 @endsection
 
 @section('content')
@@ -67,26 +42,6 @@
                     معلومات الموعد
                 </h5>
                 <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="info-item">
-                            <div class="info-icon">
-                                <i class="bi bi-grid"></i>
-                            </div>
-                            <div>
-                                <div class="info-label">نوع الخدمة</div>
-                                <div class="info-value">
-                                    @if($appointment->service_type === 'custom_design')
-                                        <span class="custom-design-badge">
-                                            <i class="bi bi-brush"></i>
-                                            تصميم مخصص
-                                        </span>
-                                    @else
-                                        {{ $appointment->service }}
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div class="col-md-6">
                         <div class="info-item">
                             <div class="info-icon">
@@ -132,33 +87,6 @@
                 <p class="mb-0">{{ $appointment->notes }}</p>
             </div>
             @endif
-
-            <div class="info-section">
-                <h5 class="section-title">
-                    <i class="bi bi-clock-history me-2"></i>
-                    سجل الموعد
-                </h5>
-                <div class="timeline">
-                    @if(isset($appointment->history) && count($appointment->history) > 0)
-                    @foreach($appointment->history as $history)
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-content">
-                            <div class="timeline-date">{{ $history->created_at->format('Y/m/d h:i A') }}</div>
-                            <p class="timeline-text">{{ $history->description }}</p>
-                        </div>
-                    </div>
-                    @endforeach
-                    @else
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-content">
-                            <p class="timeline-text text-muted">لا يوجد سجل للموعد حتى الآن</p>
-                        </div>
-                    </div>
-                    @endif
-                </div>
-            </div>
         </div>
     </div>
 </div>

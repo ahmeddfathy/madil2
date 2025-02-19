@@ -509,6 +509,14 @@
     <!-- Add this hidden input for product ID -->
     <input type="hidden" id="product-id" value="{{ $product->id }}">
 
+    @if($pendingAppointment)
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            showAppointmentModal({{ $pendingAppointment->id }});
+        });
+    </script>
+    @endif
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('assets/js/customer/products-show.js') }}"></script>

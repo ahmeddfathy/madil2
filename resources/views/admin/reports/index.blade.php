@@ -450,13 +450,20 @@
     const stockCtx = document.getElementById('stockDistributionChart').getContext('2d');
     const stockData = @json($inventoryReport['stock_distribution']);
 
+    // إضافة console.log للتأكد من البيانات
+    console.log('Stock Distribution Data:', stockData);
+
     new Chart(stockCtx, {
       type: 'bar',
       data: {
         labels: ['متوفر', 'منخفض', 'نفذ'],
         datasets: [{
-          label: 'المنتجات',
-          data: Object.values(stockData),
+          label: 'عدد المنتجات',
+          data: [
+            stockData['متوفر'] || 0,
+            stockData['منخفض'] || 0,
+            stockData['نفذ'] || 0
+          ],
           backgroundColor: [
             '#4CAF50',  // متوفر - أخضر
             '#FFC107',  // منخفض - أصفر

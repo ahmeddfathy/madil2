@@ -15,7 +15,8 @@ use App\Http\Controllers\{
     DashboardController,
     PhoneController,
     AddressController,
-    ContactController
+    ContactController,
+    PolicyController
 };
 
 // Admin Controllers
@@ -176,6 +177,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::get('/cart/items', [ProductController::class, 'getCartItems'])->name('cart.items');
     Route::patch('/cart/items/{cartItem}', [ProductController::class, 'updateCartItem'])->name('cart.update-item');
     Route::delete('/cart/remove/{cartItem}', [ProductController::class, 'removeCartItem'])->name('cart.remove-item');
+    Route::get('/cart/items/{cartItem}/check-appointment', [CartController::class, 'checkAppointment']);
 });
 
 // مسارات لوحة تحكم العميل
@@ -199,3 +201,5 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/cart/items/{cartItem}', [CartController::class, 'updateItem'])->name('cart.items.update');
     Route::delete('/cart/items/{cartItem}', [CartController::class, 'removeItem'])->name('cart.items.remove');
 });
+
+Route::get('/policy', [PolicyController::class, 'index'])->name('policy');

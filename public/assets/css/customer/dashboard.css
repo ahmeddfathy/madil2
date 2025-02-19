@@ -1,31 +1,35 @@
 :root {
-    /* ألوان أكثر وضوحًا وحيوية */
-    --primary-color: #4A3AFF;     /* أزرق نابض بالحياة مع عمق أكبر */
-    --secondary-color: #7B6EFF;   /* درجة فاتحة مع تباين واضح */
-
-    /* خلفية مشرقة وواضحة */
-    --background-color: #F0F4FF;  /* خلفية مشرقة وناعمة */
-
-    /* تأثير زجاجي أكثر وضوحًا */
-    --glass-background: rgba(255, 255, 255, 0.75);
-    --glass-background-dark: rgba(255, 255, 255, 0.65);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.55);
-
-    /* تم إزالة الظل */
+    --primary-color: #2D00F7;
+    --secondary-color: #A100F2;
+    --background-color: #F6F8FF;
+    --glass-background: rgba(255, 255, 255, 0.85);
+    --glass-background-dark: rgba(255, 255, 255, 0.75);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.65);
     --card-shadow: none;
-
-    /* درجات لونية أكثر تباينًا */
-    --text-color: #1E2A38;        /* أزرق رمادي داكن وواضح */
-    --text-light: #2C3E50;        /* أزرق رمادي متوسط مع وضوح */
-    --text-muted: #4A5F6E;        /* رمادي مائل للأزرق أكثر حيوية */
-    --heading-color: #1E2A38;     /* متناسق مع لون النص الرئيسي مع تأكيد */
-
-    /* ألوان الحالة أكثر حدة وتميزًا */
-    --danger-color: #FF4D4D;      /* أحمر صارخ وواضح */
-    --success-color: #2ECC71;     /* أخضر مشرق وحيوي */
+    --text-color: #0A1F44;
+    --text-light: #2D3B55;
+    --text-muted: #516B8B;
+    --heading-color: #051937;
+    --danger-color: #E41749;
+    --success-color: #00B074;
+    --warning-color: #ffc107;
+    --info-color: #70a1ff;
+    --secondary-bg: #747d8c;
+    --primary-border-color: rgba(74, 58, 255, 0.15);
+    --primary-border-color-light: rgba(74, 58, 255, 0.1);
+    --primary-border-color-lighter: rgba(74, 58, 255, 0.05);
+    --primary-border-color-darker: rgba(74, 58, 255, 0.2);
+    --primary-shadow-color: rgba(74, 58, 255, 0.05);
+    --primary-shadow-color-darker: rgba(74, 58, 255, 0.2);
+    --primary-bg-color: rgba(74, 58, 255, 0.03);
+    --primary-bg-color-hover: rgba(74, 58, 255, 0.05);
+    --black-color: #000;
+    --white-color: #fff;
+    --border-muted: rgba(0, 0, 0, 0.1);
 }
+
 body {
-    background: linear-gradient(135deg, var(--background-color), #fff);
+    background: linear-gradient(135deg, var(--background-color), var(--white-color));
     min-height: 100vh;
     font-family: 'Tajawal', sans-serif;
     color: var(--text-color);
@@ -39,7 +43,7 @@ body {
     -webkit-backdrop-filter: blur(4px);
     border-radius: 10px;
     border: var(--glass-border);
-    box-shadow: none;
+    box-shadow: var(--card-shadow);
 }
 
 /* Navbar Styles */
@@ -95,8 +99,8 @@ body {
     -webkit-backdrop-filter: blur(4px);
     border-radius: 15px;
     padding: 2rem;
-    border: 2px solid rgba(74, 58, 255, 0.15);
-    box-shadow: none;
+    border: 2px solid var(--primary-border-color);
+    box-shadow: var(--card-shadow);
     margin-bottom: 2rem;
 }
 
@@ -119,7 +123,7 @@ body {
     padding: 0.5rem 1.2rem;
     border-radius: 50px;
     background: var(--primary-color);
-    color: white;
+    color: var(--white-color);
     font-weight: 500;
 }
 
@@ -133,8 +137,8 @@ body {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    border: 2px solid rgba(74, 58, 255, 0.15);
-    box-shadow: none;
+    border: 2px solid var(--primary-border-color);
+    box-shadow: var(--card-shadow);
     position: relative;
     overflow: hidden;
 }
@@ -152,8 +156,8 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(74, 58, 255, 0.2);
+    background: var(--glass-background);
+    border: 1px solid var(--primary-border-color-light);
 }
 
 .dashboard-card:hover .card-icon {
@@ -161,23 +165,23 @@ body {
 }
 
 .orders .card-icon {
-    background: rgba(74, 58, 255, 0.1);
+    background: var(--primary-bg-color);
     color: var(--primary-color);
 }
 
 .appointments .card-icon {
-    background: rgba(0, 184, 148, 0.1);
-    color: #00b894;
+    background: var(--primary-bg-color);
+    color: var(--success-color);
 }
 
 .cart .card-icon {
-    background: rgba(253, 121, 168, 0.1);
-    color: #fd79a8;
+    background: var(--primary-bg-color);
+    color: var(--danger-color);
 }
 
 .notifications .card-icon {
-    background: rgba(255, 159, 67, 0.1);
-    color: #ff9f43;
+    background: var(--primary-bg-color);
+    color: var(--warning-color);
 }
 
 .card-info {
@@ -225,7 +229,7 @@ body {
 }
 
 .dashboard-card:hover .card-arrow i {
-    color: white;
+    color: var(--white-color);
     transform: translateX(-3px);
 }
 
@@ -236,8 +240,8 @@ body {
     -webkit-backdrop-filter: blur(4px);
     border-radius: 15px;
     padding: 2rem;
-    border: 2px solid rgba(74, 58, 255, 0.15);
-    box-shadow: none;
+    border: 2px solid var(--primary-border-color);
+    box-shadow: var(--card-shadow);
     height: 100%;
 }
 
@@ -259,7 +263,7 @@ body {
     color: var(--heading-color);
     border-bottom: var(--glass-border);
     padding: 1rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--glass-background);
     letter-spacing: 0.3px;
 }
 
@@ -276,7 +280,7 @@ body {
 }
 
 .table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--glass-background);
 }
 
 /* Appointment Cards */
@@ -292,14 +296,14 @@ body {
     -webkit-backdrop-filter: blur(4px);
     border-radius: 15px;
     padding: 1.5rem;
-    border: 2px solid rgba(74, 58, 255, 0.15);
+    border: 2px solid var(--primary-border-color);
     transition: none;
 }
 
 .appointment-card:hover {
     transform: none;
     background: var(--glass-background);
-    box-shadow: none;
+    box-shadow: var(--card-shadow);
 }
 
 .appointment-header {
@@ -339,32 +343,32 @@ body {
 }
 
 .badge.bg-warning {
-    background-color: #ffa502 !important;
-    color: #1e1e2d;
+    background-color: var(--warning-color) !important;
+    color: var(--black-color);
     font-weight: 600;
 }
 
 .badge.bg-success {
-    background-color: #2ed573 !important;
-    color: #fff;
+    background-color: var(--success-color) !important;
+    color: var(--white-color);
     font-weight: 600;
 }
 
 .badge.bg-danger {
-    background-color: #ff4757 !important;
-    color: #fff;
+    background-color: var(--danger-color) !important;
+    color: var(--white-color);
     font-weight: 600;
 }
 
 .badge.bg-info {
-    background-color: #70a1ff !important;
-    color: #fff;
+    background-color: var(--info-color) !important;
+    color: var(--white-color);
     font-weight: 600;
 }
 
 .badge.bg-secondary {
-    background-color: #747d8c !important;
-    color: #fff;
+    background-color: var(--secondary-bg) !important;
+    color: var(--white-color);
     font-weight: 600;
 }
 
@@ -386,7 +390,7 @@ body {
 .btn-primary {
     background: var(--primary-color);
     border: none;
-    color: #fff;
+    color: var(--white-color);
 }
 
 .btn-primary:hover {
@@ -402,7 +406,7 @@ body {
 
 .btn-outline-primary:hover {
     background: var(--primary-color);
-    color: #fff;
+    color: var(--white-color);
     transform: translateY(-2px);
 }
 
@@ -417,7 +421,7 @@ body {
     -webkit-backdrop-filter: blur(10px);
     border: var(--glass-border);
     border-radius: 15px;
-    box-shadow: none;
+    box-shadow: var(--card-shadow);
 }
 
 .notification-dropdown .dropdown-item {
@@ -432,11 +436,11 @@ body {
 }
 
 .notification-dropdown .dropdown-item.unread {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--glass-background);
 }
 
 .notification-dropdown .dropdown-item:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--glass-background);
 }
 
 .notification-content p {
@@ -693,7 +697,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--glass-background);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -736,28 +740,28 @@ body {
 
 /* Addresses Section */
 .card {
-    border: 2px solid rgba(74, 58, 255, 0.15);
-    box-shadow: none;
+    border: 2px solid var(--primary-border-color);
+    box-shadow: var(--card-shadow);
     border-radius: 12px;
     transition: none;
     background: var(--glass-background);
 }
 
 .card:hover {
-    box-shadow: none;
+    box-shadow: var(--card-shadow);
     transform: none;
 }
 
 .card-header {
     background-color: transparent;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--border-muted);
     padding: 1.25rem;
 }
 
 .card-header h5 {
     margin: 0;
     font-weight: 600;
-    color: #2c3e50;
+    color: var(--heading-color);
 }
 
 .card-body {
@@ -768,7 +772,7 @@ body {
 .empty-state {
     text-align: center;
     padding: 2rem;
-    color: #6c757d;
+    color: var(--text-muted);
 }
 
 .empty-state i {
@@ -788,7 +792,7 @@ body {
 }
 
 .list-group-item {
-    border: 1px solid rgba(74, 58, 255, 0.15);
+    border: 1px solid var(--primary-border-color);
     margin-bottom: 0.5rem;
     border-radius: 8px !important;
     transition: none;
@@ -800,8 +804,8 @@ body {
 }
 
 .list-group-item.active {
-    background-color: #f8f9fa;
-    border-color: #dee2e6;
+    background-color: var(--glass-background);
+    border-color: var(--glass-border);
 }
 
 .list-group-item:hover {
@@ -810,12 +814,12 @@ body {
 
 /* Address Content */
 .list-group-item p {
-    color: #2c3e50;
+    color: var(--text-color);
     margin: 0;
 }
 
 .list-group-item small {
-    color: #6c757d;
+    color: var(--text-muted);
     font-size: 0.85rem;
 }
 
@@ -827,8 +831,8 @@ body {
 }
 
 .badge.bg-warning {
-    background-color: #ffc107 !important;
-    color: #000;
+    background-color: var(--warning-color) !important;
+    color: var(--black-color);
 }
 
 /* Button Group */
@@ -842,42 +846,42 @@ body {
 }
 
 .btn-outline-primary {
-    color: #0d6efd;
-    border-color: #0d6efd;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 .btn-outline-primary:hover {
-    background-color: #0d6efd;
-    color: #fff;
+    background-color: var(--primary-color);
+    color: var(--white-color);
 }
 
 .btn-outline-warning {
-    color: #ffc107;
-    border-color: #ffc107;
+    color: var(--warning-color);
+    border-color: var(--warning-color);
 }
 
 .btn-outline-warning:hover {
-    background-color: #ffc107;
-    color: #000;
+    background-color: var(--warning-color);
+    color: var(--black-color);
 }
 
 .btn-outline-danger {
-    color: #dc3545;
-    border-color: #dc3545;
+    color: var(--danger-color);
+    border-color: var(--danger-color);
 }
 
 .btn-outline-danger:hover {
-    background-color: #dc3545;
-    color: #fff;
+    background-color: var(--danger-color);
+    color: var(--white-color);
 }
 
 /* Icons */
 .fa-map-marker-alt {
-    color: #dc3545;
+    color: var(--danger-color);
 }
 
 .fa-calendar-alt {
-    color: #6c757d;
+    color: var(--text-muted);
 }
 
 /* Add Address Button */
@@ -885,14 +889,14 @@ body {
     padding: 0.375rem 0.75rem;
     font-size: 0.875rem;
     border-radius: 6px;
-    background-color: #0d6efd;
-    border-color: #0d6efd;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
     transition: all 0.2s ease;
 }
 
 .btn-primary.btn-sm:hover {
-    background-color: #0b5ed7;
-    border-color: #0a58ca;
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
 }
 
 /* Responsive Adjustments */
@@ -925,22 +929,22 @@ body {
 }
 
 .user-guide-section .card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
-    border: 2px solid rgba(74, 58, 255, 0.1);
-    box-shadow: 0 4px 15px rgba(74, 58, 255, 0.05);
+    background: linear-gradient(135deg, var(--glass-background), var(--glass-background-dark));
+    border: 2px solid var(--primary-border-color-light);
+    box-shadow: 0 4px 15px var(--primary-shadow-color);
 }
 
 .guide-item {
     padding: 1rem;
     border-radius: 10px;
-    background: rgba(74, 58, 255, 0.03);
-    border: 1px solid rgba(74, 58, 255, 0.1);
+    background: var(--primary-bg-color);
+    border: 1px solid var(--primary-border-color-light);
     margin-bottom: 1rem;
     transition: all 0.3s ease;
 }
 
 .guide-item:hover {
-    background: rgba(74, 58, 255, 0.05);
+    background: var(--primary-bg-color-hover);
     transform: translateY(-2px);
 }
 
@@ -970,7 +974,7 @@ body {
     left: 2rem;
     z-index: 1000;
     background: var(--primary-color);
-    color: white;
+    color: var(--white-color);
     border: none;
     border-radius: 50%;
     width: 50px;
@@ -978,7 +982,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 10px rgba(74, 58, 255, 0.2);
+    box-shadow: 0 2px 10px var(--primary-shadow-color-darker);
     transition: all 0.3s ease;
 }
 
@@ -997,7 +1001,7 @@ body {
 
 /* Guide Hint Styles */
 .guide-hint .alert {
-    background: rgba(74, 58, 255, 0.05);
+    background: var(--primary-bg-color);
     border-radius: 10px;
     padding: 0.75rem 1rem;
 }
@@ -1009,7 +1013,7 @@ body {
 
 .guide-hint .alert i.fa-question-circle {
     font-size: 1.1rem;
-    background: white;
+    background: var(--white-color);
     border-radius: 50%;
     padding: 2px;
 }
@@ -1033,8 +1037,8 @@ body {
 
 /* Primary Badge Styles */
 .primary-badge {
-    background-color: #ffc107 !important;
-    color: #000 !important;
+    background-color: var(--warning-color) !important;
+    color: var(--black-color) !important;
     font-weight: 600;
     padding: 0.4em 0.8em;
     border-radius: 50px;
@@ -1043,8 +1047,8 @@ body {
 
 /* Active List Item with Primary Phone */
 .list-group-item.active {
-    background-color: rgba(74, 58, 255, 0.05) !important;
-    border-color: rgba(74, 58, 255, 0.2) !important;
+    background-color: var(--primary-bg-color) !important;
+    border-color: var(--primary-border-color-darker) !important;
 }
 
 .list-group-item.active .phone-number {

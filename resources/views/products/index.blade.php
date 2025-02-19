@@ -188,9 +188,14 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="cart-items" id="cartItems">
-            <!-- Cart items will be dynamically added here -->
+
+        <!-- Cart Items Container with Scroll -->
+        <div class="cart-items-container">
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be dynamically added here -->
+            </div>
         </div>
+
         <div class="cart-footer">
             <div class="cart-total">
                 <span>الإجمالي:</span>

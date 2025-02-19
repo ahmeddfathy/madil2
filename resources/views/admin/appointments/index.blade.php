@@ -231,7 +231,57 @@
                                 </div>
                                 @if($appointments->hasPages())
                                 <div class="pagination-container px-4 py-3 border-top">
-                                    {{ $appointments->links() }}
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="pagination-info text-muted">
+                                            عرض {{ $appointments->firstItem() }} إلى {{ $appointments->lastItem() }} من {{ $appointments->total() }} موعد
+                                        </div>
+                                        <nav>
+                                            <ul class="pagination mb-0">
+                                                {{-- Previous Page Link --}}
+                                                @if ($appointments->onFirstPage())
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link">
+                                                            <i class="fas fa-chevron-right"></i>
+                                                        </span>
+                                                    </li>
+                                                @else
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ $appointments->previousPageUrl() }}">
+                                                            <i class="fas fa-chevron-right"></i>
+                                                        </a>
+                                                    </li>
+                                                @endif
+
+                                                {{-- Pagination Elements --}}
+                                                @foreach ($appointments->onEachSide(1)->links()->elements[0] as $page => $url)
+                                                    @if ($page == $appointments->currentPage())
+                                                        <li class="page-item active">
+                                                            <span class="page-link">{{ $page }}</span>
+                                                        </li>
+                                                    @else
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                                        </li>
+                                                    @endif
+                                                @endforeach
+
+                                                {{-- Next Page Link --}}
+                                                @if ($appointments->hasMorePages())
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ $appointments->nextPageUrl() }}">
+                                                            <i class="fas fa-chevron-left"></i>
+                                                        </a>
+                                                    </li>
+                                                @else
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link">
+                                                            <i class="fas fa-chevron-left"></i>
+                                                        </span>
+                                                    </li>
+                                                @endif
+                                            </ul>
+                                        </nav>
+                                    </div>
                                 </div>
                                 @endif
                             </div>

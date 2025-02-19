@@ -38,19 +38,24 @@
         @forelse($appointments as $appointment)
             <div class="appointment-item">
                 <div class="appointment-header">
-                    <div class="appointment-icon">
-                        <i class="bi bi-calendar-check"></i>
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="appointment-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <h5 class="appointment-title">
+                            @if($appointment->service_type === 'custom_design')
+                                <span class="badge bg-primary">
+                                    <i class="bi bi-brush me-1"></i>
+                                    تصميم مخصص
+                                </span>
+                            @else
+                                {{ $appointment->service }}
+                            @endif
+                        </h5>
                     </div>
-                    <h5 class="appointment-title">
-                        @if($appointment->service_type === 'custom_design')
-                            <span class="badge bg-primary">
-                                <i class="bi bi-brush me-1"></i>
-                                تصميم مخصص
-                            </span>
-                        @else
-                            {{ $appointment->service }}
-                        @endif
-                    </h5>
+                    <div class="appointment-status status-{{ $appointment->status }}">
+                        {{ $appointment->status_text }}
+                    </div>
                 </div>
 
                 <div class="appointment-meta">
@@ -82,9 +87,6 @@
                 </div>
 
                 <div class="appointment-actions">
-                    <div class="appointment-status status-{{ $appointment->status }}">
-                        {{ $appointment->status_text }}
-                    </div>
                     <a href="{{ route('appointments.show', $appointment->reference_number) }}"
                        class="btn btn-primary">
                         <i class="bi bi-eye"></i>
@@ -107,7 +109,66 @@
         @endforelse
 
         <div class="d-flex justify-content-center mt-4">
-            {{ $appointments->links() }}
+            @if ($appointments->hasPages())
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {{-- Previous Page Link --}}
+                        @if ($appointments->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $appointments->previousPageUrl() }}" rel="prev">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @foreach ($appointments->render()->elements as $element)
+                            {{-- "Three Dots" Separator --}}
+                            @if (is_string($element))
+                                <li class="page-item disabled">
+                                    <span class="page-link">{{ $element }}</span>
+                                </li>
+                            @endif
+
+                            {{-- Array Of Links --}}
+                            @if (is_array($element))
+                                @foreach ($element as $page => $url)
+                                    @if ($page == $appointments->currentPage())
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ $page }}</span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            @endif
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($appointments->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $appointments->nextPageUrl() }}" rel="next">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="bi bi-chevron-left"></i>
+                                </span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+            @endif
         </div>
     </div>
 </div>

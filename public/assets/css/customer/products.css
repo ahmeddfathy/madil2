@@ -272,10 +272,11 @@ body {
     width: 100%;
     height: 100vh;
     background: #fff;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
     z-index: 1050;
     transition: right 0.3s ease;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 @media (min-width: 768px) {
@@ -310,14 +311,9 @@ body.cart-open {
 
 /* Cart Header */
 .cart-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     padding: 1rem;
     background: #fff;
     border-bottom: 1px solid var(--border-color);
-    z-index: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -354,14 +350,40 @@ body.cart-open {
     font-size: 1.25rem;
 }
 
-/* Cart Items Container */
+/* Cart Items Container - للتحكم في التمرير */
+.cart-items-container {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Cart Items - منطقة التمرير */
 .cart-items {
+    height: 100%;
+    overflow-y: auto;
     padding: 1rem;
-    margin-top: 70px;
-    margin-bottom: 90px;
     background: #f8f9fa;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    /* تخصيص شريط التمرير */
+    scrollbar-width: thin;
+    scrollbar-color: #6c5ce7 #f8f9fa;
+}
+
+/* تخصيص شريط التمرير لمتصفحات Webkit */
+.cart-items::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cart-items::-webkit-scrollbar-track {
+    background: #f8f9fa;
+}
+
+.cart-items::-webkit-scrollbar-thumb {
+    background-color: #6c5ce7;
+    border-radius: 6px;
+}
+
+.cart-items::-webkit-scrollbar-thumb:hover {
+    background-color: #5348c7;
 }
 
 /* Cart Item */
@@ -376,18 +398,11 @@ body.cart-open {
     transition: all 0.3s ease;
 }
 
-/* Remove hover effect */
-.cart-item:hover {
-    transform: none;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-    border-color: rgba(108, 92, 231, 0.1);
-}
-
 .cart-item:last-child {
     margin-bottom: 0;
 }
 
-/* Remove Button - Always visible */
+/* Remove Button */
 .remove-btn {
     position: absolute;
     left: 1rem;
@@ -403,11 +418,6 @@ body.cart-open {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    opacity: 1;
-}
-
-/* Remove hover visibility */
-.cart-item:hover .remove-btn {
     opacity: 1;
 }
 
@@ -527,12 +537,8 @@ body.cart-open {
 
 /* Cart Footer */
 .cart-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #fff;
     padding: 1rem;
+    background: #fff;
     border-top: 1px solid var(--border-color);
     box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
 }

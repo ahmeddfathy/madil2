@@ -1,29 +1,19 @@
-/* Notifications Page Styles */
 :root {
-    /* ألوان أكثر وضوحًا وحيوية */
-    --primary-color: #4A3AFF;     /* أزرق نابض بالحياة مع عمق أكبر */
-    --secondary-color: #7B6EFF;   /* درجة فاتحة مع تباين واضح */
-    --success-color: #2ECC71;     /* أخضر مشرق وحيوي */
-    --warning-color: #F39C12;     /* برتقالي دافئ وواضح */
-    --danger-color: #FF4D4D;      /* أحمر صارخ وواضح */
-    --processing-color: #3498DB;  /* أزرق هادئ وواضح */
-
-    /* خلفية مشرقة وواضحة */
-    --background-color: #F0F4FF;  /* خلفية مشرقة وناعمة */
-
-    /* تأثير زجاجي أكثر وضوحًا */
+    --primary-color: #4A3AFF;
+    --secondary-color: #7B6EFF;
+    --success-color: #2ECC71;
+    --warning-color: #F39C12;
+    --danger-color: #FF4D4D;
+    --processing-color: #3498DB;
+    --background-color: #F0F4FF;
     --glass-background: rgba(255, 255, 255, 0.75);
     --glass-background-dark: rgba(255, 255, 255, 0.65);
     --glass-border: 1px solid rgba(74, 58, 255, 0.25);
-
-    /* تم إزالة الظل */
     --card-shadow: none;
-
-    /* درجات لونية أكثر تباينًا */
-    --text-color: #1E2A38;        /* أزرق رمادي داكن وواضح */
-    --text-light: #2C3E50;        /* أزرق رمادي متوسط مع وضوح */
-    --text-muted: #4A5F6E;        /* رمادي مائل للأزرق أكثر حيوية */
-    --heading-color: #1E2A38;     /* متناسق مع لون النص الرئيسي مع تأكيد */
+    --text-color: #1E2A38;
+    --text-light: #2C3E50;
+    --text-muted: #4A5F6E;
+    --heading-color: #1E2A38;
 }
 
 body {
@@ -219,45 +209,61 @@ body {
 .pagination {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 0.5rem;
     margin-top: 2rem;
+    direction: ltr;
+}
+
+.page-item {
+    margin: 0 2px;
+}
+
+.page-item.disabled .page-link {
+    background: var(--glass-background-dark);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    border: 1px solid rgba(74, 58, 255, 0.1);
 }
 
 .page-link {
     background: var(--glass-background);
-    border: var(--glass-border);
+    border: 2px solid rgba(74, 58, 255, 0.15);
     color: var(--text-color);
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
     transition: all 0.3s ease;
     font-weight: 500;
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
 }
 
-.page-link:hover,
+.page-link:hover {
+    background: rgba(74, 58, 255, 0.1);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
 .page-item.active .page-link {
     background: var(--primary-color);
     color: white;
+    border-color: var(--primary-color);
     transform: translateY(-2px);
-    box-shadow: none;
 }
 
-/* Animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* تحسين مظهر الأسهم */
+.page-item:first-child .page-link,
+.page-item:last-child .page-link {
+    font-size: 1.2rem;
+    padding: 0.5rem;
 }
 
-.notification-item {
-    animation: fadeIn 0.5s ease-out;
-}
-
-/* Responsive Design */
+/* تحسين المظهر على الشاشات الصغيرة */
 @media (max-width: 768px) {
     .notifications-container {
         padding: 1rem 0.5rem;
@@ -286,6 +292,17 @@ body {
         width: 80px;
         height: 80px;
         font-size: 3rem;
+    }
+
+    .page-link {
+        padding: 0.4rem 0.8rem;
+        min-width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+
+    .pagination {
+        gap: 0.3rem;
     }
 }
 

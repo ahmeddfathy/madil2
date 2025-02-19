@@ -460,3 +460,100 @@ body {
 .order-meta .btn-primary i {
     font-size: 1.1rem;
 }
+
+/* Tracking Timeline Styles */
+.tracking-timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    opacity: 0.5;
+}
+
+.timeline-item.completed {
+    opacity: 1;
+}
+
+.timeline-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.timeline-item.completed .timeline-icon {
+    background-color: #28a745;
+    color: white;
+}
+
+.timeline-content {
+    flex-grow: 1;
+}
+
+.timeline-content h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.timeline-content p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Status Badge Colors */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+}
+
+.status-pending {
+    background-color: #ffeeba;
+    color: #856404;
+}
+
+.status-processing {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.status-out_for_delivery {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-on_the_way {
+    background-color: #b8daff;
+    color: #004085;
+}
+
+.status-delivered {
+    background-color: #c3e6cb;
+    color: #155724;
+}
+
+.status-completed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-returned {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
