@@ -16,7 +16,8 @@ use App\Http\Controllers\{
     PhoneController,
     AddressController,
     ContactController,
-    PolicyController
+    PolicyController,
+    TestNotificationController
 };
 
 // Admin Controllers
@@ -203,3 +204,12 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/policy', [PolicyController::class, 'index'])->name('policy');
+
+Route::get('/test', function () {
+    return view('test-notification');
+});
+
+Route::post('/api/test-notification', [TestNotificationController::class, 'sendNotification']);
+
+Route::post('/admin/update-fcm-token', [App\Http\Controllers\Admin\DashboardController::class, 'updateFcmToken'])
+    ->middleware(['auth', 'admin']);

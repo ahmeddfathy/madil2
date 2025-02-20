@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+use App\Notifications\OrderCreated;
 
 class Order extends Model
 {
@@ -28,6 +30,8 @@ class Order extends Model
     const ORDER_STATUS_ON_THE_WAY = 'on_the_way';
     const ORDER_STATUS_DELIVERED = 'delivered';
     const ORDER_STATUS_RETURNED = 'returned';
+
+    const STATUS_PENDING = 'pending';
 
     protected $fillable = [
         'user_id',
@@ -54,6 +58,25 @@ class Order extends Model
         static::creating(function ($order) {
             $order->uuid = (string) Str::uuid();
             $order->order_number = 'ORD-' . str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
+        });
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($order) {
+            Log::info('Order created event fired', [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number
+            ]);
+
+            try {
+                $order->user->notify(new OrderCreated($order));
+            } catch (\Exception $e) {
+                Log::error('Failed to send order notification', [
+                    'error' => $e->getMessage(),
+                    'order_id' => $order->id
+                ]);
+            }
         });
     }
 

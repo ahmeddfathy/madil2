@@ -9,6 +9,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -225,6 +227,41 @@ class DashboardController extends Controller
                 'orderStats' => $defaultStatuses,
                 'error' => 'Error loading dashboard data: ' . $e->getMessage()
             ]);
+        }
+    }
+
+    public function updateFcmToken(Request $request)
+    {
+        try {
+            Log::info('Updating FCM token for admin', [
+                'admin_id' => Auth::id(),
+                'token' => $request->token
+            ]);
+
+            $request->validate([
+                'token' => 'required|string'
+            ]);
+
+            $user = Auth::user();
+            $user->update([
+                'fcm_token' => $request->token
+            ]);
+
+            Log::info('FCM token updated successfully', [
+                'admin_id' => $user->id
+            ]);
+
+            return response()->json(['message' => 'Token updated successfully']);
+        } catch (\Exception $e) {
+            Log::error('Error updating FCM token', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'admin_id' => Auth::id()
+            ]);
+
+            return response()->json([
+                'error' => 'Failed to update token: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

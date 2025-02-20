@@ -255,8 +255,149 @@
 
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 <script>
-    // تهيئة البيانات
+    function log(message) {
+        console.log(`[Admin Dashboard] ${message}`);
+    }
+
+    try {
+        firebase.initializeApp({
+            apiKey: "AIzaSyCBMLqzzmOAaDB2bkM2oja-0uOP5SclXAA",
+            authDomain: "madil-notifications.firebaseapp.com",
+            projectId: "madil-notifications",
+            storageBucket: "madil-notifications.firebasestorage.app",
+            messagingSenderId: "98732624533",
+            appId: "1:98732624533:web:6335d91275f4640542699c"
+        });
+        log('Firebase initialized successfully');
+    } catch (error) {
+        log('Firebase initialization error: ' + error.message);
+    }
+
+    const messaging = firebase.messaging();
+    log('Messaging service initialized');
+
+    async function requestPermissionAndToken() {
+        try {
+            log('Checking Service Worker support...');
+            if (!('serviceWorker' in navigator)) {
+                throw new Error('Service Worker not supported');
+            }
+            if (!('PushManager' in window)) {
+                throw new Error('Push notifications not supported');
+            }
+
+            log('Requesting notification permission...');
+            const permission = await Notification.requestPermission();
+            log('Permission: ' + permission);
+
+            if (permission === 'granted') {
+                log('Registering Service Worker...');
+                const registration = await navigator.serviceWorker.register('/admin/firebase-messaging-sw.js');
+                log('Service Worker registered successfully');
+
+                try {
+                    log('Setting up messaging service worker...');
+                    messaging.useServiceWorker(registration);
+
+                    log('Requesting FCM token...');
+                    const currentToken = await messaging.getToken();
+
+                    if (currentToken) {
+                        log('FCM Token received: ' + currentToken);
+                        updateFcmToken(currentToken);
+                        return currentToken;
+                    } else {
+                        log('No registration token available');
+                        return null;
+                    }
+                } catch (tokenError) {
+                    log('Token error: ' + tokenError.message);
+                    return null;
+                }
+            }
+        } catch (err) {
+            log('Permission/Token error: ' + err.message);
+            return null;
+        }
+    }
+
+    // التعامل مع الرسائل في الواجهة الأمامية
+    messaging.onMessage((payload) => {
+        log('Message received in foreground: ' + JSON.stringify(payload));
+
+        try {
+            log('Attempting to show direct notification...');
+            const notification = new Notification(payload.notification.title, {
+                body: payload.notification.body,
+                vibrate: [100, 50, 100],
+                requireInteraction: true,
+                dir: 'rtl',
+                lang: 'ar',
+                tag: Date.now().toString() // تاج فريد لكل إشعار
+            });
+
+            notification.onclick = function(event) {
+                event.preventDefault();
+                window.focus();
+                notification.close();
+
+                // فتح صفحة الطلب إذا كان هناك رابط
+                if (payload.data && payload.data.link) {
+                    window.location.href = payload.data.link;
+                }
+            };
+
+            log('Direct notification shown successfully');
+        } catch (error) {
+            log('Direct notification error: ' + error.message);
+
+            // محاولة استخدام Service Worker كخطة بديلة
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                navigator.serviceWorker.ready.then(registration => {
+                    return registration.showNotification(payload.notification.title, {
+                        body: payload.notification.body,
+                        vibrate: [100, 50, 100],
+                        requireInteraction: true,
+                        dir: 'rtl',
+                        lang: 'ar',
+                        tag: Date.now().toString(),
+                        data: payload.data
+                    });
+                }).then(() => {
+                    log('Notification shown via Service Worker');
+                }).catch(error => {
+                    log('Service Worker notification error: ' + error.message);
+                });
+            }
+        }
+    });
+
+    // تحديث FCM token في قاعدة البيانات
+    function updateFcmToken(token) {
+        fetch('/admin/update-fcm-token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ token })
+        })
+        .then(response => response.json())
+        .then(data => {
+            log('Token updated successfully');
+        })
+        .catch(error => {
+            log('Token update error: ' + error.message);
+        });
+    }
+
+    // بدء العملية عند تحميل الصفحة
+    requestPermissionAndToken();
+
+    // كود الرسوم البيانية
     const chartConfig = {
         labels: JSON.parse('@json($chartLabels)'),
         data: JSON.parse('@json($chartData)'),

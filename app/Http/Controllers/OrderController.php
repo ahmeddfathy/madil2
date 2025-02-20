@@ -4,18 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Notifications\OrderCreated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use App\Notifications\OrderCreated;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Auth::user()->orders()
+        $user = Auth::user();
+
+        $orders = $user->orders()
             ->with(['items.product'])
             ->latest()
             ->paginate(10);
@@ -67,7 +70,12 @@ class OrderController extends Controller
                 'shipping_address' => $validated['shipping_address'],
                 'phone' => $validated['phone'],
                 'notes' => $validated['notes'],
-                'status' => Order::STATUS_PENDING
+                'order_status' => Order::ORDER_STATUS_PENDING
+            ]);
+
+            Log::info('New order created', [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number
             ]);
 
             // Create order items and update stock
@@ -87,7 +95,15 @@ class OrderController extends Controller
             Session::forget('cart');
 
             // Send order confirmation notification
-            Auth::user()->notify(new OrderCreated($order));
+            try {
+                $order->user->notify(new OrderCreated($order));
+                Log::info('OrderCreated notification sent');
+            } catch (\Exception $e) {
+                Log::error('Failed to send OrderCreated notification', [
+                    'error' => $e->getMessage(),
+                    'order_id' => $order->id
+                ]);
+            }
 
             return redirect()->route('orders.show', $order)
                 ->with('success', 'Order placed successfully.');

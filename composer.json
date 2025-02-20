@@ -9,6 +9,8 @@
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
         "cviebrock/eloquent-sluggable": "^11.0",
+        "google/apiclient": "*",
+        "google/auth": "*",
         "intervention/image": "^3.11",
         "laravel/framework": "^11.31",
         "laravel/jetstream": "^5.3",
