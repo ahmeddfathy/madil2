@@ -35,7 +35,10 @@
                     </li>
                     @auth
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}" href="{{ route('profile.edit') }}">الملف الشخصي</a>
+                            <a class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}" href="/user/profile">الملف الشخصي</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">لوحة التحكم</a>
                         </li>
                     @endauth
                 </ul>

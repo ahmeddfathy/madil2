@@ -1,35 +1,35 @@
 :root {
-    --primary-color: #2D00F7;
-    --secondary-color: #A100F2;
-    --background-color: #F6F8FF;
+    --primary-color: #4A3AFF;
+    --secondary-color: #7B6EFF;
+    --background-color: #F0F4FF;
     --glass-background: rgba(255, 255, 255, 0.85);
     --glass-background-dark: rgba(255, 255, 255, 0.75);
     --glass-border: 1px solid rgba(255, 255, 255, 0.65);
-    --card-shadow: none;
-    --text-color: #0A1F44;
-    --text-light: #2D3B55;
+    --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    --text-color: #1E2A38;
+    --text-light: #2C3E50;
     --text-muted: #516B8B;
     --heading-color: #051937;
-    --danger-color: #E41749;
-    --success-color: #00B074;
-    --warning-color: #ffc107;
-    --info-color: #70a1ff;
+    --danger-color: #FF4D4D;
+    --success-color: #2ECC71;
+    --warning-color: #F39C12;
+    --info-color: #3498DB;
     --secondary-bg: #747d8c;
-    --primary-border-color: rgba(74, 58, 255, 0.15);
-    --primary-border-color-light: rgba(74, 58, 255, 0.1);
-    --primary-border-color-lighter: rgba(74, 58, 255, 0.05);
-    --primary-border-color-darker: rgba(74, 58, 255, 0.2);
-    --primary-shadow-color: rgba(74, 58, 255, 0.05);
-    --primary-shadow-color-darker: rgba(74, 58, 255, 0.2);
-    --primary-bg-color: rgba(74, 58, 255, 0.03);
-    --primary-bg-color-hover: rgba(74, 58, 255, 0.05);
+    --primary-border-color: rgba(74, 58, 255, 0.2);
+    --primary-border-color-light: rgba(74, 58, 255, 0.15);
+    --primary-border-color-lighter: rgba(74, 58, 255, 0.1);
+    --primary-border-color-darker: rgba(74, 58, 255, 0.3);
+    --primary-shadow-color: rgba(74, 58, 255, 0.1);
+    --primary-shadow-color-darker: rgba(74, 58, 255, 0.3);
+    --primary-bg-color: rgba(74, 58, 255, 0.05);
+    --primary-bg-color-hover: rgba(74, 58, 255, 0.1);
     --black-color: #000;
     --white-color: #fff;
-    --border-muted: rgba(0, 0, 0, 0.1);
+    --border-muted: rgba(0, 0, 0, 0.2);
 }
 
 body {
-    background: linear-gradient(135deg, var(--background-color), var(--white-color));
+    background: linear-gradient(135deg, #F0F4FF 0%, #E6EBFF 100%);
     min-height: 100vh;
     font-family: 'Tajawal', sans-serif;
     color: var(--text-color);

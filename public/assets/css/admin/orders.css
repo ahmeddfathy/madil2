@@ -446,3 +446,75 @@
     color: var(--primary);
     font-weight: 700;
 }
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    direction: ltr;  /* لضمان عمل الأسهم بشكل صحيح */
+}
+
+.page-item {
+    margin: 0 2px;
+}
+
+.page-item.disabled .page-link {
+    background: #F3F4F6;
+    color: var(--text-muted);
+    cursor: not-allowed;
+    border: 1px solid var(--border-color);
+}
+
+.page-link {
+    background: white;
+    border: 2px solid var(--border-color);
+    color: var(--text-medium);
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.page-link:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.page-item.active .page-link {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+/* تحسين مظهر الأسهم */
+.page-item:first-child .page-link,
+.page-item:last-child .page-link {
+    font-size: 1.2rem;
+    padding: 0.5rem;
+}
+
+/* تحسين المظهر على الشاشات الصغيرة */
+@media (max-width: 768px) {
+    .page-link {
+        padding: 0.4rem 0.8rem;
+        min-width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+
+    .pagination {
+        gap: 0.3rem;
+    }
+}

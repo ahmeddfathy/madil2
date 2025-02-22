@@ -48,7 +48,7 @@
                         <a class="nav-link active" href="/products">المنتجات</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/profile">حسابي</a>
+                        <a class="nav-link" href="/user/profile">حسابي</a>
                     </li>
                 </ul>
                 <div class="nav-buttons">
@@ -103,9 +103,9 @@
             </ol>
         </nav>
 
-        <div class="row g-5">
+        <div class="row g-4">
             <!-- Product Images -->
-            <div class="col-md-6">
+            <div class="col-lg-6 col-md-12">
                 <div class="product-gallery card">
                     <div class="card-body">
                         @if($product->images->count() > 0)
@@ -138,7 +138,7 @@
             </div>
 
             <!-- Product Details -->
-            <div class="col-md-6">
+            <div class="col-lg-6 col-md-12">
                 <div class="product-info">
                     <h1 class="product-title">{{ $product->name }}</h1>
 
@@ -197,7 +197,7 @@
                                 <i class="fas fa-palette me-2"></i>
                                 الألوان المتاحة
                             </h5>
-                            <div class="colors-grid mb-3">
+                            <div class="colors-grid">
                                 @foreach($product->colors as $color)
                                     <div class="color-item {{ $color->is_available ? 'available' : 'unavailable' }}"
                                         data-color="{{ $color->color }}"
@@ -206,13 +206,6 @@
                                             <span class="color-preview" style="background-color: {{ $color->color }};"></span>
                                             <span class="color-name">{{ $color->color }}</span>
                                         </div>
-                                        <span class="color-status">
-                                            @if($color->is_available)
-                                                <i class="fas fa-check text-success"></i>
-                                            @else
-                                                <i class="fas fa-times text-danger"></i>
-                                            @endif
-                                        </span>
                                     </div>
                                 @endforeach
                             </div>
@@ -236,7 +229,7 @@
                     @if($product->allow_size_selection && $product->sizes->isNotEmpty())
                         <div class="available-sizes mb-4">
                             <h4>
-                                <i class="fas fa-ruler"></i>
+                                <i class="fas fa-ruler me-2"></i>
                                 المقاسات المتاحة
                             </h4>
                             <div class="sizes-list">
@@ -244,7 +237,6 @@
                                     <div class="size-option {{ $size->is_available ? 'available' : 'disabled' }}"
                                          onclick="{{ $size->is_available ? 'selectSize(this)' : 'return false' }}"
                                          data-size="{{ $size->size }}">
-                                        <i class="fas fa-check"></i>
                                         <span class="size-label">{{ $size->size }}</span>
                                     </div>
                                 @endforeach
@@ -304,18 +296,26 @@
                     </div>
 
                     <!-- Add to Cart Button -->
-                    <button class="btn btn-primary btn-lg w-100 mb-4" onclick="addToCart()">
-                        <i class="fas fa-shopping-cart me-2"></i>
-                        أضف إلى السلة
-                    </button>
+                    <div class="action-buttons mt-4">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg" onclick="addToCart()">
+                                <i class="fas fa-shopping-cart me-2"></i>
+                                أضف إلى السلة
+                            </button>
+                        </div>
+                    </div>
                     @else
-                        <!-- Login to Order Button -->
-                        <button class="btn btn-primary btn-lg w-100 mb-4"
-                                onclick="showLoginPrompt('{{ route('login') }}')"
-                                type="button">
-                            <i class="fas fa-shopping-cart me-2"></i>
-                            تسجيل الدخول للطلب
-                        </button>
+                    <!-- Login to Order Button -->
+                    <div class="action-buttons mt-4">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg"
+                                    onclick="showLoginPrompt('{{ route('login') }}')"
+                                    type="button">
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                تسجيل الدخول للطلب
+                            </button>
+                        </div>
+                    </div>
                     @endauth
 
                     <!-- Error Messages -->

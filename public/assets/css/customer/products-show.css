@@ -1573,3 +1573,165 @@ body.cart-open {
         padding: 0.875rem;
     }
 }
+
+/* Responsive Improvements */
+@media (max-width: 576px) {
+    .product-title {
+        font-size: 1.5rem;
+    }
+
+    .product-price {
+        font-size: 1.5rem;
+    }
+
+    .colors-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .color-item {
+        padding: 0.5rem;
+    }
+
+    .color-name {
+        font-size: 0.9rem;
+    }
+
+    .sizes-list {
+        gap: 0.5rem;
+    }
+
+    .size-option {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .custom-measurements-section {
+        padding: 1rem;
+    }
+
+    .cart-sidebar {
+        width: 100%;
+    }
+
+    .cart-item-inner {
+        flex-direction: column;
+    }
+
+    .cart-item-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .product-gallery {
+        margin-bottom: 2rem;
+    }
+
+    .colors-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .cart-sidebar {
+        width: 400px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+    .colors-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Improve Image Gallery Responsiveness */
+.main-image-wrapper {
+    width: 100%;
+    padding-top: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.image-thumbnails {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+/* Improve Modal Responsiveness */
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    .modal-content {
+        border-radius: 15px;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    #appointmentForm .form-control,
+    #appointmentForm .form-select {
+        font-size: 16px;
+        padding: 0.75rem;
+    }
+}
+
+/* Fixed Cart Button Responsiveness */
+@media (max-width: 576px) {
+    .fixed-buttons-group {
+        bottom: 1rem;
+        right: 1rem;
+    }
+
+    .fixed-cart-btn {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* Navigation Responsiveness */
+@media (max-width: 768px) {
+    .navbar-brand img {
+        height: 50px;
+    }
+
+    .nav-buttons {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+/* Footer Responsiveness */
+@media (max-width: 768px) {
+    .footer {
+        text-align: center;
+    }
+
+    .footer-links ul {
+        justify-content: center;
+    }
+
+    .footer-contact ul li {
+        justify-content: center;
+    }
+
+    .social-links {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+}

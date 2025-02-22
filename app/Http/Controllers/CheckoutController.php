@@ -173,18 +173,6 @@ class CheckoutController extends Controller
         $cart->items()->delete();
         $cart->delete();
 
-        try {
-          // إرسال إشعار تأكيد الطلب مع التقاط أي أخطاء
-          Auth::user()->notify(new OrderCreated($order));
-        } catch (\Exception $e) {
-          Log::error('Failed to send order notification', [
-            'order_id' => $order->id,
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-          ]);
-          // نستمر في العملية حتى لو فشل إرسال الإشعار
-        }
-
         Log::info('Checkout completed successfully', [
           'order_id' => $order->id
         ]);

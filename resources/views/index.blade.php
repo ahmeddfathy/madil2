@@ -41,8 +41,12 @@
             </li>
             @auth
               <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}" href="{{ route('profile.edit') }}">الملف الشخصي</a>
+                <a class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}" href="/user/profile">الملف الشخصي</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">لوحة التحكم</a>
+              </li>
+
             @endauth
           </ul>
           <div class="nav-buttons">
@@ -70,8 +74,8 @@
               <h1 class="hero-title">أناقتك تبدأ من هنا</h1>
               <p class="hero-text">اكتشف أحدث التصاميم العصرية وأجود أنواع الأقمشة مع خدمة التفصيل المتميزة</p>
               <div class="hero-buttons">
-                <a href="#" class="btn btn-primary">اطلب الآن</a>
-                <a href="#" class="btn btn-outline-primary">تعرف علينا</a>
+                <a href="{{ route('products.index') }}" class="btn btn-primary">اطلب الآن</a>
+                <a href="{{ route('about') }}" class="btn btn-outline-primary">تعرف علينا</a>
               </div>
             </div>
           </div>

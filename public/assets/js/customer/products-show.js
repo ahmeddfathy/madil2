@@ -854,14 +854,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // تحميل تفاصيل المنتج وتحديث واجهة المستخدم
-    const productId = document.getElementById('product-id').value;
-    fetch(`/products/${productId}/details`)
-        .then(response => response.json())
-        .then(data => {
-            updateFeatureVisibility(data.features);
-        })
-        .catch(error => console.error('Error:', error));
 
     // إضافة استعادة حالة النافذة المنبثقة عند تحميل الصفحة
     const urlParams = new URLSearchParams(window.location.search);

@@ -264,12 +264,12 @@
 
     try {
         firebase.initializeApp({
-            apiKey: "AIzaSyCBMLqzzmOAaDB2bkM2oja-0uOP5SclXAA",
-            authDomain: "madil-notifications.firebaseapp.com",
-            projectId: "madil-notifications",
-            storageBucket: "madil-notifications.firebasestorage.app",
-            messagingSenderId: "98732624533",
-            appId: "1:98732624533:web:6335d91275f4640542699c"
+            apiKey: "{{ config('services.firebase.api_key') }}",
+            authDomain: "{{ config('services.firebase.auth_domain') }}",
+            projectId: "{{ config('services.firebase.project_id') }}",
+            storageBucket: "{{ config('services.firebase.storage_bucket') }}",
+            messagingSenderId: "{{ config('services.firebase.messaging_sender_id') }}",
+            appId: "{{ config('services.firebase.app_id') }}"
         });
         log('Firebase initialized successfully');
     } catch (error) {
