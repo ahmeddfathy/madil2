@@ -26,9 +26,17 @@ class OrderCreated extends Notification
       $body = "تم إنشاء طلب جديد بقيمة $" . number_format($order->total_amount, 2);
       $link = "/admin/orders/{$order->id}";
 
-      if ($order->appointment_id) {
-        $appointment = $order->appointment;
-        $body .= "\nموعد المقاسات: " . $appointment->appointment_date->format('Y-m-d H:i');
+      $itemsWithAppointments = $order->items->filter(function($item) {
+        return $item->appointment !== null;
+      });
+
+      if ($itemsWithAppointments->isNotEmpty()) {
+        $body .= "\n\nمواعيد المقاسات:";
+        foreach ($itemsWithAppointments as $item) {
+          $body .= "\nالمنتج: {$item->product->name}";
+          $body .= "\nالموعد: " . $item->appointment->appointment_date->format('Y-m-d H:i');
+          $body .= "\nرقم المرجع: " . $item->appointment->reference_number;
+        }
       }
 
       $result = $firebaseService->sendNotificationToAdmins($title, $body, $link);
@@ -46,10 +54,13 @@ class OrderCreated extends Notification
     $this->order->load(['items.product', 'items.appointment']);
 
     $orderItems = $this->order->items->map(function($item) {
-        $itemText = $item->quantity . 'x ' . $item->product->name . ' - $' . number_format($item->subtotal, 2);
+        $itemText = "• {$item->product->name}\n";
+        $itemText .= "  الكمية: {$item->quantity}\n";
+        $itemText .= "  السعر: $" . number_format($item->subtotal, 2);
 
         if ($item->appointment) {
-            $itemText .= "\nموعد المقاسات: " . $item->appointment->appointment_date->format('Y-m-d H:i');
+            $itemText .= "\n  موعد المقاسات: " . $item->appointment->appointment_date->format('Y-m-d H:i');
+            $itemText .= "\n  رقم المرجع: " . $item->appointment->reference_number;
         }
 
         return $itemText;
@@ -88,12 +99,20 @@ class OrderCreated extends Notification
       'payment_method' => $this->order->payment_method
     ];
 
-    if ($this->order->appointment_id) {
-      $appointment = $this->order->appointment;
-      $data['appointment'] = [
-        'date' => $appointment->appointment_date->format('Y-m-d H:i'),
-        'reference_number' => $appointment->reference_number
-      ];
+    $appointments = $this->order->items
+      ->filter(function($item) {
+        return $item->appointment !== null;
+      })
+      ->map(function($item) {
+        return [
+          'product_name' => $item->product->name,
+          'date' => $item->appointment->appointment_date->format('Y-m-d H:i'),
+          'reference_number' => $item->appointment->reference_number
+        ];
+      });
+
+    if ($appointments->isNotEmpty()) {
+      $data['appointments'] = $appointments->values()->all();
     }
 
     return $data;

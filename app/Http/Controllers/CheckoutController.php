@@ -11,6 +11,7 @@ use App\Exceptions\CheckoutException;
 use App\Models\Appointment;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use App\Notifications\OrderCreated;
 
 class CheckoutController extends Controller
 {
@@ -126,6 +127,17 @@ class CheckoutController extends Controller
 
         $cart->items()->delete();
         $cart->delete();
+
+        try {
+          $order->load(['items.product', 'items.appointment']); // تحميل العلاقات المطلوبة
+          $order->user->notify(new OrderCreated($order));
+          Log::info('OrderCreated notification sent', ['order_id' => $order->id]);
+        } catch (\Exception $e) {
+          Log::error('Failed to send OrderCreated notification', [
+            'error' => $e->getMessage(),
+            'order_id' => $order->id
+          ]);
+        }
 
         return redirect()->route('orders.show', $order)
           ->with('success', 'تم إنشاء الطلب بنجاح');
