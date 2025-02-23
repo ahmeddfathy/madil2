@@ -103,6 +103,68 @@
                             </div>
                         </div>
 
+                        <!-- Payment Details Card -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card border-0 shadow-sm payment-details-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4 d-flex align-items-center">
+                                            <span class="icon-circle bg-success text-white me-2">
+                                                <i class="fas fa-money-bill-wave"></i>
+                                            </span>
+                                            تفاصيل الدفع
+                                        </h5>
+
+                                        <form action="{{ route('admin.orders.update-payment', $order) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+
+                                            <div class="row align-items-end">
+                                                <div class="col-md-4">
+                                                    <div class="payment-info mb-3">
+                                                        <label for="amount_paid" class="form-label">المبلغ المدفوع</label>
+                                                        <div class="input-group">
+                                                            <input type="number"
+                                                                   name="amount_paid"
+                                                                   id="amount_paid"
+                                                                   value="{{ old('amount_paid', $order->amount_paid) }}"
+                                                                   min="0"
+                                                                   max="{{ $order->total_amount }}"
+                                                                   class="form-control"
+                                                                   required>
+                                                            <span class="input-group-text">ريال</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="payment-stats mb-3">
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-muted">المبلغ الكلي:</span>
+                                                            <span class="fw-bold">{{ number_format($order->total_amount) }} ريال</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span class="text-muted">المبلغ المتبقي:</span>
+                                                            <span class="fw-bold {{ $order->remaining_amount > 0 ? 'text-danger' : 'text-success' }}">
+                                                                {{ number_format($order->remaining_amount) }} ريال
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <button type="submit" class="btn btn-primary w-100">
+                                                        <i class="fas fa-save me-2"></i>
+                                                        تحديث المبلغ المدفوع
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Order Details -->
                         <div class="row g-4">
                             <!-- Order Info -->

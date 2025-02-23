@@ -577,87 +577,8 @@ body {
     --status-color: 245, 158, 11;
 }
 
-/* Sidebar Styles */
-.admin-layout {
-    display: flex;
-    min-height: 100vh;
-}
-
-.sidebar {
-    width: 260px;
-    background: white;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    right: 0;
-    overflow-y: auto;
-    z-index: 1000;
-    padding: 1.5rem 1rem;
-    transition: var(--transition);
-    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.05);
-}
-
-.sidebar-header {
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--light);
-    text-align: center;
-}
-
-.sidebar-logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 0.5rem;
-}
-
-.nav-section {
-    margin-bottom: 1.25rem;
-    padding: 0 0.5rem;
-}
-
-.nav-section-title {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--dark);
-    padding: 0.75rem 1rem;
-    margin-bottom: 0.75rem;
-    background: var(--light);
-    border-radius: 0.5rem;
-}
-
-.nav-link {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.875rem 1rem;
-    color: var(--dark);
-    border-radius: 0.5rem;
-    transition: var(--transition);
-    margin-bottom: 0.375rem;
-}
-
-.nav-link:hover,
-.nav-link.active {
-    background: var(--primary-light);
-    color: var(--primary);
-    transform: translateX(-4px);
-}
-
-.nav-link i {
-    width: 1.5rem;
-    font-size: 1.125rem;
-    text-align: center;
-}
-
-.nav-title {
-    font-size: 0.9375rem;
-    font-weight: 500;
-}
-
 /* Main Content Wrapper */
 .main-content-wrapper {
-    margin-right: 260px;
     padding: 1.5rem;
     min-height: 100vh;
     transition: var(--transition);
@@ -679,71 +600,22 @@ body {
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
-
-    .sidebar {
-        width: 240px;
-    }
-
-    .main-content-wrapper {
-        margin-right: 240px;
-    }
 }
 
 @media (max-width: 1200px) {
     .main-content-wrapper {
-        margin-right: 220px;
         padding: 1rem;
-    }
-
-    .sidebar {
-        width: 220px;
-    }
-
-    .nav-link {
-        padding: 0.75rem;
-    }
-
-    .nav-section-title {
-        padding: 0.75rem;
-    }
-
-    .chart-container {
-        min-height: 250px;
-    }
-
-    .chart-container canvas {
-        max-height: 350px;
     }
 }
 
 @media (max-width: 992px) {
-    .sidebar {
-        transform: translateX(100%);
-    }
-
-    .sidebar.active {
-        transform: translateX(0);
-    }
-
     .main-content-wrapper {
         margin-right: 0;
-    }
-
-    .sidebar-toggle {
-        display: flex;
     }
 
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
-    }
-
-    .chart-container {
-        min-height: 220px;
-    }
-
-    .chart-container canvas {
-        max-height: 300px;
     }
 }
 
@@ -1023,44 +895,6 @@ body {
         border-radius: 0.5rem;
     }
 
-    /* Improved Sidebar */
-    .sidebar {
-        width: 100%;
-        max-width: 280px;
-        padding: 1rem;
-        background: linear-gradient(145deg, #ffffff, #f5f7fa);
-    }
-
-    .sidebar-header {
-        padding: 0.875rem;
-        margin-bottom: 1rem;
-    }
-
-    .nav-section {
-        margin-bottom: 0.875rem;
-    }
-
-    .nav-section-title {
-        padding: 0.625rem 0.75rem;
-        font-size: 0.8125rem;
-        margin-bottom: 0.5rem;
-        background: rgba(0, 0, 0, 0.02);
-    }
-
-    .nav-link {
-        padding: 0.75rem;
-        margin-bottom: 0.25rem;
-        border-radius: 0.625rem;
-    }
-
-    .nav-link i {
-        font-size: 1rem;
-    }
-
-    .nav-title {
-        font-size: 0.875rem;
-    }
-
     /* Performance Improvements */
     * {
         -webkit-tap-highlight-color: transparent;
@@ -1068,48 +902,20 @@ body {
 
     .stat-card,
     .action-card,
-    .btn,
-    .nav-link {
+    .btn {
         touch-action: manipulation;
     }
 
-    @supports (backdrop-filter: blur(10px)) {
-        .sidebar-overlay.active {
-            backdrop-filter: blur(10px);
-            background: rgba(0, 0, 0, 0.3);
-        }
-    }
-
     /* Smooth Scrolling */
-    .sidebar,
     .main-content-wrapper {
         scroll-behavior: smooth;
         -webkit-overflow-scrolling: touch;
     }
 
     /* Better Touch Feedback */
-    .nav-link:active,
     .action-card:active,
     .stat-card:active {
         background-color: rgba(0, 0, 0, 0.02);
-    }
-}
-
-/* Add overlay for mobile sidebar */
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-}
-
-@media (max-width: 992px) {
-    .sidebar-overlay.active {
-        display: block;
     }
 }
 
@@ -1387,87 +1193,4 @@ body {
 [dir="rtl"] .chart-container .chartjs-tooltip {
     direction: rtl;
     text-align: right;
-}
-
-/* Sidebar Toggle Button */
-.sidebar-toggle {
-    display: none;
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    z-index: 1010;
-    width: 45px;
-    height: 45px;
-    padding: 0;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.sidebar-toggle:hover {
-    transform: scale(1.05);
-    background: var(--primary-hover);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-}
-
-.sidebar-toggle:active {
-    transform: scale(0.95);
-}
-
-.sidebar-toggle i {
-    font-size: 1.25rem;
-}
-
-@media (max-width: 992px) {
-    .sidebar-toggle {
-        display: flex;
-    }
-
-    /* عند فتح السايدبار */
-    .sidebar.active ~ .sidebar-toggle {
-        right: 290px;
-        background: var(--danger);
-    }
-
-    .sidebar.active ~ .sidebar-toggle i {
-        transform: rotate(180deg);
-    }
-}
-
-@media (max-width: 576px) {
-    .sidebar-toggle {
-        bottom: 1rem;
-        right: 1rem;
-        width: 40px;
-        height: 40px;
-    }
-
-    .sidebar-toggle i {
-        font-size: 1rem;
-    }
-
-    /* عند فتح السايدبار في الموبايل */
-    .sidebar.active ~ .sidebar-toggle {
-        right: 240px;
-    }
-}
-
-/* تحسين مظهر الـ Overlay */
-.sidebar-overlay {
-    backdrop-filter: blur(4px);
-    background: rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-.sidebar-overlay.active {
-    opacity: 1;
-    visibility: visible;
 }

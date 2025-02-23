@@ -13,7 +13,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Password Validation
+    // Password Validation with Real-time Feedback
+    passwordInput.addEventListener('input', () => {
+        const password = passwordInput.value;
+        const strengthResult = validatePasswordStrength(password);
+        updatePasswordRequirements(password);
+    });
+
+    // Password Confirmation Validation
     confirmPasswordInput.addEventListener('input', () => {
         if (passwordInput.value !== confirmPasswordInput.value) {
             confirmPasswordInput.setCustomValidity('كلمة المرور غير متطابقة');
@@ -24,31 +31,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Phone Validation
+    // Phone Validation with International Format Support
     phoneInput.addEventListener('input', () => {
-        const phoneRegex = /^05\d{8}$/;
-        if (!phoneRegex.test(phoneInput.value)) {
-            phoneInput.setCustomValidity('رقم الهاتف غير صحيح - يجب أن يبدأ ب 05 ويتكون من 10 أرقام');
-            showError(phoneInput, 'رقم الهاتف غير صحيح - يجب أن يبدأ ب 05 ويتكون من 10 أرقام');
+        let phone = phoneInput.value.trim();
+
+        // Remove any non-digit characters except +
+        phone = phone.replace(/[^\d+]/g, '');
+
+        // Ensure only one + at the start
+        if (phone.includes('+')) {
+            phone = '+' + phone.replace(/\+/g, '');
+        }
+
+        // Auto-format Saudi numbers
+        if (phone.startsWith('0')) {
+            phone = '+966' + phone.substring(1);
+        }
+
+        phoneInput.value = phone;
+
+        const phoneRegex = /^\+?\d{8,15}$/;
+        if (!phoneRegex.test(phone)) {
+            const message = 'رقم الهاتف يجب أن يتكون من 8 إلى 15 رقم، ويمكن أن يبدأ بـ +';
+            phoneInput.setCustomValidity(message);
+            showError(phoneInput, message);
         } else {
             phoneInput.setCustomValidity('');
             hideError(phoneInput);
         }
     });
 
-    // Password Strength Validation
-    passwordInput.addEventListener('input', () => {
-        const password = passwordInput.value;
-        const strengthResult = validatePasswordStrength(password);
-
-        if (!strengthResult.isValid) {
-            passwordInput.setCustomValidity(strengthResult.message);
-            showError(passwordInput, strengthResult.message);
-        } else {
-            passwordInput.setCustomValidity('');
-            hideError(passwordInput);
+    // Add CSS for password strength indicator
+    const style = document.createElement('style');
+    style.textContent = `
+        .password-strength {
+            font-size: 0.875rem;
         }
-    });
+        .password-strength .alert {
+            margin: 0;
+        }
+        .form-text ul {
+            padding-right: 1.5rem;
+            margin-bottom: 0;
+        }
+        .form-text ul li {
+            margin-bottom: 0.25rem;
+        }
+    `;
+    document.head.appendChild(style);
 
     // Floating Label Effect
     document.querySelectorAll('.form-control').forEach(input => {
@@ -68,6 +98,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Update Password Requirements UI
+function updatePasswordRequirements(password) {
+    const requirements = [
+        { regex: /.{8,}/, index: 0, text: '8 أحرف على الأقل' },
+        { regex: /[A-Z]/, index: 1, text: 'حرف كبير (A-Z)' },
+        { regex: /[a-z]/, index: 2, text: 'حرف صغير (a-z)' },
+        { regex: /[0-9]/, index: 3, text: 'رقم (0-9)' },
+        { regex: /[!@#$%^&*(),.?":{}|<>]/, index: 4, text: 'رمز خاص' }
+    ];
+
+    const requirementsList = document.querySelectorAll('.password-requirements li');
+    let allValid = true;
+
+    requirements.forEach(req => {
+        const li = requirementsList[req.index];
+        const icon = li.querySelector('i');
+        const isValid = req.regex.test(password);
+
+        if (password.length === 0) {
+            icon.className = 'fas fa-circle text-muted';
+            li.className = '';
+        } else {
+            icon.className = isValid
+                ? 'fas fa-check-circle'
+                : 'fas fa-times-circle';
+            li.className = isValid ? 'valid' : 'invalid';
+        }
+
+        allValid = allValid && isValid;
+    });
+
+    if (allValid && password.length > 0) {
+        passwordInput.setCustomValidity('');
+    } else if (password.length > 0) {
+        passwordInput.setCustomValidity('يرجى تحقيق جميع متطلبات كلمة المرور');
+    }
+}
 
 // Form Validation Function
 function validateForm() {
@@ -91,7 +159,7 @@ function validateForm() {
     }
 
     // Phone number validation
-    const phoneRegex = /^05\d{8}$/;
+    const phoneRegex = /^\+?\d{8,15}$/;
     if (!phoneRegex.test(phone)) {
         showToast('رقم الهاتف غير صحيح', 'error');
         isValid = false;

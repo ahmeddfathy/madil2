@@ -31,6 +31,8 @@
                class="filter-btn {{ request('filter') === 'past' ? 'active' : '' }}">
                 المواعيد السابقة
             </a>
+            <a href="{{ route('appointments.index', ['filter' => null]) }}"
+               class="btn btn-secondary">إزالة الفلتر</a>
         </div>
     </div>
 

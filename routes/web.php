@@ -146,6 +146,8 @@ Route::middleware([
                     ->name('orders.update-status');
                 Route::put('/orders/{order:uuid}/payment-status', [AdminOrderController::class, 'updatePaymentStatus'])
                     ->name('orders.update-payment-status');
+                Route::patch('/orders/{order:uuid}/payment', [AdminOrderController::class, 'updatePayment'])
+                    ->name('orders.update-payment');
             });
 
             // Appointments Management

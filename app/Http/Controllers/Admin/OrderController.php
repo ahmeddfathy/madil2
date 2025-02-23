@@ -262,4 +262,24 @@ class OrderController extends Controller
 
     return back()->with('success', 'Payment status updated successfully.');
   }
+
+  /**
+   * تحديث المبلغ المدفوع للطلب
+   */
+  public function updatePayment(Request $request, Order $order)
+  {
+    $request->validate([
+        'amount_paid' => 'required|numeric|min:0|max:' . $order->total_amount,
+    ]);
+
+    $order->update([
+        'amount_paid' => $request->amount_paid,
+        // تحديث حالة الدفع تلقائياً
+        'payment_status' => $request->amount_paid >= $order->total_amount
+            ? Order::PAYMENT_STATUS_PAID
+            : Order::PAYMENT_STATUS_PENDING,
+    ]);
+
+    return back()->with('success', 'تم تحديث المبلغ المدفوع بنجاح');
+  }
 }

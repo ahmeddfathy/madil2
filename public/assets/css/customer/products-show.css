@@ -1735,3 +1735,77 @@ body.cart-open {
         margin-top: 1rem;
     }
 }
+
+/* Appointment Modal Input Styles */
+#appointmentModal .form-control,
+#appointmentModal .form-select {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+#appointmentModal .form-control:focus,
+#appointmentModal .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.15);
+    outline: none;
+}
+
+#appointmentModal .form-control::placeholder {
+    color: #999;
+}
+
+#appointmentModal .form-control:hover,
+#appointmentModal .form-select:hover {
+    border-color: #bbb;
+}
+
+#appointmentModal .form-label {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+#appointmentModal .input-group .form-control {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+#appointmentModal .input-group-text {
+    background-color: #fff;
+    border: 2px solid #e0e0e0;
+    border-left: none;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: #666;
+}
+
+/* Error state for inputs */
+#appointmentModal .form-control.is-invalid,
+#appointmentModal .form-select.is-invalid {
+    border-color: #dc3545;
+    background-image: none;
+}
+
+#appointmentModal .form-control.is-invalid:focus,
+#appointmentModal .form-select.is-invalid:focus {
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+/* Success state for inputs */
+#appointmentModal .form-control.is-valid,
+#appointmentModal .form-select.is-valid {
+    border-color: #198754;
+    background-image: none;
+}
+
+#appointmentModal .form-control.is-valid:focus,
+#appointmentModal .form-select.is-valid:focus {
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}

@@ -184,9 +184,10 @@
     </div>
 
     <script>
-        document.getElementById('checkout-form').addEventListener('submit', function(e) {
-            this.classList.add('loading');
-        });
+        // Remove loading effect
+        // document.getElementById('checkout-form').addEventListener('submit', function(e) {
+        //     this.classList.add('loading');
+        // });
     </script>
 </body>
 </html>

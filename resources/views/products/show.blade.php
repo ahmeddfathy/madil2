@@ -157,9 +157,6 @@
                             <i class="fas {{ $product->stock > 0 ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
                             {{ $product->stock > 0 ? 'متوفر' : 'غير متوفر' }}
                         </span>
-                        @if($product->stock > 0)
-                            <span class="stock-count">({{ $product->stock }} قطعة متوفرة)</span>
-                        @endif
                     </div>
 
                     <div class="product-description mb-4">

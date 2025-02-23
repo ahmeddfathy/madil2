@@ -75,9 +75,13 @@
                 <div class="col-md-3">
                     <div class="order-item">
                         @if($item->product->images->where('is_primary', true)->first())
-                        <img src="{{ Storage::url($item->product->images->where('is_primary', true)->first()->image_path) }}"
-                            alt="{{ $item->product->name }}"
-                            class="item-image">
+                            <img src="{{ Storage::url($item->product->images->where('is_primary', true)->first()->image_path) }}"
+                                alt="{{ $item->product->name }}"
+                                class="item-image">
+                        @elseif($item->product->images->first())
+                            <img src="{{ Storage::url($item->product->images->first()->image_path) }}"
+                                alt="{{ $item->product->name }}"
+                                class="item-image">
                         @endif
                         <div class="item-details">
                             <h4 class="item-name">{{ $item->product->name }}</h4>

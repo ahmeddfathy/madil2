@@ -43,17 +43,16 @@
                             <span class="input-group-text">
                                 <i class="fas fa-envelope"></i>
                             </span>
-                            <input type="email" class="form-control" name="email" :value="old('email')" placeholder="example@domain.com" required>
+                            <input type="email" class="form-control" name="email" :value="old('email')" placeholder="Example@domain.com" required>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label class="form-label">رقم الهاتف</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fas fa-phone"></i>
                             </span>
-                            <input type="tel" class="form-control" name="phone" :value="old('phone')" placeholder="05xxxxxxxx" required>
+                            <input type="tel" class="form-control" name="phone" :value="old('phone')" placeholder="أدخل رقم الهاتف مع رمز الدولة (+966)" required>
                         </div>
                     </div>
 
@@ -73,7 +72,17 @@
                             <span class="input-group-text">
                                 <i class="fas fa-lock"></i>
                             </span>
-                            <input type="password" class="form-control" name="password" placeholder="********" required>
+                            <input type="password" class="form-control" name="password" placeholder="مثال: Abc@1234" required>
+                        </div>
+                        <div class="password-requirements">
+                            <div>كلمة المرور يجب أن تحتوي على:</div>
+                            <ul class="mt-2">
+                                <li><i class="fas fa-circle text-muted"></i> 8 أحرف على الأقل</li>
+                                <li><i class="fas fa-circle text-muted"></i> حرف كبير (A-Z)</li>
+                                <li><i class="fas fa-circle text-muted"></i> حرف صغير (a-z)</li>
+                                <li><i class="fas fa-circle text-muted"></i> رقم (0-9)</li>
+                                <li><i class="fas fa-circle text-muted"></i> رمز خاص مثل @ # $ % ^ & *</li>
+                            </ul>
                         </div>
                     </div>
 
@@ -83,7 +92,7 @@
                             <span class="input-group-text">
                                 <i class="fas fa-lock"></i>
                             </span>
-                            <input type="password" class="form-control" name="password_confirmation" placeholder="********" required>
+                            <input type="password" class="form-control" name="password_confirmation" placeholder="مثال: Abc@1234" required>
                         </div>
                     </div>
 
@@ -99,13 +108,13 @@
                     </div>
                     @endif
 
-                    <button type="submit" class="btn-signup">
+                    <button type="submit" class="btn btn-primary w-100 py-2">
                         <i class="fas fa-user-plus me-2"></i>
                         إنشاء الحساب
                     </button>
 
-                    <p class="login-link mt-4">
-                        لديك حساب بالفعل؟ <a href="{{ route('login') }}">تسجيل الدخول</a>
+                    <p class="text-center mt-4">
+                        لديك حساب بالفعل؟ <a href="{{ route('login') }}" class="text-primary">تسجيل الدخول</a>
                     </p>
                 </form>
             </div>

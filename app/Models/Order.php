@@ -38,17 +38,19 @@ class Order extends Model
         'total_amount',
         'shipping_address',
         'phone',
-        'payment_method',
+        
         'payment_status',
         'order_status',
         'notes',
         'policy_agreement',
         'uuid',
         'order_number',
+        'amount_paid',
     ];
 
     protected $casts = [
-        'total_amount' => 'integer'
+        'total_amount' => 'integer',
+        'amount_paid' => 'integer',
     ];
 
     protected static function boot()
@@ -88,6 +90,11 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function appointment(): BelongsTo
+    {
+        return $this->belongsTo(Appointment::class);
     }
 
     // Helper methods for status checks
@@ -151,5 +158,10 @@ class Order extends Model
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+
+    public function getRemainingAmountAttribute(): int
+    {
+        return $this->total_amount - ($this->amount_paid ?? 0);
     }
 }

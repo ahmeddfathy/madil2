@@ -106,11 +106,11 @@
     @can('create', App\Models\Product::class)
     <div class="col-12 col-md-6 col-lg-4">
         <div class="action-card bg-white rounded-3 shadow-sm p-3 h-100">
-            <div class="d-flex align-items-center">
-                <div class="action-icon bg-primary me-3">
+            <div class="d-flex align-items-center justify-content-end">
+                <div class="action-icon bg-primary ms-3">
                     <i class="fas fa-plus"></i>
                 </div>
-                <div>
+                <div class="text-end">
                     <h5 class="mb-1">إضافة منتج</h5>
                     <p class="mb-0 text-muted small">إضافة منتجات جديدة للمتجر</p>
                 </div>
@@ -122,11 +122,11 @@
     @can('viewAny', App\Models\Order::class)
     <div class="col-12 col-md-6 col-lg-4">
         <div class="action-card bg-white rounded-3 shadow-sm p-3 h-100">
-            <div class="d-flex align-items-center">
-                <div class="action-icon bg-info me-3">
+            <div class="d-flex align-items-center justify-content-end">
+                <div class="action-icon bg-info ms-3">
                     <i class="fas fa-tasks"></i>
                 </div>
-                <div>
+                <div class="text-end">
                     <h5 class="mb-1">إدارة الطلبات</h5>
                     <p class="mb-0 text-muted small">عرض وإدارة طلبات العملاء</p>
                 </div>
@@ -138,11 +138,11 @@
     @can('viewAny', App\Models\Appointment::class)
     <div class="col-12 col-md-6 col-lg-4">
         <div class="action-card bg-white rounded-3 shadow-sm p-3 h-100">
-            <div class="d-flex align-items-center">
-                <div class="action-icon bg-success me-3">
+            <div class="d-flex align-items-center justify-content-end">
+                <div class="action-icon bg-success ms-3">
                     <i class="fas fa-calendar"></i>
                 </div>
-                <div>
+                <div class="text-end">
                     <h5 class="mb-1">المواعيد</h5>
                     <p class="mb-0 text-muted small">إدارة مواعيد العملاء</p>
                 </div>

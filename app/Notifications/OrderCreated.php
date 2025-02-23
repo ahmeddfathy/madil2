@@ -8,7 +8,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 
 class OrderCreated extends Notification
 {
@@ -20,36 +19,20 @@ class OrderCreated extends Notification
   {
     $this->order = $order;
 
-    // Send Firebase notification to admins
     try {
-      Log::info('Starting to send Firebase notification for new order', [
-        'order_id' => $order->id,
-        'order_number' => $order->order_number
-      ]);
-
       $firebaseService = App::make(FirebaseNotificationService::class);
 
       $title = "طلب جديد #{$order->order_number}";
       $body = "تم إنشاء طلب جديد بقيمة $" . number_format($order->total_amount, 2);
       $link = "/admin/orders/{$order->id}";
 
-      Log::info('Sending notification with details', [
-        'title' => $title,
-        'body' => $body,
-        'link' => $link
-      ]);
+      if ($order->appointment_id) {
+        $appointment = $order->appointment;
+        $body .= "\nموعد المقاسات: " . $appointment->appointment_date->format('Y-m-d H:i');
+      }
 
       $result = $firebaseService->sendNotificationToAdmins($title, $body, $link);
-
-      Log::info('Firebase notification sent successfully', [
-        'result' => $result
-      ]);
     } catch (\Exception $e) {
-      Log::error('Failed to send Firebase notification to admins', [
-        'error' => $e->getMessage(),
-        'trace' => $e->getTraceAsString(),
-        'order_id' => $order->id
-      ]);
     }
   }
 
@@ -63,14 +46,10 @@ class OrderCreated extends Notification
     $this->order->load(['items.product', 'items.appointment']);
 
     $orderItems = $this->order->items->map(function($item) {
-        $itemText = "• {$item->product->name}\n";
-        $itemText .= "  الكمية: {$item->quantity}\n";
-        $itemText .= "  السعر: $" . number_format($item->subtotal, 2);
+        $itemText = $item->quantity . 'x ' . $item->product->name . ' - $' . number_format($item->subtotal, 2);
 
         if ($item->appointment) {
-            $itemText .= "\n  موعد المقاسات: " . $item->appointment->formatted_date;
-            $itemText .= " " . $item->appointment->formatted_time;
-            $itemText .= "\n  رقم المرجع: " . $item->appointment->reference_number;
+            $itemText .= "\nموعد المقاسات: " . $item->appointment->appointment_date->format('Y-m-d H:i');
         }
 
         return $itemText;
@@ -100,7 +79,7 @@ class OrderCreated extends Notification
 
   public function toArray($notifiable): array
   {
-    return [
+    $data = [
       'title' => 'تأكيد الطلب',
       'message' => 'تم استلام طلبك رقم #' . $this->order->order_number . ' بنجاح',
       'type' => 'order_created',
@@ -108,5 +87,15 @@ class OrderCreated extends Notification
       'total_amount' => $this->order->total_amount,
       'payment_method' => $this->order->payment_method
     ];
+
+    if ($this->order->appointment_id) {
+      $appointment = $this->order->appointment;
+      $data['appointment'] = [
+        'date' => $appointment->appointment_date->format('Y-m-d H:i'),
+        'reference_number' => $appointment->reference_number
+      ];
+    }
+
+    return $data;
   }
 }

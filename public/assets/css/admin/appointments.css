@@ -138,7 +138,8 @@
     margin: 0;
     padding: 0;
     border-radius: var(--border-radius-md);
-    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .table {
@@ -146,6 +147,7 @@
     margin: 0;
     border-collapse: separate;
     border-spacing: 0;
+    min-width: 800px;
 }
 
 .table thead {
@@ -298,6 +300,47 @@
 
     .card-body {
         padding: 1rem;
+    }
+
+    .table-responsive {
+        margin: 0 -1rem;
+        padding: 0 1rem;
+        width: calc(100% + 2rem);
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table td,
+    .table th {
+        white-space: nowrap;
+        padding: 1rem;
+    }
+
+    .table td:first-child,
+    .table th:first-child {
+        min-width: 200px;
+    }
+
+    .table td:nth-child(2),
+    .table th:nth-child(2) {
+        min-width: 150px;
+    }
+
+    .table td:nth-child(3),
+    .table th:nth-child(3) {
+        min-width: 150px;
+    }
+
+    .table td:nth-child(4),
+    .table th:nth-child(4) {
+        min-width: 140px;
+    }
+
+    .table td:last-child,
+    .table th:last-child {
+        min-width: 160px;
     }
 
     .btn {

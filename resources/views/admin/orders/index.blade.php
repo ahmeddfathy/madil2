@@ -89,11 +89,7 @@
                                             <p class="text-muted mb-0 fs-sm">إدارة ومتابعة طلبات العملاء</p>
                                         </div>
                                         <div class="actions d-flex gap-2">
-                                            <button type="button" class="btn btn-light-primary btn-wave">
-                                                <i class="fas fa-file-export me-2"></i>
-                                                تصدير التقرير
-                                            </button>
-                                            <button type="button" class="btn btn-light-success btn-wave">
+                                            <button type="button" class="btn btn-light-success btn-wave" onclick="window.print()">
                                                 <i class="fas fa-print me-2"></i>
                                                 طباعة
                                             </button>

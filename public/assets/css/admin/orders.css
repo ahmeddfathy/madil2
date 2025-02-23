@@ -518,3 +518,63 @@
         gap: 0.3rem;
     }
 }
+
+/* Payment Details Card Styles */
+.payment-details-card {
+    background: white;
+    border-radius: 1.25rem;
+    overflow: hidden;
+}
+
+.payment-details-card .card-title {
+    color: var(--text-dark);
+    font-size: 1.25rem;
+}
+
+.payment-details-card .form-label {
+    font-weight: 600;
+    color: var(--text-medium);
+    margin-bottom: 0.5rem;
+}
+
+.payment-details-card .input-group {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.payment-details-card .input-group .form-control {
+    border-right: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    height: 48px;
+}
+
+.payment-details-card .input-group-text {
+    background: white;
+    border-left: none;
+    color: var(--text-medium);
+    font-weight: 500;
+}
+
+.payment-stats {
+    background: #F9FAFB;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+}
+
+.payment-stats .fw-bold {
+    font-size: 1.1rem;
+}
+
+/* Responsive styles for payment details */
+@media (max-width: 768px) {
+    .payment-details-card .card-body {
+        padding: 1.25rem;
+    }
+
+    .payment-stats {
+        margin-bottom: 1rem;
+    }
+}

@@ -22,11 +22,17 @@
                                         <form action="{{ route('admin.products.index') }}" method="GET" class="row g-3">
                                             <div class="col-md-4">
                                                 <label class="form-label">
-                                                    <i class="fas fa-search text-primary me-2"></i>
-                                                    بحث
+                                                    <i class="fas fa-box text-primary me-2"></i>
+                                                    اختر المنتج
                                                 </label>
-                                                <input type="text" name="search" class="form-control shadow-sm"
-                                                       placeholder="ابحث عن المنتجات..." value="{{ request('search') }}">
+                                                <select name="product" class="form-select shadow-sm">
+                                                    <option value="">كل المنتجات</option>
+                                                    @foreach($allProducts as $prod)
+                                                        <option value="{{ $prod->id }}" {{ request('product') == $prod->id ? 'selected' : '' }}>
+                                                            {{ $prod->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                             <div class="col-md-4">
                                                 <label class="form-label">
@@ -59,6 +65,10 @@
                                                     <i class="fas fa-filter me-2"></i>
                                                     تصفية
                                                 </button>
+                                                <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
+                                                    <i class="fas fa-times me-2"></i>
+                                                    مسح الفلتر
+                                                </a>
                                             </div>
                                         </form>
                                     </div>
