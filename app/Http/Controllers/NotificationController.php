@@ -17,7 +17,10 @@ class NotificationController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $notifications = $user->notifications()->paginate(10);
+        $notifications = DatabaseNotification::where('notifiable_id', $user->id)
+            ->where('notifiable_type', User::class)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         return view('notifications.index', compact('notifications'));
     }
 

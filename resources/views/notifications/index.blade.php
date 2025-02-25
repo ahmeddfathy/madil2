@@ -5,6 +5,21 @@
 @section('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 <link rel="stylesheet" href="{{ asset('assets/css/customer/notifications.css') }}">
+<style>
+    .appointment-details {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 12px;
+        margin-top: 10px;
+    }
+    .appointment-item {
+        border-bottom: 1px solid #dee2e6;
+        padding: 8px 0;
+    }
+    .appointment-item:last-child {
+        border-bottom: none;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -34,6 +49,19 @@
                         <div>
                             <h5 class="mb-1">{{ $notification->data['title'] ?? 'إشعار جديد' }}</h5>
                             <p class="mb-0">{{ $notification->data['message'] ?? '' }}</p>
+
+                            @if(isset($notification->data['appointments']) && count($notification->data['appointments']) > 0)
+                            <div class="appointment-details mt-3">
+                                <h6 class="mb-2"><i class="bi bi-calendar-check me-2"></i>مواعيد المقاسات:</h6>
+                                @foreach($notification->data['appointments'] as $appointment)
+                                <div class="appointment-item">
+                                    <div><strong>المنتج:</strong> {{ $appointment['product_name'] }}</div>
+                                    <div><strong>الموعد:</strong> {{ $appointment['date'] }}</div>
+                                    <div><strong>رقم المرجع:</strong> {{ $appointment['reference_number'] }}</div>
+                                </div>
+                                @endforeach
+                            </div>
+                            @endif
                         </div>
                         @if(!$notification->read_at)
                         <form action="{{ route('notifications.mark-as-read', $notification) }}" method="POST">

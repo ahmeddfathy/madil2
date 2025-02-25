@@ -9,12 +9,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\AppointmentCreated;
+use Illuminate\Support\Facades\Notification;
 
 class AppointmentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
-        $query = Auth::user()->appointments();
+        $query = Appointment::where('user_id', Auth::id());
 
         if (request('filter') === 'upcoming') {
             $query->where('appointment_date', '>', now());
@@ -65,6 +72,11 @@ class AppointmentController extends Controller
 
             // Create the appointment with status set to pending
             $appointment = $this->createAppointment($validated);
+
+            // إرسال إشعار فقط في حالة التصميم الخاص
+            if ($validated['service_type'] === 'custom_design') {
+                $appointment->user->notify(new AppointmentCreated($appointment));
+            }
 
             DB::commit();
 
@@ -155,7 +167,7 @@ class AppointmentController extends Controller
         $appointment->appointment_time = Carbon::parse($data['appointment_time'])->format('H:i:s');
         $appointment->phone = $data['phone'];
         $appointment->notes = $data['notes'] ?? null;
-        $appointment->status = Appointment::STATUS_PENDING; // Ensure status is set to pending
+        $appointment->status = Appointment::STATUS_PENDING;
         $appointment->location = $data['location'];
         $appointment->address = $data['address'] ?? null;
         $appointment->save();

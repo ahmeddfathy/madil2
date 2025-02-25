@@ -4,14 +4,14 @@ namespace App\Notifications;
 
 use App\Models\Appointment;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 use Illuminate\Queue\SerializesModels;
 use Carbon\Carbon;
 
-class AppointmentConfirmed extends Notification
+class AppointmentDateTimeUpdated extends Notification
 {
     use Queueable, SerializesModels;
 
@@ -19,40 +19,44 @@ class AppointmentConfirmed extends Notification
     private $appointmentId;
     private $appointmentDate;
     private $appointmentTime;
-    private $serviceType;
+    private $appointmentNotes;
     private $userId;
 
     public function __construct(Appointment $appointment)
     {
         try {
-            // التحقق من نوع الخدمة أولاً
-            if ($appointment->service_type !== 'custom_design') {
-                return;
-            }
-
             $this->appointment = $appointment;
 
             if (!$appointment->exists) {
                 throw new \Exception('Appointment model does not exist');
             }
 
+            // Set Carbon locale to Arabic
+            Carbon::setLocale('ar');
+
             // Store essential data as primitive types
             $this->appointmentId = $appointment->id;
-            $this->appointmentDate = $appointment->date instanceof Carbon ? $appointment->date->format('Y-m-d') : null;
-            $this->appointmentTime = $appointment->time;
-            $this->serviceType = $appointment->service_type;
+
+            if ($appointment->appointment_date) {
+                $date = Carbon::parse($appointment->appointment_date);
+                $this->appointmentDate = $date->translatedFormat('l j F Y'); // Will show like "الأحد 15 فبراير 2024"
+            } else {
+                $this->appointmentDate = 'غير محدد';
+            }
+
+            $this->appointmentTime = $appointment->appointment_time ? Carbon::parse($appointment->appointment_time)->format('H:i') : 'غير محدد';
+            $this->appointmentNotes = $appointment->notes;
             $this->userId = $appointment->user_id;
 
-            Log::info('Creating appointment confirmation notification', [
+            Log::info('Creating appointment date/time update notification', [
                 'appointment_id' => $this->appointmentId,
                 'date' => $this->appointmentDate,
                 'time' => $this->appointmentTime,
-                'service' => $this->serviceType,
                 'user_id' => $this->userId,
                 'user_email' => $appointment->user->email ?? 'No email found'
             ]);
         } catch (Throwable $e) {
-            Log::error('Error in AppointmentConfirmed constructor', [
+            Log::error('Error in AppointmentDateTimeUpdated constructor', [
                 'error' => $e->getMessage(),
                 'error_trace' => $e->getTraceAsString(),
                 'appointment_id' => $appointment->id ?? null
@@ -64,11 +68,6 @@ class AppointmentConfirmed extends Notification
     public function via($notifiable): array
     {
         try {
-            // التحقق من نوع الخدمة
-            if ($this->serviceType !== 'custom_design') {
-                return [];
-            }
-
             $channels = ['database'];
 
             if ($notifiable && $notifiable->email) {
@@ -94,39 +93,27 @@ class AppointmentConfirmed extends Notification
     public function toMail($notifiable): MailMessage
     {
         try {
-            if (!$this->appointmentDate || !$this->appointmentTime) {
-                throw new \Exception('Missing required appointment data');
-            }
-
-            $serviceTypes = [
-                'new_abaya' => '👗 عباية جديدة',
-                'alteration' => '✂️ تعديل',
-                'repair' => '🧵 إصلاح',
-                'custom_design' => '✨ تصميم خاص'
-            ];
-
-            $serviceText = $serviceTypes[$this->serviceType] ?? ucfirst($this->serviceType);
-
-            return (new MailMessage)
-                ->subject('📅 تأكيد الموعد - ' . $this->appointment->reference_number)
+            $message = (new MailMessage)
+                ->subject("📅 تحديث موعد الزيارة - {$this->appointment->reference_number}")
                 ->greeting("✨ مرحباً {$notifiable->name}!")
-                ->line('تم تأكيد موعدك بنجاح!')
+                ->line("تم تحديث موعد زيارتك")
                 ->line('━━━━━━━━━━━━━━━━━━━━━━')
                 ->line("🔖 رقم المرجع: {$this->appointment->reference_number}")
-                ->line("📅 التاريخ: {$this->appointmentDate}")
-                ->line("⏰ الوقت: {$this->appointmentTime}")
-                ->line("💫 الخدمة: {$serviceText}")
-                ->line('━━━━━━━━━━━━━━━━━━━━━━')
-                ->line("📍 الموقع: {$this->appointment->location_text}")
-                ->when($this->appointment->address, function ($mail) {
-                    return $mail->line("العنوان: {$this->appointment->address}");
-                })
+                ->line("📅 التاريخ الجديد: {$this->appointmentDate}")
+                ->line("⏰ الوقت الجديد: {$this->appointmentTime}");
+
+            if ($this->appointmentNotes) {
+                $message->line('━━━━━━━━━━━━━━━━━━━━━━')
+                       ->line("📝 ملاحظات: {$this->appointmentNotes}");
+            }
+
+            return $message
                 ->line('━━━━━━━━━━━━━━━━━━━━━━')
                 ->action('👉 تفاصيل الموعد', route('appointments.show', $this->appointment->reference_number))
                 ->line('🙏 شكراً لاختيارك خدماتنا!')
                 ->line('📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.');
         } catch (Throwable $e) {
-            Log::error('Error preparing appointment confirmation email', [
+            Log::error('Error preparing appointment date/time update email', [
                 'error' => $e->getMessage(),
                 'appointment_reference' => $this->appointment->reference_number
             ]);
@@ -138,10 +125,12 @@ class AppointmentConfirmed extends Notification
     {
         try {
             return [
-                'title' => 'تأكيد الموعد',
-                'message' => "تم تأكيد موعدك بتاريخ {$this->appointmentDate} الساعة {$this->appointmentTime}",
-                'type' => 'appointment_confirmed',
-                'reference_number' => $this->appointment->reference_number
+                'title' => 'تحديث موعد الزيارة',
+                'message' => "تم تحديث موعد زيارتك إلى {$this->appointmentDate} الساعة {$this->appointmentTime}",
+                'type' => 'appointment_datetime_updated',
+                'reference_number' => $this->appointment->reference_number,
+                'date' => $this->appointmentDate,
+                'time' => $this->appointmentTime
             ];
         } catch (Throwable $e) {
             Log::error('Error in toArray method', [
@@ -150,24 +139,23 @@ class AppointmentConfirmed extends Notification
             ]);
 
             return [
-                'title' => 'تأكيد الموعد',
+                'title' => 'تحديث موعد الزيارة',
                 'message' => 'حدث خطأ أثناء معالجة الإشعار',
-                'type' => 'appointment_confirmed',
-                'appointment_id' => $this->appointmentId
+                'type' => 'appointment_datetime_updated',
+                'reference_number' => $this->appointment->reference_number
             ];
         }
     }
 
     public function failed(Throwable $e)
     {
-        Log::error('Failed to send appointment confirmation notification', [
+        Log::error('Failed to send appointment date/time update notification', [
             'error' => $e->getMessage(),
             'error_trace' => $e->getTraceAsString(),
             'appointment_id' => $this->appointmentId ?? null,
             'appointment_data' => [
                 'date' => $this->appointmentDate ?? null,
-                'time' => $this->appointmentTime ?? null,
-                'service' => $this->serviceType ?? null
+                'time' => $this->appointmentTime ?? null
             ]
         ]);
     }

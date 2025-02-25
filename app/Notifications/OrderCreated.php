@@ -39,7 +39,12 @@ class OrderCreated extends Notification
         }
       }
 
-      $result = $firebaseService->sendNotificationToAdmins($title, $body, $link);
+      $result = $firebaseService->sendNotificationToAdmins(
+        $title,
+        $body,
+        $link,
+        ['link' => $link]
+      );
     } catch (\Exception $e) {
     }
   }

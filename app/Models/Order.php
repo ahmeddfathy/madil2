@@ -38,7 +38,7 @@ class Order extends Model
         'total_amount',
         'shipping_address',
         'phone',
-        
+
         'payment_status',
         'order_status',
         'notes',
@@ -70,15 +70,6 @@ class Order extends Model
                 'order_id' => $order->id,
                 'order_number' => $order->order_number
             ]);
-
-            try {
-                $order->user->notify(new OrderCreated($order));
-            } catch (\Exception $e) {
-                Log::error('Failed to send order notification', [
-                    'error' => $e->getMessage(),
-                    'order_id' => $order->id
-                ]);
-            }
         });
     }
 

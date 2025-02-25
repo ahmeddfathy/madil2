@@ -330,13 +330,15 @@
 
         try {
             log('Attempting to show direct notification...');
+
             const notification = new Notification(payload.notification.title, {
                 body: payload.notification.body,
                 vibrate: [100, 50, 100],
                 requireInteraction: true,
                 dir: 'rtl',
                 lang: 'ar',
-                tag: Date.now().toString() // تاج فريد لكل إشعار
+                tag: Date.now().toString(),
+                data: payload.data
             });
 
             notification.onclick = function(event) {
@@ -344,10 +346,20 @@
                 window.focus();
                 notification.close();
 
-                // فتح صفحة الطلب إذا كان هناك رابط
+                // فتح صفحة الطلب في نفس النافذة
                 if (payload.data && payload.data.link) {
                     window.location.href = payload.data.link;
                 }
+
+                // تحديث الصفحة إذا كنا بالفعل في صفحة الطلبات
+                if (window.location.pathname.includes('/admin/orders')) {
+                    window.location.reload();
+                }
+            };
+
+            // إضافة حدث عند إغلاق الإشعار
+            notification.onclose = function() {
+                log('Notification closed');
             };
 
             log('Direct notification shown successfully');

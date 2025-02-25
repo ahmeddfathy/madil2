@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Notifications\AppointmentStatusUpdated;
+use App\Notifications\AppointmentDateTimeUpdated;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
@@ -85,8 +86,8 @@ class AppointmentController extends Controller
 
         $appointment->update($validated);
 
-        // Notify the customer
-        $appointment->user->notify(new AppointmentStatusUpdated($appointment));
+        // Notify the customer using the new notification
+        $appointment->user->notify(new AppointmentDateTimeUpdated($appointment));
 
         return redirect()->route('admin.appointments.show', $appointment->reference_number)
             ->with('success', 'تم تحديث موعد الزيارة بنجاح.');
