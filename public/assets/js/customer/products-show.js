@@ -14,12 +14,24 @@ function updateMainImage(src, thumbnail) {
 function selectColor(element) {
     if (!element.classList.contains('available')) return;
 
-    // Uncheck custom color checkbox if exists
-    const useCustomColorCheckbox = document.getElementById('useCustomColor');
-    if (useCustomColorCheckbox) {
-        useCustomColorCheckbox.checked = false;
-        document.getElementById('customColorGroup').classList.add('d-none');
-        document.getElementById('customColor').value = '';
+    // إذا كان العنصر محدد بالفعل، قم بإلغاء تحديده
+    if (element.classList.contains('active')) {
+        element.classList.remove('active');
+        selectedColor = null;
+
+        // إعادة تفعيل حقل اللون المخصص
+        const customColorInput = document.getElementById('customColor');
+        if (customColorInput) {
+            customColorInput.disabled = false;
+        }
+        return;
+    }
+
+    // تعطيل وإفراغ حقل اللون المخصص
+    const customColorInput = document.getElementById('customColor');
+    if (customColorInput) {
+        customColorInput.value = '';
+        customColorInput.disabled = true;
     }
 
     // Remove active class from all colors
@@ -30,17 +42,35 @@ function selectColor(element) {
     // Add active class to selected color
     element.classList.add('active');
     selectedColor = element.dataset.color;
+
+    // Clear any error messages that might be displayed
+    const errorMessage = document.getElementById('errorMessage');
+    if (errorMessage && !errorMessage.classList.contains('d-none')) {
+        errorMessage.classList.add('d-none');
+    }
 }
 
 function selectSize(element) {
     if (!element.classList.contains('available')) return;
 
-    // Uncheck custom size checkbox if exists
-    const useCustomSizeCheckbox = document.getElementById('useCustomSize');
-    if (useCustomSizeCheckbox) {
-        useCustomSizeCheckbox.checked = false;
-        document.getElementById('customSizeGroup').classList.add('d-none');
-        document.getElementById('customSize').value = '';
+    // إذا كان العنصر محدد بالفعل، قم بإلغاء تحديده
+    if (element.classList.contains('active')) {
+        element.classList.remove('active');
+        selectedSize = null;
+
+        // إعادة تفعيل حقل المقاس المخصص
+        const customSizeInput = document.getElementById('customSize');
+        if (customSizeInput) {
+            customSizeInput.disabled = false;
+        }
+        return;
+    }
+
+    // تعطيل وإفراغ حقل المقاس المخصص
+    const customSizeInput = document.getElementById('customSize');
+    if (customSizeInput) {
+        customSizeInput.value = '';
+        customSizeInput.disabled = true;
     }
 
     // Remove active class from all sizes
@@ -54,6 +84,12 @@ function selectSize(element) {
 
     // If size is selected, uncheck needs appointment
     document.getElementById('needsAppointment').checked = false;
+
+    // Clear any error messages
+    const errorMessage = document.getElementById('errorMessage');
+    if (errorMessage && !errorMessage.classList.contains('d-none')) {
+        errorMessage.classList.add('d-none');
+    }
 }
 
 function updatePageQuantity(change) {
@@ -129,6 +165,7 @@ function addToCart() {
     const hasCustomColorEnabled = document.getElementById('customColor') !== null;
     const hasSizeSelectionEnabled = document.querySelector('.available-sizes') !== null;
     const hasCustomSizeEnabled = document.getElementById('customSize') !== null;
+    const hasAppointmentEnabled = document.querySelector('.custom-measurements-section') !== null;
 
     // الحصول على قيمة اللون
     let colorValue = null;
@@ -153,39 +190,94 @@ function addToCart() {
     }
 
     // التحقق من الحالات المختلفة
-    if (hasColorSelectionEnabled || hasCustomColorEnabled) {
-        if (hasSizeSelectionEnabled || hasCustomSizeEnabled) {
-            // في حالة وجود خيارات الألوان والمقاسات معاً
-            if (!needsAppointment) {
-                if (!colorValue) {
-                    errorMessage.textContent = 'يرجى اختيار لون للمنتج';
-                    errorMessage.classList.remove('d-none');
-                    return;
-                }
-                if (!sizeValue) {
-                    errorMessage.textContent = 'يرجى اختيار مقاس للمنتج';
-                    errorMessage.classList.remove('d-none');
-                    return;
-                }
-            }
-        } else {
+    if (needsAppointment && hasAppointmentEnabled) {
+        // إذا تم اختيار حجز موعد وكانت الميزة متاحة، نستمر بدون تحقق من اللون والمقاس
+    }
+    else if (!needsAppointment) {
+        if ((hasColorSelectionEnabled || hasCustomColorEnabled) &&
+            !(hasSizeSelectionEnabled || hasCustomSizeEnabled)) {
             // في حالة وجود خيارات الألوان فقط
-            if (!needsAppointment && !colorValue) {
-                errorMessage.textContent = 'يرجى اختيار لون للمنتج أو حجز موعد لأخذ المقاسات';
+            if (!colorValue) {
+                let errorText = '';
+                if (hasColorSelectionEnabled && hasCustomColorEnabled) {
+                    errorText = 'يرجى اختيار لون أو كتابة اللون المطلوب';
+                } else if (hasColorSelectionEnabled) {
+                    errorText = 'يرجى اختيار لون للمنتج';
+                } else if (hasCustomColorEnabled) {
+                    errorText = 'يرجى كتابة اللون المطلوب';
+                }
+
+                if (hasAppointmentEnabled) {
+                    errorText += ' أو اختيار خيار "أحتاج إلى أخذ المقاسات"';
+                }
+
+                errorMessage.textContent = errorText;
                 errorMessage.classList.remove('d-none');
                 return;
             }
         }
-    } else if (hasSizeSelectionEnabled || hasCustomSizeEnabled) {
-        // في حالة وجود خيارات المقاسات فقط
-        if (!needsAppointment && !sizeValue) {
-            errorMessage.textContent = 'يرجى اختيار مقاس للمنتج أو حجز موعد لأخذ المقاسات';
-            errorMessage.classList.remove('d-none');
-            return;
+        else if (!(hasColorSelectionEnabled || hasCustomColorEnabled) &&
+                (hasSizeSelectionEnabled || hasCustomSizeEnabled)) {
+            // في حالة وجود خيارات المقاسات فقط
+            if (!sizeValue) {
+                let errorText = '';
+                if (hasSizeSelectionEnabled && hasCustomSizeEnabled) {
+                    errorText = 'يرجى اختيار مقاس أو كتابة المقاس المطلوب';
+                } else if (hasSizeSelectionEnabled) {
+                    errorText = 'يرجى اختيار مقاس للمنتج';
+                } else if (hasCustomSizeEnabled) {
+                    errorText = 'يرجى كتابة المقاس المطلوب';
+                }
+
+                if (hasAppointmentEnabled) {
+                    errorText += ' أو اختيار خيار "أحتاج إلى أخذ المقاسات"';
+                }
+
+                errorMessage.textContent = errorText;
+                errorMessage.classList.remove('d-none');
+                return;
+            }
         }
-    } else if (!needsAppointment) {
-        // في حالة عدم وجود خيارات وعدم حجز موعد
-        errorMessage.textContent = 'يجب حجز موعد لأخذ المقاسات';
+        else if ((hasColorSelectionEnabled || hasCustomColorEnabled) &&
+                (hasSizeSelectionEnabled || hasCustomSizeEnabled)) {
+            // في حالة وجود خيارات الألوان والمقاسات معاً
+            let errorMessages = [];
+
+            if (!colorValue) {
+                if (hasColorSelectionEnabled && hasCustomColorEnabled) {
+                    errorMessages.push('اختيار لون أو كتابة اللون المطلوب');
+                } else if (hasColorSelectionEnabled) {
+                    errorMessages.push('اختيار لون للمنتج');
+                } else if (hasCustomColorEnabled) {
+                    errorMessages.push('كتابة اللون المطلوب');
+                }
+            }
+
+            if (!sizeValue) {
+                if (hasSizeSelectionEnabled && hasCustomSizeEnabled) {
+                    errorMessages.push('اختيار مقاس أو كتابة المقاس المطلوب');
+                } else if (hasSizeSelectionEnabled) {
+                    errorMessages.push('اختيار مقاس للمنتج');
+                } else if (hasCustomSizeEnabled) {
+                    errorMessages.push('كتابة المقاس المطلوب');
+                }
+            }
+
+            if (errorMessages.length > 0) {
+                let errorText = 'يرجى ' + errorMessages.join(' و');
+
+                if (hasAppointmentEnabled) {
+                    errorText += ' أو اختيار خيار "أحتاج إلى أخذ المقاسات"';
+                }
+
+                errorMessage.textContent = errorText;
+                errorMessage.classList.remove('d-none');
+                return;
+            }
+        }
+    }
+    else if (needsAppointment && !hasAppointmentEnabled) {
+        errorMessage.textContent = 'عذراً، خيار حجز الموعد غير متاح لهذا المنتج';
         errorMessage.classList.remove('d-none');
         return;
     }
@@ -555,8 +647,10 @@ function toggleCart() {
 
 // Initialize when document is ready
 document.addEventListener('DOMContentLoaded', function() {
-    loadCartItems();
-
+        // تحقق مما إذا كان المستخدم مسجل دخول قبل تحميل السلة
+        if (document.body.classList.contains('user-logged-in')) {
+            loadCartItems();
+        }
     // Setup event listeners for both cart buttons
     document.getElementById('closeCart').addEventListener('click', closeCart);
     document.getElementById('cartToggle').addEventListener('click', toggleCart);
@@ -701,6 +795,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     item.classList.remove('active');
                 });
                 selectedColor = null;
+
+                // Clear any error messages
+                const errorMessage = document.getElementById('errorMessage');
+                if (errorMessage && !errorMessage.classList.contains('d-none')) {
+                    errorMessage.classList.add('d-none');
+                }
             } else {
                 customColorGroup.classList.add('d-none');
                 document.getElementById('customColor').value = '';
@@ -729,13 +829,51 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Add event listener to needs appointment checkbox
-    document.getElementById('needsAppointment').addEventListener('change', function(e) {
+    document.getElementById('needsAppointment')?.addEventListener('change', function(e) {
         if (e.target.checked) {
-            // Clear size selection when appointment is needed
-            document.querySelectorAll('.size-item').forEach(item => {
+            // إلغاء تحديد الألوان وتعطيل حقل اللون المخصص
+            document.querySelectorAll('.color-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            selectedColor = null;
+
+            const customColorInput = document.getElementById('customColor');
+            if (customColorInput) {
+                customColorInput.value = '';
+                customColorInput.disabled = true;
+            }
+
+            // إلغاء تحديد المقاسات وتعطيل حقل المقاس المخصص
+            document.querySelectorAll('.size-option').forEach(item => {
                 item.classList.remove('active');
             });
             selectedSize = null;
+
+            const customSizeInput = document.getElementById('customSize');
+            if (customSizeInput) {
+                customSizeInput.value = '';
+                customSizeInput.disabled = true;
+            }
+
+            // إخفاء رسائل الخطأ
+            const errorMessage = document.getElementById('errorMessage');
+            if (errorMessage && !errorMessage.classList.contains('d-none')) {
+                errorMessage.classList.add('d-none');
+            }
+
+            // إظهار إشعار للمستخدم
+            showNotification('تم اختيار خيار حجز موعد لأخذ المقاسات', 'success');
+        } else {
+            // إعادة تفعيل الحقول عند إلغاء تحديد خيار حجز الموعد
+            const customColorInput = document.getElementById('customColor');
+            if (customColorInput) {
+                customColorInput.disabled = false;
+            }
+
+            const customSizeInput = document.getElementById('customSize');
+            if (customSizeInput) {
+                customSizeInput.disabled = false;
+            }
         }
     });
 
@@ -839,7 +977,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         // إعادة توجيه المستخدم إلى صفحة السلة
                         window.location.href = '/cart';
                     } else {
-                        // إغلاق النافذة المنبثقة وتحديث محتوى السلة
+                        // إغلاق النافذة المنبثقة عند تحميل الصفحة
                         bootstrap.Modal.getInstance(document.getElementById('appointmentModal')).hide();
                         loadCartItems();
                     }
@@ -854,12 +992,50 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-
     // إضافة استعادة حالة النافذة المنبثقة عند تحميل الصفحة
     const urlParams = new URLSearchParams(window.location.search);
     const pendingAppointment = urlParams.get('pending_appointment');
 
     if (pendingAppointment) {
         showAppointmentModal(pendingAppointment);
+    }
+
+    // إضافة مستمعي أحداث لحقول الإدخال المخصصة
+    const customColorInput = document.getElementById('customColor');
+    if (customColorInput) {
+        customColorInput.addEventListener('focus', function() {
+            // إلغاء تحديد الألوان عند التركيز على حقل اللون المخصص
+            document.querySelectorAll('.color-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            selectedColor = null;
+        });
+
+        customColorInput.addEventListener('input', function() {
+            // إذا كان المستخدم يكتب في حقل اللون المخصص، نتأكد من إخفاء رسائل الخطأ
+            const errorMessage = document.getElementById('errorMessage');
+            if (errorMessage && !errorMessage.classList.contains('d-none')) {
+                errorMessage.classList.add('d-none');
+            }
+        });
+    }
+
+    const customSizeInput = document.getElementById('customSize');
+    if (customSizeInput) {
+        customSizeInput.addEventListener('focus', function() {
+            // إلغاء تحديد المقاسات عند التركيز على حقل المقاس المخصص
+            document.querySelectorAll('.size-option').forEach(item => {
+                item.classList.remove('active');
+            });
+            selectedSize = null;
+        });
+
+        customSizeInput.addEventListener('input', function() {
+            // إذا كان المستخدم يكتب في حقل المقاس المخصص، نتأكد من إخفاء رسائل الخطأ
+            const errorMessage = document.getElementById('errorMessage');
+            if (errorMessage && !errorMessage.classList.contains('d-none')) {
+                errorMessage.classList.add('d-none');
+            }
+        });
     }
 });

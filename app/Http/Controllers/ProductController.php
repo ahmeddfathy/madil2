@@ -301,11 +301,42 @@ class ProductController extends Controller
 
         $needs_appointment = $request->needs_appointment;
 
+        if ($needs_appointment && !$product->allow_appointment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'عذراً، خيار حجز الموعد غير متاح لهذا المنتج'
+            ], 422);
+        }
+
         if (!$needs_appointment) {
-            if ($product->sizes()->count() > 0 && !$request->size) {
+            $errors = [];
+
+            if ($product->allow_color_selection && !$request->color) {
+                if ($product->allow_custom_color) {
+                    $errors[] = 'يرجى اختيار لون أو كتابة اللون المطلوب';
+                } else {
+                    $errors[] = 'يرجى اختيار لون للمنتج';
+                }
+            }
+
+            if ($product->allow_size_selection && !$request->size) {
+                if ($product->allow_custom_size) {
+                    $errors[] = 'يرجى اختيار مقاس أو كتابة المقاس المطلوب';
+                } else {
+                    $errors[] = 'يرجى اختيار مقاس للمنتج';
+                }
+            }
+
+            if (!empty($errors)) {
+                $errorMessage = 'يرجى ' . implode(' و', $errors);
+
+                if ($product->allow_appointment) {
+                    $errorMessage .= ' أو اختيار خيار "أحتاج إلى أخذ المقاسات"';
+                }
+
                 return response()->json([
                     'success' => false,
-                    'message' => 'يرجى اختيار المقاس أو تحديد موعد لأخذ المقاسات'
+                    'message' => $errorMessage
                 ], 422);
             }
         }
