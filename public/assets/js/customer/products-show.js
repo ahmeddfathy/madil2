@@ -189,9 +189,19 @@ function addToCart() {
         }
     }
 
+    // تحديد ما إذا كان المنتج يحتوي فقط على خيار الموعد (بدون ألوان أو مقاسات)
+    const onlyHasAppointmentOption = hasAppointmentEnabled &&
+        !(hasColorSelectionEnabled || hasCustomColorEnabled || hasSizeSelectionEnabled || hasCustomSizeEnabled);
+
     // التحقق من الحالات المختلفة
     if (needsAppointment && hasAppointmentEnabled) {
         // إذا تم اختيار حجز موعد وكانت الميزة متاحة، نستمر بدون تحقق من اللون والمقاس
+    }
+    // حالة جديدة: إذا كان المنتج يحتوي فقط على خيار الموعد ولكن المستخدم لم يختره
+    else if (onlyHasAppointmentOption && !needsAppointment) {
+        errorMessage.textContent = 'هذا المنتج يتطلب حجز موعد لأخذ المقاسات';
+        errorMessage.classList.remove('d-none');
+        return;
     }
     else if (!needsAppointment) {
         if ((hasColorSelectionEnabled || hasCustomColorEnabled) &&

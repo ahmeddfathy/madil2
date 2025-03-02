@@ -75,6 +75,8 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
+        // You can add your custom symbolic links here
+        // public_path('images') => storage_path('app/images'),
     ],
 
 ];
