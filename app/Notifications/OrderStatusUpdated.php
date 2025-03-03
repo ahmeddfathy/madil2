@@ -60,33 +60,50 @@ class OrderStatusUpdated extends Notification
                 default => "تم تحديث حالة طلبك إلى {$status}"
             };
 
-            $mail = (new MailMessage)
-                ->subject("{$statusEmoji} تحديث حالة الطلب #{$this->order->order_number}")
-                ->greeting("✨ مرحباً {$notifiable->name}!")
-                ->line($message)
-                ->line('━━━━━━━━━━━━━━━━━━━━━━')
-                ->line("📦 رقم الطلب: #{$this->order->order_number}")
-                ->line("📊 الحالة: {$statusEmoji} {$status}");
+            $sections = [
+                [
+                    'title' => 'تفاصيل الطلب',
+                    'items' => [
+                        "📦 رقم الطلب: #{$this->order->order_number}",
+                        "📊 الحالة: {$statusEmoji} {$status}"
+                    ]
+                ]
+            ];
 
-            // إضافة معلومات التوصيل إذا كان الطلب في مرحلة التوصيل
             if (in_array($this->order->order_status, ['out_for_delivery', 'on_the_way'])) {
-                $mail->line('━━━━━━━━━━━━━━━━━━━━━━')
-                    ->line('📍 معلومات التوصيل:')
-                    ->line("العنوان: {$this->order->shipping_address}")
-                    ->line("رقم الهاتف: {$this->order->phone}");
+                $sections[] = [
+                    'title' => 'معلومات التوصيل',
+                    'items' => [
+                        "العنوان: {$this->order->shipping_address}",
+                        "رقم الهاتف: {$this->order->phone}"
+                    ]
+                ];
             }
 
-            // إضافة ملاحظات إذا وجدت
             if ($this->order->notes) {
-                $mail->line('━━━━━━━━━━━━━━━━━━━━━━')
-                    ->line("📝 ملاحظات: {$this->order->notes}");
+                $sections[] = [
+                    'title' => 'ملاحظات',
+                    'items' => ["📝 {$this->order->notes}"]
+                ];
             }
 
-            return $mail
-                ->line('━━━━━━━━━━━━━━━━━━━━━━')
-                ->action('👉 تفاصيل الطلب', route('orders.show', $this->order))
-                ->line('🙏 شكراً لتسوقك معنا!')
-                ->line('📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.');
+            return (new MailMessage)
+                ->view('emails.notifications', [
+                    'title' => "{$statusEmoji} تحديث حالة الطلب #{$this->order->order_number}",
+                    'greeting' => "✨ مرحباً {$notifiable->name}!",
+                    'intro' => $message,
+                    'content' => [
+                        'sections' => $sections,
+                        'action' => [
+                            'text' => '👉 تفاصيل الطلب',
+                            'url' => route('orders.show', $this->order)
+                        ],
+                        'outro' => [
+                            '🙏 شكراً لتسوقك معنا!',
+                            '📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.'
+                        ]
+                    ]
+                ]);
         } catch (Throwable $e) {
             Log::error('Error preparing order status email', [
                 'error' => $e->getMessage(),

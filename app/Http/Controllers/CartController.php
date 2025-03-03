@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Appointment;
 
 class CartController extends Controller
 {
@@ -272,6 +273,16 @@ class CartController extends Controller
         }
 
         $cart = $cartItem->cart;
+
+        // First find the appointment ID
+        $appointment = Appointment::where('cart_item_id', $cartItem->id)->first();
+
+        if ($appointment) {
+            // Force delete the appointment first
+            $appointment->forceDelete();
+        }
+
+        // Then delete cart item
         $cartItem->delete();
 
         // تحديث إجمالي السلة

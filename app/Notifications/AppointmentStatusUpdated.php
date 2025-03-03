@@ -86,50 +86,75 @@ class AppointmentStatusUpdated extends Notification
     public function toMail($notifiable): MailMessage
     {
         try {
-            $statusEmoji = match($this->appointmentStatus) {
+            $statusEmoji = match($this->appointment->status) {
                 'pending' => '⏳',
                 'confirmed' => '✅',
                 'cancelled' => '❌',
                 'completed' => '🎉',
-                'approved' => '👍',
+                'no_show' => '❗',
                 default => '📝'
             };
 
-            $status = match($this->appointmentStatus) {
+            $status = match($this->appointment->status) {
                 'pending' => 'قيد الانتظار',
                 'confirmed' => 'مؤكد',
                 'cancelled' => 'ملغي',
                 'completed' => 'مكتمل',
-                'approved' => 'موافق عليه',
-                default => ucfirst($this->appointmentStatus)
+                'no_show' => 'لم يحضر',
+                default => ucfirst($this->appointment->status)
             };
 
-            $message = (new MailMessage)
-                ->subject("{$statusEmoji} تحديث حالة الموعد - {$this->appointment->reference_number}")
-                ->greeting("✨ مرحباً {$notifiable->name}!")
-                ->line("تم تحديث حالة موعدك إلى: {$statusEmoji} {$status}")
-                ->line('━━━━━━━━━━━━━━━━━━━━━━')
-                ->line("🔖 رقم المرجع: {$this->appointment->reference_number}");
+            $message = match($this->appointment->status) {
+                'confirmed' => 'تم تأكيد موعدك',
+                'cancelled' => 'تم إلغاء موعدك',
+                'completed' => 'تم اكتمال موعدك بنجاح',
+                'no_show' => 'تم تسجيل عدم حضورك للموعد',
+                default => "تم تحديث حالة موعدك إلى {$status}"
+            };
 
-            if ($this->appointmentDate !== 'غير محدد') {
-                $message->line("📅 التاريخ: {$this->appointmentDate}");
+            $items = [
+                "🔖 رقم المرجع: {$this->appointment->reference_number}",
+                "📊 الحالة: {$statusEmoji} {$status}",
+            ];
+
+            // إضافة التاريخ والوقت فقط إذا كانا موجودين
+            if ($this->appointment->date) {
+                $items[] = "📅 التاريخ: " . $this->appointment->date->format('Y-m-d');
             }
-            if ($this->appointmentTime !== 'غير محدد') {
-                $message->line("⏰ الوقت: {$this->appointmentTime}");
+            if ($this->appointment->time) {
+                $items[] = "⏰ الوقت: {$this->appointment->time}";
+            }
+            if ($this->appointment->location_text) {
+                $items[] = "📍 الموقع: {$this->appointment->location_text}";
+            }
+            if ($this->appointment->address) {
+                $items[] = "العنوان: {$this->appointment->address}";
             }
 
-            if ($this->appointmentNotes) {
-                $message->line('━━━━━━━━━━━━━━━━━━━━━━')
-                       ->line("📝 ملاحظات: {$this->appointmentNotes}");
-            }
-
-            return $message
-                ->line('━━━━━━━━━━━━━━━━━━━━━━')
-                ->action('👉 تفاصيل الموعد', route('appointments.show', $this->appointment->reference_number))
-                ->line('🙏 شكراً لاختيارك خدماتنا!')
-                ->line('📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.');
+            return (new MailMessage)
+                ->view('emails.notifications', [
+                    'title' => "{$statusEmoji} تحديث حالة الموعد #{$this->appointment->reference_number}",
+                    'greeting' => "✨ مرحباً {$notifiable->name}",
+                    'intro' => $message,
+                    'content' => [
+                        'sections' => [
+                            [
+                                'title' => 'تفاصيل الموعد',
+                                'items' => $items
+                            ]
+                        ],
+                        'action' => [
+                            'text' => '👉 تفاصيل الموعد',
+                            'url' => route('appointments.show', $this->appointment->reference_number)
+                        ],
+                        'outro' => [
+                            '🙏 شكراً لاختيارك خدماتنا!',
+                            '📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.'
+                        ]
+                    ]
+                ]);
         } catch (Throwable $e) {
-            Log::error('Error preparing appointment status email', [
+            Log::error('Error preparing appointment status update email', [
                 'error' => $e->getMessage(),
                 'appointment_reference' => $this->appointment->reference_number
             ]);

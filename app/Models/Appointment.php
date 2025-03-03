@@ -128,4 +128,23 @@ class Appointment extends Model
     {
         return 'reference_number';
     }
+
+    /**
+     * Scope للمواعيد المعلقة التي لم يتم إكمال طلباتها
+     */
+    public function scopePendingWithoutOrder($query)
+    {
+        return $query->where('status', self::STATUS_PENDING)
+                    ->where('service_type', self::SERVICE_NEW_ABAYA)
+                    ->whereDoesntHave('orderItems')
+                    ->where('created_at', '<=', now()->subMinute());
+    }
+
+    /**
+     * حذف المواعيد المعلقة التي لم يتم إكمال طلباتها
+     */
+    public static function cleanupPendingAppointments()
+    {
+        return static::pendingWithoutOrder()->forceDelete();
+    }
 }

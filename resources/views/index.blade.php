@@ -76,6 +76,9 @@
               <div class="hero-buttons">
                 <a href="{{ route('products.index') }}" class="btn btn-primary">اطلب الآن</a>
                 <a href="{{ route('about') }}" class="btn btn-outline-primary">تعرف علينا</a>
+                <a href="{{ asset('profile/الملف التعريفي (3).pdf') }}" class="btn btn-success" download>
+                  <i class="fas fa-file-pdf me-1"></i>الملف التعريفي
+                </a>
               </div>
             </div>
           </div>
@@ -118,7 +121,6 @@
               <img src="https://th.bing.com/th/id/OIP.D7nA3n_V4NUqMLEVWF1M5QHaF8?rs=1&pid=ImgDetMain" alt="تفصيل وخياطة رجالي" class="img-fluid mb-3">
               <h3>تفصيل وخياطة رجالي</h3>
               <p>الثياب الرجالية المختلفة والسديريات وجلابيات النوم</p>
-              <a href="#" class="card-link">اكتشف المزيد <i class="fas fa-arrow-left"></i></a>
             </div>
           </div>
           <div class="col-md-4">
@@ -129,7 +131,6 @@
               <img src="https://th.bing.com/th/id/OIP.1yt_Dc_hfr6ts_gIpm6lMQHaJi?rs=1&pid=ImgDetMain" alt="تفصيل نسائي" class="img-fluid mb-3">
               <h3>تفصيل نسائي</h3>
               <p>تفصيل العبايات النسائية بأحدث التصاميم العصرية</p>
-              <a href="#" class="card-link">اكتشف المزيد <i class="fas fa-arrow-left"></i></a>
             </div>
           </div>
           <div class="col-md-4">
@@ -140,7 +141,6 @@
               <img src="https://th.bing.com/th/id/OIP.8DI5HCPocmh1DLXBecDzLwHaNj?rs=1&pid=ImgDetMain" alt="تعديلات وإصلاحات" class="img-fluid mb-3    ">
               <h3>تعديلات وإصلاحات</h3>
               <p>خدمات التعديل والإصلاح لجميع أنواع الملابس</p>
-              <a href="#" class="card-link">اكتشف المزيد <i class="fas fa-arrow-left"></i></a>
             </div>
           </div>
         </div>

@@ -23,7 +23,7 @@ class OrderCreated extends Notification
       $firebaseService = App::make(FirebaseNotificationService::class);
 
       $title = "طلب جديد #{$order->order_number}";
-      $body = "تم إنشاء طلب جديد بقيمة $" . number_format($order->total_amount, 2);
+      $body = "تم إنشاء طلب جديد بقيمة " . number_format($order->total_amount, 2) . " ريال";
       $link = "/admin/orders/{$order->id}";
 
       $itemsWithAppointments = $order->items->filter(function($item) {
@@ -59,38 +59,51 @@ class OrderCreated extends Notification
     $this->order->load(['items.product', 'items.appointment']);
 
     $orderItems = $this->order->items->map(function($item) {
-        $itemText = "• {$item->product->name}\n";
-        $itemText .= "  الكمية: {$item->quantity}\n";
-        $itemText .= "  السعر: $" . number_format($item->subtotal, 2);
-
-        if ($item->appointment) {
-            $itemText .= "\n  موعد المقاسات: " . $item->appointment->appointment_date->format('Y-m-d H:i');
-            $itemText .= "\n  رقم المرجع: " . $item->appointment->reference_number;
-        }
-
-        return $itemText;
-    })->join("\n\n");
+        return [
+            "• {$item->product->name}",
+            "  الكمية: {$item->quantity}",
+            "  السعر: " . number_format($item->subtotal, 2) . " ريال",
+            $item->appointment ? "  موعد المقاسات: " . $item->appointment->appointment_date->format('Y-m-d H:i') : null,
+            $item->appointment ? "  رقم المرجع: " . $item->appointment->reference_number : null
+        ];
+    })->flatten()->filter()->toArray();
 
     return (new MailMessage)
-        ->subject('🛍️ تأكيد الطلب #' . $this->order->order_number)
-        ->greeting("✨ مرحباً {$notifiable->name}")
-        ->line('نشكرك على ثقتك! تم استلام طلبك بنجاح.')
-        ->line('━━━━━━━━━━━━━━━━━━━━━━')
-        ->line("📦 رقم الطلب: #{$this->order->order_number}")
-        ->line('🛒 تفاصيل المنتجات:')
-        ->line($orderItems)
-        ->line('━━━━━━━━━━━━━━━━━━━━━━')
-        ->line('📍 معلومات التوصيل:')
-        ->line("العنوان: {$this->order->shipping_address}")
-        ->line("رقم الهاتف: {$this->order->phone}")
-        ->line('━━━━━━━━━━━━━━━━━━━━━━')
-        ->line('💳 معلومات الدفع:')
-        ->line('طريقة الدفع: ' . ($this->order->payment_method === 'card' ? '💳 بطاقة ائتمان' : '💵 نقداً عند الاستلام'))
-        ->line('إجمالي الطلب: 💰 $' . number_format($this->order->total_amount, 2))
-        ->action('👉 متابعة الطلب', route('orders.show', $this->order))
-        ->line('━━━━━━━━━━━━━━━━━━━━━━')
-        ->line('🙏 شكراً لتسوقك معنا!')
-        ->line('📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.');
+        ->view('emails.notifications', [
+            'title' => '🛍️ تأكيد الطلب #' . $this->order->order_number,
+            'greeting' => "✨ مرحباً {$notifiable->name}",
+            'intro' => 'نشكرك على ثقتك! تم استلام طلبك بنجاح.',
+            'content' => [
+                'sections' => [
+                    [
+                        'title' => '🛒 تفاصيل المنتجات',
+                        'items' => $orderItems
+                    ],
+                    [
+                        'title' => '📍 معلومات التوصيل',
+                        'items' => [
+                            "العنوان: {$this->order->shipping_address}",
+                            "رقم الهاتف: {$this->order->phone}"
+                        ]
+                    ],
+                    [
+                        'title' => '💳 معلومات الدفع',
+                        'items' => [
+                            'طريقة الدفع: ' . ($this->order->payment_method === 'card' ? '💳 بطاقة ائتمان' : '💵 نقداً عند الاستلام'),
+                            'إجمالي الطلب: 💰 ' . number_format($this->order->total_amount, 2) . ' ريال'
+                        ]
+                    ]
+                ],
+                'action' => [
+                    'text' => '👉 متابعة الطلب',
+                    'url' => route('orders.show', $this->order)
+                ],
+                'outro' => [
+                    '🙏 شكراً لتسوقك معنا!',
+                    '📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.'
+                ]
+            ]
+        ]);
   }
 
   public function toArray($notifiable): array

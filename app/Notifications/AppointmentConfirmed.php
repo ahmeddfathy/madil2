@@ -94,10 +94,6 @@ class AppointmentConfirmed extends Notification
     public function toMail($notifiable): MailMessage
     {
         try {
-            if (!$this->appointmentDate || !$this->appointmentTime) {
-                throw new \Exception('Missing required appointment data');
-            }
-
             $serviceTypes = [
                 'new_abaya' => '👗 عباية جديدة',
                 'alteration' => '✂️ تعديل',
@@ -108,23 +104,39 @@ class AppointmentConfirmed extends Notification
             $serviceText = $serviceTypes[$this->serviceType] ?? ucfirst($this->serviceType);
 
             return (new MailMessage)
-                ->subject('📅 تأكيد الموعد - ' . $this->appointment->reference_number)
-                ->greeting("✨ مرحباً {$notifiable->name}!")
-                ->line('تم تأكيد موعدك بنجاح!')
-                ->line('━━━━━━━━━━━━━━━━━━━━━━')
-                ->line("🔖 رقم المرجع: {$this->appointment->reference_number}")
-                ->line("📅 التاريخ: {$this->appointmentDate}")
-                ->line("⏰ الوقت: {$this->appointmentTime}")
-                ->line("💫 الخدمة: {$serviceText}")
-                ->line('━━━━━━━━━━━━━━━━━━━━━━')
-                ->line("📍 الموقع: {$this->appointment->location_text}")
-                ->when($this->appointment->address, function ($mail) {
-                    return $mail->line("العنوان: {$this->appointment->address}");
-                })
-                ->line('━━━━━━━━━━━━━━━━━━━━━━')
-                ->action('👉 تفاصيل الموعد', route('appointments.show', $this->appointment->reference_number))
-                ->line('🙏 شكراً لاختيارك خدماتنا!')
-                ->line('📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.');
+                ->view('emails.notifications', [
+                    'title' => 'تأكيد الموعد - ' . $this->appointment->reference_number,
+                    'greeting' => "✨ مرحباً {$notifiable->name}!",
+                    'intro' => 'تم تأكيد موعدك بنجاح!',
+                    'content' => [
+                        'sections' => [
+                            [
+                                'title' => 'تفاصيل الموعد',
+                                'items' => [
+                                    "🔖 رقم المرجع: {$this->appointment->reference_number}",
+                                    "📅 التاريخ: {$this->appointmentDate}",
+                                    "⏰ الوقت: {$this->appointmentTime}",
+                                    "💫 الخدمة: {$serviceText}",
+                                ]
+                            ],
+                            [
+                                'title' => 'معلومات الموقع',
+                                'items' => [
+                                    "📍 الموقع: {$this->appointment->location_text}",
+                                    $this->appointment->address ? "العنوان: {$this->appointment->address}" : null,
+                                ]
+                            ]
+                        ],
+                        'action' => [
+                            'text' => '👉 تفاصيل الموعد',
+                            'url' => route('appointments.show', $this->appointment->reference_number)
+                        ],
+                        'outro' => [
+                            '🙏 شكراً لاختيارك خدماتنا!',
+                            '📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.'
+                        ]
+                    ]
+                ]);
         } catch (Throwable $e) {
             Log::error('Error preparing appointment confirmation email', [
                 'error' => $e->getMessage(),

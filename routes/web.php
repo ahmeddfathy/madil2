@@ -17,7 +17,7 @@ use App\Http\Controllers\{
     AddressController,
     ContactController,
     PolicyController,
-    TestNotificationController
+
 };
 
 // Admin Controllers
@@ -119,6 +119,7 @@ Route::middleware([
             Route::get('/', [AppointmentController::class, 'index'])->name('index');
             Route::get('/create', [AppointmentController::class, 'create'])->name('create');
             Route::post('/', [AppointmentController::class, 'store'])->name('store');
+            Route::get('/available-slots', [AppointmentController::class, 'getAvailableTimeSlots'])->name('available-slots');
             Route::get('/{appointment:reference_number}', [AppointmentController::class, 'show'])->name('show');
             Route::delete('/{appointment:reference_number}/cancel', [AppointmentController::class, 'cancel'])->name('cancel');
         });
@@ -206,12 +207,5 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/policy', [PolicyController::class, 'index'])->name('policy');
-
-Route::get('/test', function () {
-    return view('test-notification');
-});
-
-Route::post('/api/test-notification', [TestNotificationController::class, 'sendNotification']);
-
 Route::post('/admin/update-fcm-token', [App\Http\Controllers\Admin\DashboardController::class, 'updateFcmToken'])
     ->middleware(['auth', 'admin']);

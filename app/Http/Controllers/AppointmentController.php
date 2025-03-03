@@ -63,6 +63,26 @@ class AppointmentController extends Controller
                 ], 422);
             }
 
+            // Check for conflicting appointments
+            $conflictingAppointment = Appointment::where('appointment_date', $appointmentDate->format('Y-m-d'))
+                ->where(function ($query) use ($appointmentTime) {
+                    // تحويل الوقت بنفس التنسيق للتأكد من المقارنة الصحيحة
+                    $timeFormat = $appointmentTime->format('H:i');
+                    $query->whereRaw("TIME_FORMAT(appointment_time, '%H:%i') = ?", [$timeFormat]);
+                })
+                ->whereIn('status', [
+                    Appointment::STATUS_PENDING,
+                    Appointment::STATUS_APPROVED
+                ])
+                ->first();
+
+            if ($conflictingAppointment) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'هذا الموعد محجوز بالفعل، يرجى اختيار وقت آخر'
+                ], 422);
+            }
+
             if ($validated['service_type'] !== 'custom_design' && !$this->validateCartItem($validated['cart_item_id'])) {
                 return response()->json([
                     'success' => false,
@@ -117,16 +137,6 @@ class AppointmentController extends Controller
         return view('appointments.show', compact('appointment'));
     }
 
-    public function adminIndex()
-    {
-        $this->authorize('viewAny', Appointment::class);
-
-        $appointments = Appointment::with('user')
-            ->latest()
-            ->paginate(15);
-
-        return view('admin.appointments.index', compact('appointments'));
-    }
 
     private function validateAppointment(Request $request): array
     {
@@ -164,7 +174,7 @@ class AppointmentController extends Controller
         $appointment->cart_item_id = $data['cart_item_id'] ?? null;
         $appointment->service_type = $data['service_type'];
         $appointment->appointment_date = Carbon::parse($data['appointment_date'])->format('Y-m-d');
-        $appointment->appointment_time = Carbon::parse($data['appointment_time'])->format('H:i:s');
+        $appointment->appointment_time = Carbon::parse($data['appointment_time'])->format('H:i:00');
         $appointment->phone = $data['phone'];
         $appointment->notes = $data['notes'] ?? null;
         $appointment->status = Appointment::STATUS_PENDING;
@@ -244,6 +254,159 @@ class AppointmentController extends Controller
             Log::error('خطأ في إلغاء الموعد: ' . $e->getMessage());
             return back()
                 ->with('error', 'حدث خطأ أثناء إلغاء الموعد. الرجاء المحاولة مرة أخرى.');
+        }
+    }
+
+    public function getAvailableTimeSlots(Request $request)
+    {
+        try {
+            $request->validate([
+                'date' => 'required|date|after_or_equal:today',
+            ]);
+
+            $date = Carbon::parse($request->date);
+            $dayOfWeek = $date->dayOfWeek;
+
+            // Define time slots based on day
+            $slots = $dayOfWeek === 5 ? // Friday
+                [['start' => '17:00', 'end' => '23:00', 'label' => 'الفترة المسائية']] :
+                [
+                    ['start' => '11:00', 'end' => '14:00', 'label' => 'الفترة الصباحية'],
+                    ['start' => '17:00', 'end' => '23:00', 'label' => 'الفترة المسائية']
+                ];
+
+            $availableSlots = [];
+            $today = Carbon::now();
+            $isToday = $date->isSameDay($today);
+
+            // Get all booked appointments for this date
+            $bookedAppointments = Appointment::where('appointment_date', $date->format('Y-m-d'))
+                ->whereIn('status', [
+                    Appointment::STATUS_PENDING,
+                    Appointment::STATUS_APPROVED
+                ])
+                ->get(['appointment_time'])
+                ->map(function ($appointment) {
+                    // تأكد من تنسيق الوقت بشكل صحيح بغض النظر عن تنسيق التخزين
+                    return Carbon::parse($appointment->appointment_time)->format('H:i');
+                })
+                ->toArray();
+
+            foreach ($slots as $slot) {
+                $slotTimes = [];
+                $currentTime = Carbon::parse($slot['start']);
+                $endTime = Carbon::parse($slot['end']);
+
+                while ($currentTime < $endTime) {
+                    $timeValue = $currentTime->format('H:i');
+
+                    // Skip if time is in the past for today
+                    if ($isToday) {
+                        $slotDateTime = Carbon::parse($date->format('Y-m-d') . ' ' . $timeValue);
+                        if ($slotDateTime <= $today) {
+                            $currentTime->addMinutes(30);
+                            continue;
+                        }
+                    }
+
+                    // Skip if time is already booked
+                    if (!in_array($timeValue, $bookedAppointments)) {
+                        $slotTimes[] = [
+                            'value' => $timeValue,
+                            'label' => Carbon::parse($timeValue)->format('g:i A')
+                        ];
+                    }
+
+                    $currentTime->addMinutes(30);
+                }
+
+                if (count($slotTimes) > 0) {
+                    $availableSlots[] = [
+                        'label' => $slot['label'],
+                        'times' => $slotTimes
+                    ];
+                }
+            }
+
+            // If no available slots, find the next available day
+            $suggestedDate = null;
+            if (empty($availableSlots)) {
+                $checkDate = $date->copy()->addDay();
+                $maxDaysToCheck = 30; // To prevent infinite loop, stop after a reasonable number of days
+                $daysChecked = 0;
+
+                while ($daysChecked < $maxDaysToCheck) {
+                    // Skip Fridays (only has evening slots) if there are other options
+                    if ($daysChecked < $maxDaysToCheck - 7 && $checkDate->dayOfWeek === 5) {
+                        $checkDate->addDay();
+                        $daysChecked++;
+                        continue;
+                    }
+
+                    // Define time slots for this day
+                    $daySlots = $checkDate->dayOfWeek === 5 ? // Friday
+                        [['start' => '17:00', 'end' => '23:00']] :
+                        [
+                            ['start' => '11:00', 'end' => '14:00'],
+                            ['start' => '17:00', 'end' => '23:00']
+                        ];
+
+                    // Get all booked appointment times for this potential date
+                    $bookedTimes = Appointment::where('appointment_date', $checkDate->format('Y-m-d'))
+                        ->whereIn('status', [
+                            Appointment::STATUS_PENDING,
+                            Appointment::STATUS_APPROVED
+                        ])
+                        ->get(['appointment_time'])
+                        ->map(function ($appointment) {
+                            return Carbon::parse($appointment->appointment_time)->format('H:i');
+                        })
+                        ->toArray();
+
+                    // Calculate how many slots are available vs. booked
+                    $availableSlotsForDay = [];
+                    $totalAvailableSlots = 0;
+
+                    foreach ($daySlots as $slot) {
+                        $currentTime = Carbon::parse($slot['start']);
+                        $endTime = Carbon::parse($slot['end']);
+
+                        while ($currentTime < $endTime) {
+                            $timeValue = $currentTime->format('H:i');
+
+                            // If this time slot isn't booked, it's available
+                            if (!in_array($timeValue, $bookedTimes)) {
+                                $totalAvailableSlots++;
+                            }
+
+                            $currentTime->addMinutes(30);
+                        }
+                    }
+
+                    // If we have at least one available slot on this day
+                    if ($totalAvailableSlots > 0) {
+                        $suggestedDate = $checkDate->format('Y-m-d');
+                        break;
+                    }
+
+                    $checkDate->addDay();
+                    $daysChecked++;
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'available_slots' => $availableSlots,
+                'suggested_date' => $suggestedDate,
+                'message' => $suggestedDate ? 'لا توجد مواعيد متاحة في هذا اليوم. يمكنك الحجز في ' . Carbon::parse($suggestedDate)->locale('ar')->translatedFormat('l d F Y') : null
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error getting available time slots: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء جلب المواعيد المتاحة'
+            ], 500);
         }
     }
 }

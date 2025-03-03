@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Appointment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -484,6 +485,16 @@ class ProductController extends Controller
             }
 
             $cart = $cartItem->cart;
+
+            // First find the appointment ID
+            $appointment = Appointment::where('cart_item_id', $cartItem->id)->first();
+
+            if ($appointment) {
+                // Force delete the appointment first
+                $appointment->forceDelete();
+            }
+
+            // Then delete cart item
             $cartItem->delete();
 
             $cart->updateTotals();

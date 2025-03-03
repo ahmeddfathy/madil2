@@ -60,31 +60,37 @@ class AppointmentCreated extends Notification
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('📅 تأكيد الموعد #' . $this->appointment->reference_number)
-            ->greeting("✨ مرحباً {$notifiable->name}")
-            ->line('شكراً لك! تم تأكيد موعدك بنجاح.')
-            ->line('━━━━━━━━━━━━━━━━━━━━━━')
-            ->line("🔖 رقم المرجع: #{$this->appointment->reference_number}")
-            ->line('📋 تفاصيل الموعد:')
-            ->line("نوع الخدمة: " . $this->getServiceTypeText($this->appointment->service_type))
-            ->line("التاريخ: " . $this->appointment->appointment_date->format('Y-m-d'))
-            ->line("الوقت: " . $this->appointment->appointment_time)
-            ->line("الموقع: " . ($this->appointment->location === 'store' ? '🏪 المتجر' : '📍 موقع العميل'))
-            ->when($this->appointment->address, function ($mail) {
-                return $mail->line("العنوان: " . $this->appointment->address);
-            })
-            ->line("رقم الهاتف: " . $this->appointment->phone)
-            ->when($this->appointment->notes, function ($mail) {
-                return $mail->line("ملاحظات: " . $this->appointment->notes);
-            })
-            ->when($this->appointment->cart_item_id, function ($mail) {
-                return $mail->line("المنتج: " . $this->appointment->cartItem->product->name);
-            })
-            ->line('━━━━━━━━━━━━━━━━━━━━━━')
-            ->action('👉 تفاصيل الموعد', route('appointments.show', $this->appointment->reference_number))
-            ->line('━━━━━━━━━━━━━━━━━━━━━━')
-            ->line('🙏 شكراً لاختيارك خدماتنا!')
-            ->line('📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.');
+            ->view('emails.notifications', [
+                'title' => '📅 تأكيد الموعد #' . $this->appointment->reference_number,
+                'greeting' => "✨ مرحباً {$notifiable->name}",
+                'intro' => 'شكراً لك! تم تأكيد موعدك بنجاح.',
+                'content' => [
+                    'sections' => [
+                        [
+                            'title' => 'تفاصيل الموعد',
+                            'items' => [
+                                "🔖 رقم المرجع: #{$this->appointment->reference_number}",
+                                "نوع الخدمة: " . $this->getServiceTypeText($this->appointment->service_type),
+                                "التاريخ: " . $this->appointment->appointment_date->format('Y-m-d'),
+                                "الوقت: " . $this->appointment->appointment_time,
+                                "الموقع: " . ($this->appointment->location === 'store' ? '🏪 المتجر' : '📍 موقع العميل'),
+                                $this->appointment->address ? "العنوان: " . $this->appointment->address : null,
+                                "رقم الهاتف: " . $this->appointment->phone,
+                                $this->appointment->notes ? "ملاحظات: " . $this->appointment->notes : null,
+                                $this->appointment->cart_item_id ? "المنتج: " . $this->appointment->cartItem->product->name : null
+                            ]
+                        ]
+                    ],
+                    'action' => [
+                        'text' => '👉 تفاصيل الموعد',
+                        'url' => route('appointments.show', $this->appointment->reference_number)
+                    ],
+                    'outro' => [
+                        '🙏 شكراً لاختيارك خدماتنا!',
+                        '📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.'
+                    ]
+                ]
+            ]);
     }
 
     public function toArray($notifiable): array

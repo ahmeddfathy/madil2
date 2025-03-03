@@ -93,25 +93,34 @@ class AppointmentDateTimeUpdated extends Notification
     public function toMail($notifiable): MailMessage
     {
         try {
-            $message = (new MailMessage)
-                ->subject("📅 تحديث موعد الزيارة - {$this->appointment->reference_number}")
-                ->greeting("✨ مرحباً {$notifiable->name}!")
-                ->line("تم تحديث موعد زيارتك")
-                ->line('━━━━━━━━━━━━━━━━━━━━━━')
-                ->line("🔖 رقم المرجع: {$this->appointment->reference_number}")
-                ->line("📅 التاريخ الجديد: {$this->appointmentDate}")
-                ->line("⏰ الوقت الجديد: {$this->appointmentTime}");
-
-            if ($this->appointmentNotes) {
-                $message->line('━━━━━━━━━━━━━━━━━━━━━━')
-                       ->line("📝 ملاحظات: {$this->appointmentNotes}");
-            }
-
-            return $message
-                ->line('━━━━━━━━━━━━━━━━━━━━━━')
-                ->action('👉 تفاصيل الموعد', route('appointments.show', $this->appointment->reference_number))
-                ->line('🙏 شكراً لاختيارك خدماتنا!')
-                ->line('📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.');
+            return (new MailMessage)
+                ->view('emails.notifications', [
+                    'title' => '📅 تحديث موعد الزيارة',
+                    'greeting' => "✨ مرحباً {$notifiable->name}",
+                    'intro' => "تم تحديث موعد زيارتك إلى {$this->appointmentDate} الساعة {$this->appointmentTime}",
+                    'content' => [
+                        'sections' => [
+                            [
+                                'title' => 'تفاصيل الموعد الجديد',
+                                'items' => [
+                                    "🔖 رقم المرجع: {$this->appointment->reference_number}",
+                                    "📅 التاريخ: {$this->appointmentDate}",
+                                    "⏰ الوقت: {$this->appointmentTime}",
+                                    "📍 الموقع: {$this->appointment->location_text}",
+                                    $this->appointment->address ? "العنوان: {$this->appointment->address}" : null,
+                                ]
+                            ]
+                        ],
+                        'action' => [
+                            'text' => '👉 تفاصيل الموعد',
+                            'url' => route('appointments.show', $this->appointment->reference_number)
+                        ],
+                        'outro' => [
+                            '🙏 شكراً لاختيارك خدماتنا!',
+                            '📞 إذا كان لديك أي استفسارات، لا تتردد في الاتصال بنا.'
+                        ]
+                    ]
+                ]);
         } catch (Throwable $e) {
             Log::error('Error preparing appointment date/time update email', [
                 'error' => $e->getMessage(),
