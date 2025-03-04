@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\AppointmentCreated;
-use Illuminate\Support\Facades\Notification;
+
 
 class AppointmentController extends Controller
 {

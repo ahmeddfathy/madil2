@@ -137,7 +137,7 @@ class Appointment extends Model
         return $query->where('status', self::STATUS_PENDING)
                     ->where('service_type', self::SERVICE_NEW_ABAYA)
                     ->whereDoesntHave('orderItems')
-                    ->where('created_at', '<=', now()->subMinute());
+                    ->where('created_at', '<=', now()->subHour());
     }
 
     /**

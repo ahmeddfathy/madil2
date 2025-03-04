@@ -19,7 +19,7 @@ class CleanupPendingAppointments extends Command
      *
      * @var string
      */
-    protected $description = 'حذف المواعيد المعلقة التي لم يتم إكمال طلباتها بعد 30 دقيقة';
+    protected $description = 'حذف المواعيد المعلقة التي لم يتم إكمال طلباتها بعد ساعة';
 
     /**
      * Execute the console command.
@@ -28,6 +28,7 @@ class CleanupPendingAppointments extends Command
     {
         $count = Appointment::cleanupPendingAppointments();
 
-        $this->info("تم حذف {$count} من المواعيد المعلقة.");
+        $this->info("تم حذف {$count} من المواعيد المعلقة بنجاح");
+        $this->line("سيتم تشغيل هذا الأمر تلقائياً كل ساعة");
     }
 }

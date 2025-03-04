@@ -9,6 +9,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 // تنظيف المواعيد المعلقة كل دقيقة
-Schedule::command('appointments:cleanup-pending')->everyMinute()
+Schedule::command('appointments:cleanup-pending')->hourly()
     ->withoutOverlapping()
     ->appendOutputTo(storage_path('logs/appointments-cleanup.log'));
