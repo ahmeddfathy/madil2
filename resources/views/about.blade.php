@@ -240,7 +240,7 @@
     </section>
 
     <!-- Team Section -->
-    <section id="team" class="team-section">
+    <!-- <section id="team" class="team-section">
         <div class="container">
             <div class="section-header text-center mb-5">
                 <h2>فريق العمل</h2>
@@ -309,7 +309,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- Stats Section -->
     <section class="stats-section">
@@ -374,7 +374,7 @@
                             </li>
                             <li class="d-flex align-items-center">
                                 <i class="fas fa-map-marker-alt ms-2"></i>
-                                <span>شارع الملك فهد، الرياض، المملكة العربية السعودية</span>
+                                <span>مدينه جدة</span>
                             </li>
                         </ul>
                     </div>

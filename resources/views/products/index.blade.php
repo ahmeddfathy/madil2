@@ -336,7 +336,7 @@
                 </li>
                 <li class="d-flex align-items-center">
                   <i class="fas fa-map-marker-alt ms-2"></i>
-                  <span>شارع الملك فهد، الرياض، المملكة العربية السعودية</span>
+                    <span>مدينه جدة</span>
                 </li>
               </ul>
             </div>

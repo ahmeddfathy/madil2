@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>المتجر الحديث | الرئيسية</title>
+    <title>Madil | الرئيسية</title>
     <!-- Font Awesome -->
     <link
       rel="stylesheet"
@@ -207,7 +207,7 @@
                   <i class="fas fa-map-marker-alt"></i>
                   <div class="info-content">
                     <h5>العنوان</h5>
-                    <p>شارع الملك فهد، الرياض، المملكة العربية السعودية</p>
+                    <p>مدينه جدة</p>
                   </div>
                 </div>
                 <div class="info-item">
@@ -316,7 +316,7 @@
                 </li>
                 <li class="d-flex align-items-center">
                   <i class="fas fa-map-marker-alt ms-2"></i>
-                  <span>شارع الملك فهد، الرياض، المملكة العربية السعودية</span>
+                  <span>مدينه جدة</span>
                 </li>
               </ul>
             </div>
@@ -325,7 +325,7 @@
       </div>
       <div class="footer-bottom">
         <div class="container">
-          <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} المتجر الحديث</p>
+          <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} Madil</p>
         </div>
       </div>
     </footer>

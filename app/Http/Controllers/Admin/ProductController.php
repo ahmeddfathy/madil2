@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 
 class ProductController extends Controller
@@ -353,7 +354,7 @@ class ProductController extends Controller
             }
 
             // Finally delete the product
-            $product->forceDelete(); // not needed anymore since we removed SoftDeletes, but kept for clarity
+            $product->delete();
 
             DB::commit();
             return redirect()->route('admin.products.index')
@@ -398,5 +399,20 @@ class ProductController extends Controller
         }
 
         return $data;
+    }
+
+    protected function deleteFile(string $path): bool
+    {
+        $path = str_replace('public/', '', $path);
+
+        if (Storage::disk('public')->exists($path)) {
+            return Storage::disk('public')->delete($path);
+        }
+
+        if (Storage::exists($path)) {
+            return Storage::delete($path);
+        }
+
+        return false;
     }
 }

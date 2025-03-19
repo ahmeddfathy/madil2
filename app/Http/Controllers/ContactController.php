@@ -18,8 +18,7 @@ class ContactController extends Controller
         ]);
 
         // Send email
-        Mail::to('
-info@madil-sa.com')->send(new ContactFormMail($validated));
+        Mail::to('info@madil-sa.com')->send(new ContactFormMail($validated));
 
         return redirect()->back()->with('success', 'تم إرسال رسالتك بنجاح!');
     }
