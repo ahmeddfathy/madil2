@@ -4,6 +4,28 @@
     width: 100%;
 }
 
+:root {
+    --primary: #009245;
+    --primary-hover: #007a38;
+    --primary-light: rgba(0, 146, 69, 0.12);
+    --primary-rgb: 0, 146, 69;
+    --secondary: #00b050;
+    --secondary-light: rgba(0, 176, 80, 0.12);
+    --secondary-rgb: 0, 176, 80;
+    --success: #059669;
+    --success-light: rgba(5, 150, 105, 0.12);
+    --success-rgb: 5, 150, 105;
+    --info: #0284C7;
+    --info-light: rgba(2, 132, 199, 0.12);
+    --info-rgb: 2, 132, 199;
+    --warning: #D97706;
+    --warning-light: rgba(217, 119, 6, 0.12);
+    --warning-rgb: 217, 119, 6;
+    --danger: #DC2626;
+    --danger-light: rgba(220, 38, 38, 0.12);
+    --danger-rgb: 220, 38, 38;
+}
+
 /* Icon Styles */
 .icon-circle {
     width: 40px;
@@ -181,7 +203,7 @@
 }
 
 .bg-gradient-primary {
-    background: linear-gradient(45deg, #4338CA, #6366F1) !important;
+    background: linear-gradient(45deg, #009245, #00b050) !important;
 }
 
 .bg-gradient-success {
@@ -193,7 +215,7 @@
 }
 
 .text-primary {
-    color: #4338CA !important;
+    color: #009245 !important;
 }
 
 .text-success {

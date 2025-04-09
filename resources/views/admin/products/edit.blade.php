@@ -98,15 +98,6 @@
                                             </div>
 
                                             <div class="mb-3">
-                                                <label class="form-label">السعر (ريال)</label>
-                                                <input type="number" name="price" class="form-control shadow-sm"
-                                                       value="{{ old('price', $product->price) }}">
-                                                @error('price')
-                                                    <div class="text-danger small mt-1">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-
-                                            <div class="mb-3">
                                                 <label class="form-label">المخزون</label>
                                                 <input type="number" name="stock" class="form-control shadow-sm"
                                                        value="{{ old('stock', $product->stock) }}">
@@ -160,7 +151,7 @@
                                                     @foreach($product->images as $image)
                                                     <div class="col-auto">
                                                         <div class="position-relative">
-                                                            <img src="{{ Storage::url($image->image_path) }}"
+                                                            <img src="{{ url('storage/' . $image->image_path) }}"
                                                                  alt="صورة المنتج"
                                                                  class="rounded"
                                                                  style="width: 80px; height: 80px; object-fit: cover;">
@@ -309,6 +300,7 @@
                                                     <div class="input-group mb-2 shadow-sm">
                                                         <input type="hidden" name="size_ids[]" value="{{ $size->id }}">
                                                         <input type="text" name="sizes[]" class="form-control" placeholder="المقاس" value="{{ $size->size }}">
+                                                        <input type="number" name="size_prices[]" class="form-control" placeholder="السعر" step="0.01" value="{{ $size->price }}">
                                                         <div class="input-group-text">
                                                             <label class="mb-0">
                                                                 <input type="checkbox" name="size_available[]" value="1" {{ $size->is_available ? 'checked' : '' }} class="me-1">
@@ -339,19 +331,6 @@
                                                 خيارات المنتج
                                             </h5>
                                             <div class="row g-3">
-                                                <!-- Appointment Option -->
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="checkbox"
-                                                               id="enable_appointments" name="enable_appointments"
-                                                               value="1" {{ $product->enable_appointments ? 'checked' : '' }}>
-                                                        <label class="form-check-label" for="enable_appointments">
-                                                            <i class="fas fa-calendar-check me-2"></i>
-                                                            السماح بحجز موعد للمقاسات
-                                                        </label>
-                                                    </div>
-                                                </div>
-
                                                 <!-- Color Selection Option -->
                                                 <div class="col-md-6">
                                                     <div class="form-check form-switch">
@@ -360,7 +339,7 @@
                                                                value="1" {{ $product->enable_color_selection ? 'checked' : '' }}>
                                                         <label class="form-check-label" for="enable_color_selection">
                                                             <i class="fas fa-palette me-2"></i>
-                                                            السماح باختيار الألوان المحددة
+                                                            السماح باختيار اللون
                                                         </label>
                                                     </div>
                                                 </div>
@@ -413,6 +392,56 @@
                                     </div>
                                 </div>
 
+                                <!-- Quantities -->
+                                <div class="col-12 mt-4">
+                                    <div class="card card-body shadow-sm border-0">
+                                        <div class="card-title d-flex align-items-center justify-content-between">
+                                            <h5>خيارات الكمية والتسعير</h5>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       id="hasQuantities"
+                                                       name="enable_quantity_pricing"
+                                                       value="1"
+                                                       {{ $product->enable_quantity_pricing ? 'checked' : '' }}
+                                                       onchange="toggleQuantitiesSection(this)">
+                                                <label class="form-check-label" for="hasQuantities">تفعيل تسعير الكميات</label>
+                                            </div>
+                                        </div>
+                                        <div id="quantitiesSection" style="display: {{ $product->enable_quantity_pricing ? 'block' : 'none' }}">
+                                            @error('quantities.*')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
+                                            @error('quantity_prices.*')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
+                                            <div id="quantitiesContainer">
+                                                @foreach($product->quantities as $quantity)
+                                                <div class="input-group mb-2 shadow-sm">
+                                                    <input type="hidden" name="quantity_ids[]" value="{{ $quantity->id }}">
+                                                    <input type="number" name="quantities[]" class="form-control" placeholder="الكمية" value="{{ $quantity->quantity_value }}">
+                                                    <input type="number" name="quantity_prices[]" class="form-control" placeholder="السعر" step="0.01" value="{{ $quantity->price }}">
+                                                    <input type="text" name="quantity_descriptions[]" class="form-control" placeholder="وصف (اختياري)" value="{{ $quantity->description }}">
+                                                    <div class="input-group-text">
+                                                        <label class="mb-0">
+                                                            <input type="checkbox" name="quantity_available[]" value="{{ $loop->index }}" {{ $quantity->is_available ? 'checked' : '' }} class="me-1">
+                                                            متوفر
+                                                        </label>
+                                                    </div>
+                                                    <button type="button" class="btn btn-light-danger" onclick="this.closest('.input-group').remove()">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                            <button type="button" class="btn btn-light-secondary btn-sm" onclick="addQuantityInput()">
+                                                <i class="fas fa-plus"></i>
+                                                إضافة خيار كمية
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Submit Button -->
                                 <div class="col-12">
                                     <div class="card border-0 shadow-sm">
@@ -435,7 +464,7 @@
 @endsection
 
 @section('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/admin/products.css') }}">
+<link rel="stylesheet" href="/assets/css/admin/products.css">
 @endsection
 
 @section('scripts')
@@ -456,6 +485,11 @@ function toggleSizesSection(checkbox) {
     if (checkbox.checked && !document.querySelector('#sizesContainer .input-group')) {
         addSizeInput();
     }
+}
+
+function toggleQuantitiesSection(checkbox) {
+    const section = document.getElementById('quantitiesSection');
+    section.style.display = checkbox.checked ? 'block' : 'none';
 }
 
 function addNewImageInput() {
@@ -507,9 +541,33 @@ function addSizeInput() {
     div.innerHTML = `
         <input type="hidden" name="size_ids[]" value="">
         <input type="text" name="sizes[]" class="form-control" placeholder="المقاس">
+        <input type="number" name="size_prices[]" class="form-control" placeholder="السعر" step="0.01">
         <div class="input-group-text">
             <label class="mb-0">
                 <input type="checkbox" name="size_available[]" value="1" checked class="me-1">
+                متوفر
+            </label>
+        </div>
+        <button type="button" class="btn btn-light-danger" onclick="this.closest('.input-group').remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+function addQuantityInput() {
+    const container = document.getElementById('quantitiesContainer');
+    const index = container.children.length;
+    const div = document.createElement('div');
+    div.className = 'input-group mb-2 shadow-sm';
+    div.innerHTML = `
+        <input type="hidden" name="quantity_ids[]" value="">
+        <input type="number" name="quantities[]" class="form-control" placeholder="الكمية">
+        <input type="number" name="quantity_prices[]" class="form-control" placeholder="السعر" step="0.01">
+        <input type="text" name="quantity_descriptions[]" class="form-control" placeholder="وصف (اختياري)">
+        <div class="input-group-text">
+            <label class="mb-0">
+                <input type="checkbox" name="quantity_available[]" value="${index}" checked class="me-1">
                 متوفر
             </label>
         </div>

@@ -18,9 +18,6 @@
           <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
             {{ __('Products') }}
           </x-nav-link>
-          <x-nav-link :href="route('appointments.index')" :active="request()->routeIs('appointments.*')">
-            {{ __('Appointments') }}
-          </x-nav-link>
         </div>
       </div>
 
@@ -54,9 +51,6 @@
               </x-dropdown-link>
               <x-dropdown-link :href="route('orders.index')">
                 {{ __('My Orders') }}
-              </x-dropdown-link>
-              <x-dropdown-link :href="route('appointments.index')">
-                {{ __('My Appointments') }}
               </x-dropdown-link>
 
               <!-- Authentication -->

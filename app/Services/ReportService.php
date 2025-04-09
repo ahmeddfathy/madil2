@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\Appointment;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
@@ -195,32 +194,6 @@ class ReportService
     ];
   }
 
-  public function getAppointmentsReport($startDate = null, $endDate = null)
-  {
-    if ($startDate === null) {
-      $startDate = $this->getStartDate('month');
-    }
-
-    $query = Appointment::query();
-
-    if ($startDate) {
-      $query->whereDate('appointment_date', '>=', $startDate);
-    }
-    if ($endDate) {
-      $query->whereDate('appointment_date', '<=', $endDate);
-    }
-
-    $appointmentsData = $query->select('status', DB::raw('COUNT(*) as count'))
-      ->groupBy('status')
-      ->get();
-
-    return [
-      'total' => $appointmentsData->sum('count'),
-      'by_status' => $appointmentsData->pluck('count', 'status')->toArray(),
-      'completion_rate' => $this->calculateCompletionRate($appointmentsData),
-    ];
-  }
-
   public function getInventoryReport()
   {
     $stock_distribution = [
@@ -246,14 +219,6 @@ class ReportService
       'year' => Carbon::now()->subYear(),
       default => Carbon::now()->subMonth(),
     };
-  }
-
-  protected function calculateCompletionRate($appointmentsData): float
-  {
-    $completed = $appointmentsData->firstWhere('status', Appointment::STATUS_COMPLETED)?->count ?? 0;
-    $total = $appointmentsData->sum('count');
-
-    return $total > 0 ? round(($completed / $total) * 100, 2) : 0;
   }
 
   protected function calculateGrowth($startDate, $endDate): array

@@ -62,7 +62,7 @@ class OrderController extends Controller
         $orders = $query->paginate(10);
 
         // Transform orders data
-        $orders->getCollection()->transform(function ($order) {
+        $transformedCollection = collect($orders->items())->map(function ($order) {
             return [
                 'id' => $order->id,
                 'uuid' => $order->uuid,
@@ -120,6 +120,15 @@ class OrderController extends Controller
             ];
         });
 
+        // Create a new paginator instance with the transformed data
+        $orders = new \Illuminate\Pagination\LengthAwarePaginator(
+            $transformedCollection,
+            $orders->total(),
+            $orders->perPage(),
+            $orders->currentPage(),
+            ['path' => \Illuminate\Support\Facades\Request::url(), 'query' => \Illuminate\Support\Facades\Request::query()]
+        );
+
         // Get available statuses for filtering
         $orderStatuses = [
             Order::ORDER_STATUS_PENDING => 'قيد الانتظار',
@@ -145,42 +154,33 @@ class OrderController extends Controller
     }
   }
 
-  public function show(Order $order)
+  public function show($uuid)
   {
-    // تحميل العلاقات المطلوبة
-    $order->load([
-        'user.addresses',
-        'user.phoneNumbers',
-        'items.product',
-        'items.appointment'
+    $order = Order::where('uuid', $uuid)
+        ->with(['user', 'items.product', 'items.product.category', 'address', 'phoneNumber'])
+        ->firstOrFail();
+
+    // Format order for display
+    $formattedOrder = $this->formatOrderForDisplay($order);
+
+    // Get additional addresses and phone numbers for the user if available
+    $additionalAddresses = collect([]);
+    $additionalPhones = collect([]);
+
+    if ($order->user) {
+        // Get all addresses for the user
+        $additionalAddresses = $order->user->addresses;
+
+        // Get all phone numbers for the user
+        $additionalPhones = $order->user->phoneNumbers;
+    }
+
+    return view('admin.orders.show', [
+        'order' => $order,
+        'formattedOrder' => $formattedOrder,
+        'additionalAddresses' => $additionalAddresses,
+        'additionalPhones' => $additionalPhones,
     ]);
-
-    // فصل المنتجات حسب المواعيد
-    $itemsWithAppointments = $order->items->filter(function($item) {
-        return $item->appointment !== null;
-    });
-
-    $itemsWithoutAppointments = $order->items->filter(function($item) {
-        return $item->appointment === null;
-    });
-
-    // الحصول على العناوين الإضافية
-    $additionalAddresses = $order->user->addresses()
-        ->where('id', '!=', $order->address_id)
-        ->get();
-
-    // الحصول على أرقام الهواتف الإضافية
-    $additionalPhones = $order->user->phoneNumbers()
-        ->where('phone', '!=', $order->phone)
-        ->get();
-
-    return view('admin.orders.show', compact(
-        'order',
-        'itemsWithAppointments',
-        'itemsWithoutAppointments',
-        'additionalAddresses',
-        'additionalPhones'
-    ));
   }
 
   public function updateStatus(Request $request, Order $order)
@@ -246,6 +246,58 @@ class OrderController extends Controller
     }
   }
 
+  private function formatOrderForDisplay(Order $order)
+  {
+    return [
+        'id' => $order->id,
+        'uuid' => $order->uuid,
+        'order_number' => $order->order_number,
+        'customer' => [
+            'name' => $order->user->name ?? 'العميل غير متوفر',
+            'email' => $order->user->email ?? '-',
+            'phone' => $order->user->phone ?? '-',
+        ],
+        'address' => $order->shipping_address ?? ($order->address ? $order->address->getFullAddressAttribute() : '-'),
+        'phone' => $order->phone ?? ($order->phoneNumber ? $order->phoneNumber->phone : '-'),
+        'items' => $order->items->map(function ($item) {
+            return [
+                'product_name' => $item->product->name ?? 'المنتج غير متوفر',
+                'product_code' => $item->product->code ?? '-',
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'total' => $item->price * $item->quantity,
+            ];
+        }),
+        'total_amount' => $order->total_amount,
+        'status' => [
+            'code' => $order->order_status,
+            'text' => match($order->order_status) {
+                Order::ORDER_STATUS_COMPLETED => 'مكتمل',
+                Order::ORDER_STATUS_PROCESSING => 'قيد المعالجة',
+                Order::ORDER_STATUS_PENDING => 'معلق',
+                Order::ORDER_STATUS_CANCELLED => 'ملغي',
+                Order::ORDER_STATUS_OUT_FOR_DELIVERY => 'جاري التوصيل',
+                Order::ORDER_STATUS_ON_THE_WAY => 'في الطريق',
+                Order::ORDER_STATUS_DELIVERED => 'تم التوصيل',
+                Order::ORDER_STATUS_RETURNED => 'مرتجع',
+                default => 'غير معروف'
+            }
+        ],
+        'payment' => [
+            'status' => $order->payment_status,
+            'text' => match($order->payment_status) {
+                Order::PAYMENT_STATUS_PAID => 'مدفوع',
+                Order::PAYMENT_STATUS_PENDING => 'معلق',
+                Order::PAYMENT_STATUS_FAILED => 'فشل',
+                default => 'غير معروف'
+            }
+        ],
+        'created_at' => $order->created_at->format('Y-m-d H:i'),
+        'formatted_date' => $order->created_at->format('d/m/Y'),
+        'notes' => $order->notes ?? '-'
+    ];
+  }
+
   public function updatePaymentStatus(Request $request, Order $order)
   {
     $validated = $request->validate([
@@ -261,25 +313,5 @@ class OrderController extends Controller
     ]);
 
     return back()->with('success', 'Payment status updated successfully.');
-  }
-
-  /**
-   * تحديث المبلغ المدفوع للطلب
-   */
-  public function updatePayment(Request $request, Order $order)
-  {
-    $request->validate([
-        'amount_paid' => 'required|numeric|min:0|max:' . $order->total_amount,
-    ]);
-
-    $order->update([
-        'amount_paid' => $request->amount_paid,
-        // تحديث حالة الدفع تلقائياً
-        'payment_status' => $request->amount_paid >= $order->total_amount
-            ? Order::PAYMENT_STATUS_PAID
-            : Order::PAYMENT_STATUS_PENDING,
-    ]);
-
-    return back()->with('success', 'تم تحديث المبلغ المدفوع بنجاح');
   }
 }

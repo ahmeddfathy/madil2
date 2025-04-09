@@ -22,17 +22,11 @@
                                         <form action="{{ route('admin.products.index') }}" method="GET" class="row g-3">
                                             <div class="col-md-4">
                                                 <label class="form-label">
-                                                    <i class="fas fa-box text-primary me-2"></i>
-                                                    اختر المنتج
+                                                    <i class="fas fa-search text-primary me-2"></i>
+                                                    بحث
                                                 </label>
-                                                <select name="product" class="form-select shadow-sm">
-                                                    <option value="">كل المنتجات</option>
-                                                    @foreach($allProducts as $prod)
-                                                        <option value="{{ $prod->id }}" {{ request('product') == $prod->id ? 'selected' : '' }}>
-                                                            {{ $prod->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                                                <input type="text" name="search" class="form-control shadow-sm"
+                                                       placeholder="ابحث عن المنتجات..." value="{{ request('search') }}">
                                             </div>
                                             <div class="col-md-4">
                                                 <label class="form-label">
@@ -65,10 +59,6 @@
                                                     <i class="fas fa-filter me-2"></i>
                                                     تصفية
                                                 </button>
-                                                <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
-                                                    <i class="fas fa-times me-2"></i>
-                                                    مسح الفلتر
-                                                </a>
                                             </div>
                                         </form>
                                     </div>
@@ -99,7 +89,7 @@
                                         <div class="product-card shadow-sm">
                                             <div class="product-image-container">
                                                 @if($product->primary_image)
-                                                <img src="{{ Storage::url($product->primary_image->image_path) }}"
+                                                <img src="{{ url('storage/' . $product->primary_image->image_path) }}"
                                                     alt="{{ $product->name }}"
                                                     class="product-image" />
                                                 @else
@@ -130,8 +120,12 @@
                                                 <p class="product-description text-muted">
                                                     {{ Str::limit($product->description, 100) }}
                                                 </p>
-                                                <div class="product-price fw-bold text-primary">
-                                                    {{ number_format($product->price, 0) }} ريال
+                                                <div class="product-price fw-bold text-primary mt-2">
+                                                    @if($product->min_price == $product->max_price)
+                                                        {{ number_format($product->min_price, 0) }} ريال
+                                                    @else
+                                                        {{ number_format($product->min_price, 0) }} - {{ number_format($product->max_price, 0) }} ريال
+                                                    @endif
                                                 </div>
                                                 <div class="product-status mt-2">
                                                     @if($product->is_available)
@@ -194,5 +188,5 @@
 @endsection
 
 @section('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/admin/products.css') }}">
+<link rel="stylesheet" href="/assets/css/admin/products.css">
 @endsection

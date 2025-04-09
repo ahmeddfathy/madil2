@@ -1,15 +1,27 @@
 :root {
-    --primary: #4338CA;
-    --primary-hover: #3730A3;
-    --primary-light: rgba(67, 56, 202, 0.1);
+    --primary: #009245;
+    --primary-hover: #007a38;
+    --primary-light: rgba(0, 146, 69, 0.1);
+    --primary-rgb: 0, 146, 69;
+    --secondary: #00b050;
+    --secondary-light: rgba(0, 176, 80, 0.1);
+    --secondary-rgb: 0, 176, 80;
     --danger: #DC2626;
     --danger-hover: #B91C1C;
+    --danger-light: rgba(220, 38, 38, 0.1);
+    --danger-rgb: 220, 38, 38;
     --success: #059669;
     --success-hover: #047857;
+    --success-light: rgba(5, 150, 105, 0.1);
+    --success-rgb: 5, 150, 105;
     --warning: #D97706;
     --warning-hover: #B45309;
+    --warning-light: rgba(217, 119, 6, 0.1);
+    --warning-rgb: 217, 119, 6;
     --info: #2563EB;
     --info-hover: #1D4ED8;
+    --info-light: rgba(37, 99, 235, 0.1);
+    --info-rgb: 37, 99, 235;
     --border-color: #D1D5DB;
     --text-dark: #111827;
     --text-medium: #1F2937;
@@ -293,7 +305,7 @@
 }
 
 /* Status Colors */
-.bg-gradient-primary { background: linear-gradient(135deg, var(--primary), #4F46E5); }
+.bg-gradient-primary { background: linear-gradient(135deg, #009245, #00b050); }
 .bg-gradient-success { background: linear-gradient(135deg, var(--success), #10B981); }
 .bg-gradient-warning { background: linear-gradient(135deg, var(--warning), #F59E0B); }
 .bg-gradient-info { background: linear-gradient(135deg, var(--info), #3B82F6); }
@@ -341,7 +353,7 @@
 
 .btn-primary {
     min-width: 140px;
-    box-shadow: 0 4px 6px -1px rgba(67, 56, 202, 0.3);
+    box-shadow: 0 4px 6px -1px rgba(0, 146, 69, 0.3);
 }
 
 /* Responsive Styles */

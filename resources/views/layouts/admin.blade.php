@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'لوحة التحكم') - مدير مديل</title>
+    <title>@yield('title', 'لوحة التحكم') - بر الليث</title>
 
     <!-- Styles -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
@@ -22,8 +22,10 @@
         <aside class="sidebar shadow-sm" id="sidebar">
             <div class="sidebar-header">
                 <a href="{{ route('admin.dashboard') }}" class="sidebar-logo">
-                    مدير ماديل
+                    <i class="fas fa-tshirt me-2"></i>
+                    بر الليث
                 </a>
+                <button class="d-lg-none btn btn-close" id="closeSidebar" aria-label="Close"></button>
             </div>
 
             <nav class="sidebar-nav">
@@ -55,6 +57,23 @@
                     </div>
                 </div>
 
+                <!-- Coupons & Discounts Section -->
+                <div class="nav-section">
+                    <div class="nav-section-title">الخصومات</div>
+                    <div class="nav-item">
+                        <a href="{{ route('admin.coupons.index') }}" class="nav-link {{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}">
+                            <i class="fas fa-ticket-alt"></i>
+                            <span class="nav-title">كوبونات الخصم</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{{ route('admin.quantity-discounts.index') }}" class="nav-link {{ request()->routeIs('admin.quantity-discounts.*') ? 'active' : '' }}">
+                            <i class="fas fa-percent"></i>
+                            <span class="nav-title">خصومات الكمية</span>
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Orders Section -->
                 <div class="nav-section">
                     <div class="nav-section-title">الطلبات</div>
@@ -62,17 +81,6 @@
                         <a href="{{ route('admin.orders.index') }}" class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="nav-title">الطلبات</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Appointments Section -->
-                <div class="nav-section">
-                    <div class="nav-section-title">المواعيد</div>
-                    <div class="nav-item">
-                        <a href="{{ route('admin.appointments.index') }}" class="nav-link {{ request()->routeIs('admin.appointments.*') ? 'active' : '' }}">
-                            <i class="fas fa-calendar"></i>
-                            <span class="nav-title">المواعيد</span>
                         </a>
                     </div>
                 </div>
@@ -147,6 +155,7 @@
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const sidebarToggle = document.getElementById('sidebarToggle');
+        const closeSidebar = document.getElementById('closeSidebar');
 
         function toggleSidebar() {
             sidebar.classList.toggle('active');
@@ -154,13 +163,22 @@
             document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
         }
 
+        function closeSidebarFunc() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
         sidebarToggle.addEventListener('click', toggleSidebar);
-        sidebarOverlay.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebarFunc);
+        if (closeSidebar) {
+            closeSidebar.addEventListener('click', closeSidebarFunc);
+        }
 
         // Close sidebar on window resize if in mobile view
         window.addEventListener('resize', function() {
             if (window.innerWidth >= 992 && sidebar.classList.contains('active')) {
-                toggleSidebar();
+                closeSidebarFunc();
             }
         });
     </script>

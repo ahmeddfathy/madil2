@@ -22,8 +22,8 @@
                                                 </span>
                                                 تفاصيل الطلب #{{ $order->order_number }}
                                             </h5>
-                                            <p class="text-muted mb-0 fs-sm">عرض تفاصيل الطلب والمنتجات والمواعيد</p>
-                </div>
+                                            <p class="text-muted mb-0 fs-sm">عرض تفاصيل الطلب والمنتجات</p>
+                                        </div>
                                         <div class="actions d-flex gap-2">
                                             <a href="{{ route('admin.orders.index') }}" class="btn btn-light-secondary">
                                                 <i class="fas fa-arrow-right me-2"></i>
@@ -98,68 +98,6 @@
                                                 <h3 class="text-white mb-0">{{ $order->created_at->format('Y/m/d') }}</h3>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Payment Details Card -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <div class="card border-0 shadow-sm payment-details-card">
-                                    <div class="card-body">
-                                        <h5 class="card-title mb-4 d-flex align-items-center">
-                                            <span class="icon-circle bg-success text-white me-2">
-                                                <i class="fas fa-money-bill-wave"></i>
-                                            </span>
-                                            تفاصيل الدفع
-                                        </h5>
-
-                                        <form action="{{ route('admin.orders.update-payment', $order) }}" method="POST">
-                                            @csrf
-                                            @method('PATCH')
-
-                                            <div class="row align-items-end">
-                                                <div class="col-md-4">
-                                                    <div class="payment-info mb-3">
-                                                        <label for="amount_paid" class="form-label">المبلغ المدفوع</label>
-                                                        <div class="input-group">
-                                                            <input type="number"
-                                                                   name="amount_paid"
-                                                                   id="amount_paid"
-                                                                   value="{{ old('amount_paid', $order->amount_paid) }}"
-                                                                   min="0"
-                                                                   max="{{ $order->total_amount }}"
-                                                                   class="form-control"
-                                                                   required>
-                                                            <span class="input-group-text">ريال</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="payment-stats mb-3">
-                                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                                            <span class="text-muted">المبلغ الكلي:</span>
-                                                            <span class="fw-bold">{{ number_format($order->total_amount) }} ريال</span>
-                                                        </div>
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <span class="text-muted">المبلغ المتبقي:</span>
-                                                            <span class="fw-bold {{ $order->remaining_amount > 0 ? 'text-danger' : 'text-success' }}">
-                                                                {{ number_format($order->remaining_amount) }} ريال
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <button type="submit" class="btn btn-primary w-100">
-                                                        <i class="fas fa-save me-2"></i>
-                                                        تحديث المبلغ المدفوع
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -273,155 +211,20 @@
                                             منتجات الطلب
                                         </h5>
 
-                                        <!-- Products with Appointments -->
-                                        @if($itemsWithAppointments->isNotEmpty())
-                                        <div class="table-responsive mb-4">
-                                            <h6 class="mb-3">
-                                                <i class="fas fa-calendar-check text-primary me-2"></i>
-                                                المنتجات مع مواعيد
-                                            </h6>
-                                            <table class="table table-hover align-middle">
-                                                <thead class="bg-light">
-                                                    <tr>
-                                                        <th class="border-0 text-center" style="width: 60px">#</th>
-                                                        <th class="border-0" style="min-width: 250px">المنتج</th>
-                                                        <th class="border-0 text-center" style="width: 100px">الكمية</th>
-                                                        <th class="border-0" style="width: 100px">اللون</th>
-                                                        <th class="border-0" style="width: 100px">المقاس</th>
-                                                        <th class="border-0" style="width: 150px">السعر</th>
-                                                        <th class="border-0" style="width: 150px">الإجمالي</th>
-                                                        <th class="border-0" style="width: 250px">الموعد</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach($itemsWithAppointments as $item)
-                                                    <tr>
-                                                        <td class="text-center fw-bold">{{ $loop->iteration }}</td>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="flex-shrink-0">
-                                                                    @if($item->product->image)
-                                                                        <img src="{{ asset($item->product->image) }}"
-                                                                             class="product-image border"
-                                                                             width="60" height="60"
-                                                                             alt="{{ $item->product->name }}">
-                                                                    @else
-                                                                        <div class="product-image border d-flex align-items-center justify-content-center bg-light">
-                                                                            <i class="fas fa-box text-muted fa-lg"></i>
-                                                                        </div>
-                                                                    @endif
-                                                                </div>
-                                                                <div class="flex-grow-1 ms-3">
-                                                                    <h6 class="mb-1 fw-bold">{{ $item->product->name }}</h6>
-                                                                    @if($item->product->category)
-                                                                        <span class="badge bg-primary-subtle text-primary">
-                                                                            {{ $item->product->category->name }}
-                                                                        </span>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <span class="badge bg-light text-dark fw-bold">
-                                                                {{ $item->quantity }} قطعة
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            @if($item->color)
-                                                                <span class="badge bg-light text-dark">
-                                                                    {{ $item->color }}
-                                                                </span>
-                                                            @else
-                                                                <span class="text-muted">-</span>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            @if($item->size)
-                                                                <span class="badge bg-light text-dark">
-                                                                    {{ $item->size }}
-                                                                </span>
-                                                            @else
-                                                                <span class="text-muted">-</span>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <i class="fas fa-money-bill-wave text-success me-2"></i>
-                                                                <span class="fw-bold">{{ number_format($item->unit_price) }}</span>
-                                                                <small class="text-muted ms-1">ريال</small>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <i class="fas fa-calculator text-primary me-2"></i>
-                                                                <span class="fw-bold">{{ number_format($item->subtotal) }}</span>
-                                                                <small class="text-muted ms-1">ريال</small>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            @if($item->appointment)
-                                                                <div class="appointment-card">
-                                                                    <div class="appointment-header">
-                                                                        <div class="appointment-datetime">
-                                                                            <div class="mb-1">
-                                                                                <i class="fas fa-hashtag text-info me-2"></i>
-                                                                                <span class="text-muted">رقم المرجع:</span>
-                                                                                <span class="fw-bold">{{ $item->appointment->reference_number }}</span>
-                                                                            </div>
-                                                                            <div class="mb-1">
-                                                                                <i class="fas fa-calendar-alt text-info me-2"></i>
-                                                                                {{ $item->appointment->appointment_date->format('Y/m/d') }}
-                                                                            </div>
-                                                                            <div>
-                                                                                <i class="fas fa-clock text-info me-2"></i>
-                                                                                {{ $item->appointment->appointment_time->format('h:i A') }}
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="appointment-status mt-2">
-                                                                        @if($item->appointment->status === 'approved')
-                                                                            <div class="status-badge status-approved">
-                                                                                <i class="fas fa-check-circle"></i>
-                                                                                تم التأكيد
-                                                                            </div>
-                                                                        @else
-                                                                            <div class="status-badge status-pending">
-                                                                                <i class="fas fa-clock"></i>
-                                                                                قيد الانتظار
-                                                                            </div>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        @endif
-
-                                        <!-- Products without Appointments -->
-                                        @if($itemsWithoutAppointments->isNotEmpty())
                                         <div class="table-responsive">
-                                            <h6 class="mb-3">
-                                                <i class="fas fa-shopping-bag text-primary me-2"></i>
-                                                المنتجات بدون مواعيد
-                                            </h6>
-                                            <table class="table table-hover align-middle">
-                                                <thead class="bg-light">
+                                            <table class="table table-striped table-hover">
+                                                <thead class="table-light">
                                                     <tr>
-                                                        <th class="border-0 text-center" style="width: 60px">#</th>
-                                                        <th class="border-0" style="min-width: 250px">المنتج</th>
-                                                        <th class="border-0 text-center" style="width: 100px">الكمية</th>
-                                                        <th class="border-0" style="width: 100px">اللون</th>
-                                                        <th class="border-0" style="width: 100px">المقاس</th>
-                                                        <th class="border-0" style="width: 150px">السعر</th>
-                                                        <th class="border-0" style="width: 150px">الإجمالي</th>
+                                                        <th class="text-center" style="width: 40px">#</th>
+                                                        <th>المنتج</th>
+                                                        <th>السعر</th>
+                                                        <th>الكمية</th>
+                                                        <th>المجموع</th>
+                                                        <th>الخيارات</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach($itemsWithoutAppointments as $item)
+                                                    @foreach($order->items as $item)
                                                     <tr>
                                                         <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                                         <td>
@@ -448,29 +251,6 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td class="text-center">
-                                                            <span class="badge bg-light text-dark fw-bold">
-                                                                {{ $item->quantity }} قطعة
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            @if($item->color)
-                                                                <span class="badge bg-light text-dark">
-                                                                    {{ $item->color }}
-                                                                </span>
-                                                            @else
-                                                                <span class="text-muted">-</span>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            @if($item->size)
-                                                                <span class="badge bg-light text-dark">
-                                                                    {{ $item->size }}
-                                                                </span>
-                                                            @else
-                                                                <span class="text-muted">-</span>
-                                                            @endif
-                                                        </td>
                                                         <td>
                                                             <div class="d-flex align-items-center">
                                                                 <i class="fas fa-money-bill-wave text-success me-2"></i>
@@ -479,25 +259,42 @@
                                                             </div>
                                                         </td>
                                                         <td>
+                                                            <span class="badge bg-light text-dark fw-bold">
+                                                                {{ $item->quantity }} قطعة
+                                                            </span>
+                                                        </td>
+                                                        <td>
                                                             <div class="d-flex align-items-center">
                                                                 <i class="fas fa-calculator text-primary me-2"></i>
                                                                 <span class="fw-bold">{{ number_format($item->subtotal) }}</span>
                                                                 <small class="text-muted ms-1">ريال</small>
                                                             </div>
                                                         </td>
+                                                        <td>
+                                                            @if($item->color || $item->size)
+                                                            <div class="options-card p-2">
+                                                                @if($item->color)
+                                                                <div class="mb-1">
+                                                                    <i class="fas fa-palette text-primary me-1"></i>
+                                                                    <span class="text-muted">اللون:</span>
+                                                                    <span class="fw-bold">{{ $item->color }}</span>
+                                                                </div>
+                                                                @endif
+                                                                @if($item->size)
+                                                                <div>
+                                                                    <i class="fas fa-ruler text-primary me-1"></i>
+                                                                    <span class="text-muted">المقاس:</span>
+                                                                    <span class="fw-bold">{{ $item->size }}</span>
+                                                                </div>
+                                                                @endif
+                                                            </div>
+                                                            @endif
+                                                        </td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
-                                        @endif
-
-                                        @if($itemsWithAppointments->isEmpty() && $itemsWithoutAppointments->isEmpty())
-                                        <div class="text-center text-muted py-4">
-                                            <i class="fas fa-shopping-cart mb-2 fa-2x"></i>
-                                            <p class="mb-0">لا توجد منتجات في هذا الطلب</p>
-                                        </div>
-                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -583,5 +380,5 @@
 @endsection
 
 @section('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/admin/orders.css') }}">
+<link rel="stylesheet" href="/assets/css/admin/orders.css">
 @endsection

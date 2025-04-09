@@ -195,7 +195,13 @@ function updateProductGrid(products) {
                         <div class="stars" style="--rating: ${product.rating || 0}"></div>
                         <span class="reviews">(${product.reviews || 0} تقييم)</span>
                     </div>
-                    <p class="product-price">${product.price} ر.س</p>
+                    <p class="product-price">${product.price_display || (
+                        product.price_range ? (
+                            product.price_range.min === product.price_range.max ?
+                            `${product.price_range.min.toLocaleString()} ر.س` :
+                            `${product.price_range.min.toLocaleString()} - ${product.price_range.max.toLocaleString()} ر.س`
+                        ) : '0 ر.س'
+                    )}</p>
                     <div class="product-actions">
                         <a href="/products/${product.slug}" class="order-product-btn">
                             <i class="fas fa-shopping-cart me-2"></i>
@@ -371,11 +377,6 @@ function updateCartDisplay(data) {
         const additionalInfo = [];
         if (item.color) additionalInfo.push(`اللون: ${item.color}`);
         if (item.size) additionalInfo.push(`المقاس: ${item.size}`);
-        if (item.needs_appointment) {
-            additionalInfo.push(item.has_appointment ?
-                '<span class="text-success"><i class="fas fa-check-circle"></i> تم حجز موعد</span>' :
-                '<span class="text-warning"><i class="fas fa-clock"></i> بانتظار حجز موعد</span>');
-        }
 
         itemElement.innerHTML = `
             <div class="cart-item-inner p-3 border-bottom">
@@ -486,10 +487,15 @@ function removeFromCart(button, cartItemId) {
             cartItem.style.opacity = '0';
             cartItem.style.transform = 'translateX(50px)';
 
+            // تحديث عرض السلة مباشرة
+            updateCartDisplay(data);
+
+            // إضافة تأخير قصير قبل إعادة تحميل عناصر السلة
             setTimeout(() => {
-                updateCartDisplay(data);
-                showNotification('تم حذف المنتج من السلة بنجاح', 'success');
+                loadCartItems();
             }, 300);
+
+            showNotification('تم حذف المنتج من السلة بنجاح', 'success');
         } else {
             cartItem.style.opacity = '1';
             showNotification(data.message || 'حدث خطأ أثناء حذف المنتج', 'error');

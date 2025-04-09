@@ -81,19 +81,6 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="guide-item">
-                            <h6>
-                                <i class="fas fa-calendar-check text-primary me-2"></i>
-                                إدارة المواعيد
-                            </h6>
-                            <ul class="text-muted small">
-                                <li>تابع مواعيدك القادمة في قسم "المواعيد القادمة"</li>
-                                <li>اضغط على "التفاصيل" لمعرفة المزيد عن أي موعد</li>
-                                <li>راقب الوقت والتاريخ لكل موعد بدقة</li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -101,7 +88,7 @@
 
     <!-- Stats Cards -->
     <div class="row g-3 g-md-4 mb-4">
-        <div class="col-12 col-sm-6 col-md-3">
+        <div class="col-12 col-sm-6 col-md-4">
             <div class="dashboard-card orders">
                 <div class="card-icon">
                     <i class="fas fa-shopping-bag"></i>
@@ -117,23 +104,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-md-3">
-            <div class="dashboard-card appointments">
-                <div class="card-icon">
-                    <i class="fas fa-calendar-check"></i>
-                </div>
-                <div class="card-info">
-                    <h3>{{ $stats['appointments_count'] }}</h3>
-                    <p>المواعيد</p>
-                </div>
-                <div class="card-arrow">
-                    <a href="/appointments" class="stretched-link">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-md-3">
+        <div class="col-12 col-sm-6 col-md-4">
             <div class="dashboard-card cart">
                 <div class="card-icon">
                     <i class="fas fa-shopping-cart"></i>
@@ -149,7 +120,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-md-3">
+        <div class="col-12 col-sm-6 col-md-4">
             <div class="dashboard-card notifications">
                 <div class="card-icon">
                     <i class="fas fa-bell"></i>
@@ -256,13 +227,13 @@
                                 <div>
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-map-marker-alt me-2"></i>
+                                        <span>{{ $address['full_address'] }}</span>
                                         @if($address['is_primary'])
-                                        <span class="badge bg-warning me-2">رئيسي</span>
+                                        <span class="badge bg-warning ms-2 primary-badge">رئيسي</span>
                                         @endif
-                                        <span class="badge bg-{{ $address['type_color'] }} me-2">{{ $address['type_text'] }}</span>
+                                        <span class="badge bg-{{ $address['type_color'] }} ms-2">{{ $address['type_text'] }}</span>
                                     </div>
-                                    <p class="mb-1 mt-2">{{ $address['full_address'] }}</p>
-                                    <small class="text-muted">
+                                    <small class="text-muted d-block mt-1">
                                         <i class="fas fa-calendar-alt me-1"></i>
                                         تم الإضافة: {{ $address['created_at'] }}
                                     </small>
@@ -298,10 +269,10 @@
         </div>
     </div>
 
-    <!-- Recent Orders & Upcoming Appointments -->
+    <!-- Recent Orders Section -->
     <div class="row g-3 g-md-4">
         <!-- Recent Orders -->
-        <div class="col-12 col-xl-6">
+        <div class="col-12">
             <div class="section-card h-100">
                 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
                     <h2 class="mb-0">آخر الطلبات</h2>
@@ -345,58 +316,6 @@
                 <div class="empty-state">
                     <i class="fas fa-shopping-bag"></i>
                     <p>لا توجد طلبات حتى الآن</p>
-                </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- Upcoming Appointments -->
-        <div class="col-12 col-xl-6">
-            <div class="section-card h-100">
-                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
-                    <h2 class="mb-0">المواعيد القادمة</h2>
-                    <a href="/appointments" class="btn btn-outline-primary btn-sm">
-                        عرض الكل <i class="fas fa-arrow-left me-1"></i>
-                    </a>
-                </div>
-                @if(count($upcoming_appointments) > 0)
-                <div class="appointments-grid">
-                    @foreach($upcoming_appointments as $appointment)
-                    <div class="appointment-card">
-                        <div class="appointment-header">
-                            <div class="date">
-                                <i class="fas fa-calendar me-2"></i>
-                                {{ $appointment->appointment_date->format('Y/m/d') }}
-                            </div>
-                            <div class="time">
-                                <i class="fas fa-clock me-2"></i>
-                                {{ $appointment->appointment_time->format('H:i') }}
-                            </div>
-                        </div>
-                        <div class="appointment-body">
-                            <h5>{{ $appointment->service_type }}</h5>
-                            <p class="location">
-                                <i class="fas fa-map-marker-alt me-2"></i>
-                                {{ $appointment->location === 'store' ? 'في المحل' : 'موقع العميل' }}
-                            </p>
-                            <div class="status">
-                                <span class="badge bg-{{ $appointment->status_color }}">
-                                    {{ $appointment->status_text }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="appointment-footer">
-                            <a href="{{ route('appointments.show', $appointment->reference_number) }}" class="btn btn-primary btn-sm">
-                                التفاصيل <i class="fas fa-arrow-left me-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-                @else
-                <div class="empty-state">
-                    <i class="fas fa-calendar-check"></i>
-                    <p>لا توجد مواعيد قادمة</p>
                 </div>
                 @endif
             </div>

@@ -28,13 +28,11 @@ class ReportController extends Controller
 
     $salesReport = $this->reportService->getSalesReport($period, $startDate, $endDate);
     $topProducts = $this->reportService->getTopProducts($period, $startDate, $endDate);
-    $appointmentsReport = $this->reportService->getAppointmentsReport($startDate, $endDate);
     $inventoryReport = $this->reportService->getInventoryReport();
 
     return view('admin.reports.index', compact(
       'salesReport',
       'topProducts',
-      'appointmentsReport',
       'inventoryReport',
       'period'
     ));

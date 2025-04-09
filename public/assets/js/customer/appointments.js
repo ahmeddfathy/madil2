@@ -30,12 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!this.value) return;
 
-            // Show loading indicator
-            const loadingIndicator = document.createElement('div');
-            loadingIndicator.className = 'time-loading text-center my-2';
-            loadingIndicator.innerHTML = '<div class="spinner-border spinner-border-sm text-primary" role="status"></div> <span>جاري تحميل المواعيد المتاحة...</span>';
-            timeSelect.parentNode.appendChild(loadingIndicator);
-
             // Parse the date correctly for timezone handling
             const [year, month, day] = this.value.split('-').map(Number);
             const selectedDate = new Date(year, month - 1, day); // month is 0-based in JavaScript
@@ -52,93 +46,85 @@ document.addEventListener('DOMContentLoaded', function() {
                 6: 'السبت'
             };
 
-            // Fetch available time slots from API
-            fetch(`/appointments/available-slots?date=${this.value}&_=${Date.now()}`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json',
-                    'Cache-Control': 'no-cache, no-store',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                },
-                credentials: 'same-origin'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        try {
-                            return JSON.parse(text);
-                        } catch (e) {
-                            throw new Error(`فشل في جلب المواعيد المتاحة (${response.status})`);
-                        }
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Remove loading indicator
-                loadingIndicator.remove();
-
-                if (data.success) {
-                    // If no available slots and a suggested date is provided
-                    if (data.available_slots.length === 0 && data.suggested_date) {
-                        const suggestionDiv = document.createElement('div');
-                        suggestionDiv.className = 'alert alert-info mt-2';
-                        suggestionDiv.innerHTML = `${data.message} <button type="button" class="btn btn-sm btn-primary ms-2 select-suggested-date">اختر هذا التاريخ</button>`;
-
-                        // Add element above the time select
-                        timeSelect.parentNode.insertBefore(suggestionDiv, timeSelect);
-
-                        // Add event listener to the suggested date button
-                        suggestionDiv.querySelector('.select-suggested-date').addEventListener('click', function() {
-                            dateInput.value = data.suggested_date;
-                            dateInput.dispatchEvent(new Event('change'));
-                            suggestionDiv.remove();
-                        });
-
-                        return;
-                    }
-
-                    // Add day name to time select
-                    timeSelect.innerHTML = `<option value="">اختر الوقت المناسب ليوم ${arabicDays[dayOfWeek]}</option>`;
-
-                    // Populate time slots
-                    data.available_slots.forEach(slotGroup => {
-                        const group = document.createElement('optgroup');
-                        group.label = slotGroup.label;
-
-                        slotGroup.times.forEach(time => {
-                            const option = document.createElement('option');
-                            option.value = time.value;
-                            option.textContent = time.label;
-                            group.appendChild(option);
-                        });
-
-                        timeSelect.appendChild(group);
-                    });
-
-                    // Enable time select only if there are available slots
-                    const hasSlots = timeSelect.querySelectorAll('option').length > 1;
-                    timeSelect.disabled = !hasSlots;
-
-                    if (!hasSlots) {
-                        dateError.textContent = 'لا توجد مواعيد متاحة في هذا اليوم، يرجى اختيار يوم آخر';
-                        this.classList.add('is-invalid');
-                    }
-                } else {
-                    throw new Error(data.message || 'فشل في جلب المواعيد المتاحة');
-                }
-            })
-            .catch(error => {
-                // Remove loading indicator
-                if (loadingIndicator.parentNode) {
-                    loadingIndicator.remove();
-                }
-
-                console.error('Error:', error);
-                dateError.textContent = error.message;
+            // Check if date is in the past
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (selectedDate < today) {
                 this.classList.add('is-invalid');
+                dateError.textContent = 'لا يمكن اختيار تاريخ في الماضي';
+                timeSelect.disabled = true;
+                return;
+            }
+
+            // Define time slots based on day
+            const slots = dayOfWeek === 5 ? // Friday
+                [{ start: '17:00', end: '23:00', label: 'الفترة المسائية' }] :
+                [
+                    { start: '11:00', end: '14:00', label: 'الفترة الصباحية' },
+                    { start: '17:00', end: '23:00', label: 'الفترة المسائية' }
+                ];
+
+            // Add day name to time select
+            timeSelect.innerHTML = `<option value="">اختر الوقت المناسب ليوم ${arabicDays[dayOfWeek]}</option>`;
+
+            // Generate time slots
+            slots.forEach(slot => {
+                const group = document.createElement('optgroup');
+                group.label = slot.label;
+
+                let currentTime = new Date(`2000-01-01T${slot.start}`);
+                const endTime = new Date(`2000-01-01T${slot.end}`);
+
+                // If today, skip past times
+                const isToday = selectedDate.toDateString() === new Date().toDateString();
+                const now = new Date();
+
+                while (currentTime < endTime) {
+                    const option = document.createElement('option');
+                    const hours = currentTime.getHours().toString().padStart(2, '0');
+                    const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+                    const timeValue = `${hours}:${minutes}`;
+
+                    // Skip if time is in the past for today
+                    if (isToday) {
+                        const slotTime = new Date(selectedDate);
+                        slotTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                        if (slotTime <= now) {
+                            currentTime.setMinutes(currentTime.getMinutes() + 30);
+                            continue;
+                        }
+                    }
+
+                    // Format time in Arabic
+                    const timeString = new Date(`2000-01-01T${timeValue}`)
+                        .toLocaleTimeString('ar-SA', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+
+                    option.value = timeValue;
+                    option.textContent = timeString;
+                    group.appendChild(option);
+
+                    // Add 30 minutes
+                    currentTime.setMinutes(currentTime.getMinutes() + 30);
+                }
+
+                // Only add group if it has options
+                if (group.children.length > 0) {
+                    timeSelect.appendChild(group);
+                }
             });
+
+            // Enable time select only if there are available slots
+            const hasSlots = timeSelect.querySelectorAll('option').length > 1;
+            timeSelect.disabled = !hasSlots;
+
+            if (!hasSlots && isToday) {
+                dateError.textContent = 'لا توجد مواعيد متاحة اليوم، يرجى اختيار يوم آخر';
+                this.classList.add('is-invalid');
+            }
         });
 
         // Trigger change event if date is already selected
@@ -223,12 +209,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     errorList.appendChild(li);
                 });
                 errorDiv.appendChild(errorList);
-            }
-
-            // إعادة تحميل المواعيد المتاحة في حالة حدوث خطأ مثل "الموعد محجوز بالفعل"
-            if (error.message.includes('محجوز بالفعل')) {
-                // تحديث المواعيد المتاحة
-                dateInput.dispatchEvent(new Event('change'));
             }
         })
         .finally(() => {

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-use App\Notifications\OrderCreated;
+
 
 class Order extends Model
 {
@@ -36,9 +36,12 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'total_amount',
+        'original_amount',
+        'coupon_discount',
+        'coupon_code',
         'shipping_address',
         'phone',
-
+        'payment_method',
         'payment_status',
         'order_status',
         'notes',
@@ -49,8 +52,10 @@ class Order extends Model
     ];
 
     protected $casts = [
-        'total_amount' => 'integer',
-        'amount_paid' => 'integer',
+        'total_amount' => 'decimal:2',
+        'original_amount' => 'decimal:2',
+        'coupon_discount' => 'decimal:2',
+        'amount_paid' => 'decimal:2',
     ];
 
     protected static function boot()
@@ -83,9 +88,14 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function appointment(): BelongsTo
+    public function address()
     {
-        return $this->belongsTo(Appointment::class);
+        return $this->belongsTo(Address::class);
+    }
+
+    public function phoneNumber()
+    {
+        return $this->belongsTo(PhoneNumber::class);
     }
 
     // Helper methods for status checks

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Madil')</title>
+    <title>@yield('title', 'بر الليث')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +26,7 @@
     <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Madil" height="100" >
+                <img src="{{ asset('assets/images/logo.png') }}" alt="بر الليث" height="100" >
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -41,9 +41,6 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('dashboard*') ? 'active' : '' }}" href="/dashboard"><i class="fas fa-user ms-1"></i>حسابي</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('appointments*') ? 'active' : '' }}" href="{{ route('appointments.index') }}"><i class="fas fa-calendar-alt ms-1"></i>المواعيد</a>
                     </li>
                 </ul>
                 <div class="nav-buttons d-flex align-items-center">
@@ -79,7 +76,7 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <a href="/" class="d-block">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Madil" class="img-fluid">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="بر الليث" class="img-fluid">
             </a>
         </div>
         <div class="sidebar-user-info">
@@ -105,12 +102,6 @@
                     <a class="nav-link {{ request()->is('orders*') ? 'active' : '' }}" href="/orders">
                         <i class="fas fa-shopping-bag"></i>
                         الطلبات
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->is('appointments*') ? 'active' : '' }}" href="/appointments">
-                        <i class="fas fa-calendar-check"></i>
-                        المواعيد
                     </a>
                 </li>
                 <li class="nav-item">

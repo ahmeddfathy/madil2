@@ -1,16 +1,15 @@
-/* Global Styles */
 :root {
-    --primary-color: #4A3AFF;     /* أزرق مائل للبنفسجي - واضح ومريح */
-    --secondary-color: #7B6EFF;   /* درجة أفتح - للعناصر الثانوية */
-    --background-color: #F0F4FF;  /* خلفية فاتحة مائلة للأزرق */
-    --glass-background: rgba(255, 255, 255, 0.75);      /* شفافية عالية للوضوح */
-    --glass-background-dark: rgba(255, 255, 255, 0.65);  /* شفافية معتدلة */
-    --glass-border: 1px solid rgba(74, 58, 255, 0.25); /* حدود خفيفة جداً */
-    --card-shadow: 0 4px 12px rgba(74, 58, 255, 0.08); /* ظل خفيف */
+    --primary-color: #009245;
+    --secondary-color: #00b050;
+    --background-color: #F0F4FF;
+    --glass-background: rgba(255, 255, 255, 0.75);
+    --glass-background-dark: rgba(255, 255, 255, 0.65);
+    --glass-border: 1px solid rgba(0, 146, 69, 0.25);
+    --card-shadow: 0 4px 12px rgba(0, 146, 69, 0.08);
     --text-color: #1E2A38;
     --text-light: #2C3E50;
     --danger-color: #DC3545;
-    --success-color: #28A745;
+    --success-color: #009245;
 }
 
 body {
@@ -19,7 +18,6 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Glassmorphism Effects */
 .glass-effect {
     background: var(--glass-background);
     backdrop-filter: blur(4px);
@@ -28,8 +26,6 @@ body {
     border: var(--glass-border);
     box-shadow: var(--card-shadow);
 }
-
-/* Navbar Styles */
 .glass-navbar {
     background: var(--glass-background);
     backdrop-filter: blur(10px);

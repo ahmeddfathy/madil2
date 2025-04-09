@@ -9,7 +9,6 @@ return new class extends Migration
     public function up()
     {
         Schema::table('cart_items', function (Blueprint $table) {
-            $table->boolean('needs_appointment')->default(false);
             $table->string('color')->nullable();
             $table->string('size')->nullable();
         });
@@ -18,7 +17,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('cart_items', function (Blueprint $table) {
-            $table->dropColumn(['needs_appointment', 'color', 'size']);
+            $table->dropColumn(['color', 'size']);
         });
     }
 };

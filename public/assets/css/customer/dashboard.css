@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #4A3AFF;
-    --secondary-color: #7B6EFF;
+    --primary-color: #009245;
+    --secondary-color: #00b050;
     --background-color: #F0F4FF;
     --glass-background: rgba(255, 255, 255, 0.85);
     --glass-background-dark: rgba(255, 255, 255, 0.75);
@@ -15,14 +15,14 @@
     --warning-color: #F39C12;
     --info-color: #3498DB;
     --secondary-bg: #747d8c;
-    --primary-border-color: rgba(74, 58, 255, 0.2);
-    --primary-border-color-light: rgba(74, 58, 255, 0.15);
-    --primary-border-color-lighter: rgba(74, 58, 255, 0.1);
-    --primary-border-color-darker: rgba(74, 58, 255, 0.3);
-    --primary-shadow-color: rgba(74, 58, 255, 0.1);
-    --primary-shadow-color-darker: rgba(74, 58, 255, 0.3);
-    --primary-bg-color: rgba(74, 58, 255, 0.05);
-    --primary-bg-color-hover: rgba(74, 58, 255, 0.1);
+    --primary-border-color: rgba(0, 146, 69, 0.2);
+    --primary-border-color-light: rgba(0, 146, 69, 0.15);
+    --primary-border-color-lighter: rgba(0, 146, 69, 0.1);
+    --primary-border-color-darker: rgba(0, 146, 69, 0.3);
+    --primary-shadow-color: rgba(0, 146, 69, 0.1);
+    --primary-shadow-color-darker: rgba(0, 146, 69, 0.3);
+    --primary-bg-color: rgba(0, 146, 69, 0.05);
+    --primary-bg-color-hover: rgba(0, 146, 69, 0.1);
     --black-color: #000;
     --white-color: #fff;
     --border-muted: rgba(0, 0, 0, 0.2);

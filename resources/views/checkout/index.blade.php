@@ -6,7 +6,45 @@
     <title>{{ __('Checkout') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/customer/checkout.css') }}">
+    <style>
+        /* أنماط للمنتجات المشمولة بالخصم */
+        .discount-applied {
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 0 8px rgba(40, 167, 69, 0.2);
+            position: relative;
+        }
 
+        .no-discount {
+            opacity: 0.7;
+        }
+
+        .discount-badge {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .partial-discount-message {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .info-message {
+            color: #0dcaf0;
+            padding: 5px 0;
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body class="checkout-container">
     <!-- Header -->
@@ -45,7 +83,7 @@
                             <div class="order-items">
                                 @if(Auth::check() && isset($cart))
                                     @foreach($cart->items as $item)
-                                    <div class="order-item">
+                                    <div class="order-item" data-product-id="{{ $item->product_id }}">
                                         <div class="product-info">
                                             <div class="product-image">
                                                 <x-product-image :product="$item->product" size="16" />
@@ -61,7 +99,7 @@
                                     @endforeach
                                 @else
                                     @foreach($products as $product)
-                                    <div class="order-item">
+                                    <div class="order-item" data-product-id="{{ $product->id }}">
                                         <div class="product-info">
                                             <div class="product-image">
                                                 @if($product->primary_image)
@@ -89,6 +127,77 @@
                                 <div class="d-flex justify-content-between">
                                     <h4>الإجمالي الكلي:</h4>
                                     <span class="total-amount">{{ $cart->total_amount }} ريال</span>
+                                </div>
+
+                                <!-- Quantity Discounts Section -->
+                                @if(isset($quantityDiscounts) && count($quantityDiscounts) > 0)
+                                    <div class="quantity-discounts mt-4">
+                                        <div class="discount-header mb-3">
+                                            <h5 class="discount-title">
+                                                <i class="fas fa-tags me-2"></i>
+                                                خصومات الكمية
+                                            </h5>
+                                        </div>
+
+                                        <div class="discount-items">
+                                            @foreach($quantityDiscounts as $discount)
+                                                <div class="discount-item mb-2">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <span class="product-name">{{ $discount['product_name'] }}</span>
+                                                            <small class="discount-details d-block">
+                                                                {{ $discount['quantity'] }} قطعة -
+                                                                خصم {{ $discount['discount_type'] === 'percentage' ? $discount['discount_value'] . '%' : number_format($discount['discount_value'], 2) . ' ريال' }}
+                                                            </small>
+                                                        </div>
+                                                        <span class="discount-amount">-{{ number_format($discount['discount_amount'], 2) }} ريال</span>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                        <div class="total-discount">
+                                            <div class="d-flex justify-content-between">
+                                                <span>إجمالي خصم الكمية:</span>
+                                                <span class="total-discount-amount">-{{ number_format($quantityDiscountsTotal, 2) }} ريال</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Coupon Section -->
+                                <div class="coupon-section mt-4">
+                                    <h4>كود الخصم</h4>
+                                    <div class="coupon-input-group d-flex">
+                                        <input type="text" name="coupon_code" id="coupon_code" class="form-input"
+                                            placeholder="أدخل كود الخصم" value="{{ old('coupon_code', session('coupon_code')) }}">
+                                        <button type="button" id="apply-coupon" class="btn-apply-coupon">تطبيق</button>
+                                    </div>
+                                    <div id="coupon-message" class="mt-2"></div>
+                                    @error('coupon_code')
+                                    <p class="error-message">{{ $message }}</p>
+                                    @enderror
+
+                                    @if(isset($couponData))
+                                    <div class="coupon-applied">
+                                        <div class="coupon-details">
+                                            <span class="coupon-name">{{ $couponData['name'] }}</span>
+                                            <span class="coupon-discount">- {{ number_format($couponData['discount_amount'], 2) }} ريال</span>
+                                        </div>
+                                        @if($couponData['is_partial'])
+                                        <div class="partial-discount-message mt-2">
+                                            <small class="text-info">{{ $couponData['partial_discount_message'] }}</small>
+                                        </div>
+                                        @endif
+                                    </div>
+                                    @endif
+
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <h4>المبلغ النهائي:</h4>
+                                        <span class="final-amount">
+                                            {{ session('final_amount', $cart->total_amount) }} ريال
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -188,6 +297,67 @@
         // document.getElementById('checkout-form').addEventListener('submit', function(e) {
         //     this.classList.add('loading');
         // });
+
+        // Coupon code handling
+        document.getElementById('apply-coupon').addEventListener('click', function() {
+            const couponCode = document.getElementById('coupon_code').value;
+            const couponMessage = document.getElementById('coupon-message');
+
+            if (!couponCode) {
+                couponMessage.innerHTML = '<p class="error-message">يرجى إدخال كود الخصم</p>';
+                return;
+            }
+
+            // Send AJAX request to validate coupon
+            fetch('/checkout/apply-coupon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ coupon_code: couponCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    couponMessage.innerHTML = '<p class="success-message">' + data.message + '</p>';
+
+                    // إذا كان الكوبون يطبق على منتجات محددة فقط
+                    if (data.partial_discount) {
+                        // عرض رسالة توضيحية
+                        couponMessage.innerHTML += '<p class="info-message">' + data.partial_discount_message + '</p>';
+
+                        // تطبيق تأثير بصري على المنتجات المشمولة بالخصم
+                        const orderItems = document.querySelectorAll('.order-item');
+                        const validProductIds = data.valid_product_ids;
+
+                        orderItems.forEach(item => {
+                            // الحصول على معرف المنتج من البيانات المخزنة في عنصر المنتج
+                            const productId = parseInt(item.getAttribute('data-product-id'));
+
+                            if (validProductIds.includes(productId)) {
+                                // المنتج مشمول بالخصم
+                                item.classList.add('discount-applied');
+                                item.querySelector('.product-details').innerHTML += '<span class="discount-badge">مشمول بالخصم</span>';
+                            } else {
+                                // المنتج غير مشمول بالخصم
+                                item.classList.add('no-discount');
+                            }
+                        });
+                    }
+
+                    // إعادة تحميل الصفحة بعد ثانيتين لتحديث الإجماليات
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    couponMessage.innerHTML = '<p class="error-message">' + data.message + '</p>';
+                }
+            })
+            .catch(error => {
+                couponMessage.innerHTML = '<p class="error-message">حدث خطأ أثناء تطبيق الكوبون</p>';
+            });
+        });
     </script>
 </body>
 </html>

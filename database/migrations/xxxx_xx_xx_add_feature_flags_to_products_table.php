@@ -13,7 +13,6 @@ return new class extends Migration
             $table->boolean('enable_custom_size')->default(false);
             $table->boolean('enable_color_selection')->default(false);
             $table->boolean('enable_size_selection')->default(false);
-            $table->boolean('enable_appointments')->default(true);
         });
     }
 
@@ -25,7 +24,6 @@ return new class extends Migration
                 'enable_custom_size',
                 'enable_color_selection',
                 'enable_size_selection',
-                'enable_appointments'
             ]);
         });
     }

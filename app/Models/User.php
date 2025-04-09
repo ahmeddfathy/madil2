@@ -81,14 +81,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user's appointments.
-     */
-    public function appointments(): HasMany
-    {
-        return $this->hasMany(Appointment::class);
-    }
-
-    /**
      * Get the user's cart.
      */
     public function cart(): HasMany

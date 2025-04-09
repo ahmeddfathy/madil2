@@ -89,7 +89,11 @@
                                             <p class="text-muted mb-0 fs-sm">إدارة ومتابعة طلبات العملاء</p>
                                         </div>
                                         <div class="actions d-flex gap-2">
-                                            <button type="button" class="btn btn-light-success btn-wave" onclick="window.print()">
+                                            <button type="button" class="btn btn-light-primary btn-wave">
+                                                <i class="fas fa-file-export me-2"></i>
+                                                تصدير التقرير
+                                            </button>
+                                            <button type="button" class="btn btn-light-success btn-wave">
                                                 <i class="fas fa-print me-2"></i>
                                                 طباعة
                                             </button>
@@ -181,83 +185,83 @@
                             <div class="col-12">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body p-0">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover mb-0">
-                                                <thead class="bg-light">
-                                                    <tr>
-                                                        <th class="border-0 text-center">#</th>
-                                                        <th class="border-0">العميل</th>
-                                                        <th class="border-0">المنتجات</th>
-                                                        <th class="border-0">الإجمالي</th>
-                                                        <th class="border-0">حالة الطلب</th>
-                                                        <th class="border-0">حالة الدفع</th>
-                                                        <th class="border-0">التاريخ</th>
-                                                        <th class="border-0">الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($orders as $order)
-                                    <tr>
-                                        <td class="text-center">{{ $order['order_number'] }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar-circle bg-primary text-white me-2">
-                                                    {{ substr($order['customer_name'], 0, 1) }}
-                                                </div>
-                                                <div>
-                                                    <h6 class="mb-0">{{ $order['customer_name'] }}</h6>
-                                                    <small class="text-muted">{{ $order['customer_phone'] }}</small>
-                                                </div>
+                                        <div class="table-wrapper">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">#</th>
+                                                            <th>العميل</th>
+                                                            <th>المنتجات</th>
+                                                            <th>الإجمالي</th>
+                                                            <th>حالة الطلب</th>
+                                                            <th>حالة الدفع</th>
+                                                            <th>التاريخ</th>
+                                                            <th>الإجراءات</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @forelse($orders as $order)
+                                                        <tr>
+                                                            <td class="text-center">{{ $order['order_number'] }}</td>
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <div class="avatar-circle bg-primary text-white me-2">
+                                                                        {{ substr($order['customer_name'], 0, 1) }}
+                                                                    </div>
+                                                                    <div>
+                                                                        <h6 class="mb-0">{{ $order['customer_name'] }}</h6>
+                                                                        <small class="text-muted">{{ $order['customer_phone'] }}</small>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="small">
+                                                                    @foreach($order['items'] as $item)
+                                                                        <div class="mb-1">
+                                                                            {{ $item['product_name'] }}
+
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                            </td>
+                                                            <td>{{ number_format($order['total'], 2) }} ريال</td>
+                                                            <td>
+                                                                <span class="badge bg-{{ $order['status_color'] }}-subtle text-{{ $order['status_color'] }} rounded-pill">
+                                                                    {{ $order['status_text'] }}
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <span class="badge bg-{{ $order['payment_status_color'] }}-subtle text-{{ $order['payment_status_color'] }} rounded-pill">
+                                                                    {{ $order['payment_status_text'] }}
+                                                                </span>
+                                                            </td>
+                                                            <td>{{ $order['created_at_formatted'] }}</td>
+                                                            <td>
+                                                                <div class="action-buttons">
+                                                                    <a href="{{ route('admin.orders.show', $order['uuid']) }}"
+                                                                       class="btn btn-light-info btn-sm me-2"
+                                                                       title="عرض التفاصيل">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        @empty
+                                                        <tr>
+                                                            <td colspan="8" class="text-center py-5">
+                                                                <div class="empty-state">
+                                                                    <div class="empty-icon bg-light rounded-circle mb-3">
+                                                                        <i class="fas fa-shopping-cart text-muted fa-2x"></i>
+                                                                    </div>
+                                                                    <h5 class="text-muted mb-0">لا توجد طلبات</h5>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        @endforelse
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                        </td>
-                                        <td>
-                                            <div class="small">
-                                                @foreach($order['items'] as $item)
-                                                    <div class="mb-1">
-                                                        {{ $item['product_name'] }}
-                                                        <span class="text-muted">
-                                                            ({{ $item['quantity'] }} × {{ number_format($item['price'], 2) }} ريال)
-                                                        </span>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </td>
-                                        <td>{{ number_format($order['total'], 2) }} ريال</td>
-                                        <td>
-                                            <span class="badge bg-{{ $order['status_color'] }}-subtle text-{{ $order['status_color'] }} rounded-pill">
-                                                {{ $order['status_text'] }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-{{ $order['payment_status_color'] }}-subtle text-{{ $order['payment_status_color'] }} rounded-pill">
-                                                {{ $order['payment_status_text'] }}
-                                            </span>
-                                        </td>
-                                        <td>{{ $order['created_at_formatted'] }}</td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <a href="{{ route('admin.orders.show', $order['uuid']) }}"
-                                                   class="btn btn-light-info btn-sm me-2"
-                                                   title="عرض التفاصيل">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="8" class="text-center py-5">
-                                            <div class="empty-state">
-                                                <div class="empty-icon bg-light rounded-circle mb-3">
-                                                    <i class="fas fa-shopping-cart text-muted fa-2x"></i>
-                                                </div>
-                                                <h5 class="text-muted mb-0">لا توجد طلبات</h5>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -267,45 +271,33 @@
                         <!-- Pagination -->
                         @if($orders->hasPages())
                         <div class="d-flex justify-content-center mt-4">
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination">
+                            <nav aria-label="صفحات الطلبات">
+                                <ul class="pagination mb-0">
                                     {{-- Previous Page Link --}}
                                     @if ($orders->onFirstPage())
                                         <li class="page-item disabled">
-                                            <span class="page-link">
-                                                <i class="bi bi-chevron-right"></i>
+                                            <span class="page-link" aria-hidden="true">
+                                                <i class="fas fa-chevron-right"></i>
                                             </span>
                                         </li>
                                     @else
                                         <li class="page-item">
                                             <a class="page-link" href="{{ $orders->previousPageUrl() }}" rel="prev">
-                                                <i class="bi bi-chevron-right"></i>
+                                                <i class="fas fa-chevron-right"></i>
                                             </a>
                                         </li>
                                     @endif
 
                                     {{-- Pagination Elements --}}
-                                    @foreach ($orders->render()->elements as $element)
-                                        {{-- "Three Dots" Separator --}}
-                                        @if (is_string($element))
-                                            <li class="page-item disabled">
-                                                <span class="page-link">{{ $element }}</span>
+                                    @foreach ($orders->getUrlRange(1, $orders->lastPage()) as $page => $url)
+                                        @if ($page == $orders->currentPage())
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ $page }}</span>
                                             </li>
-                                        @endif
-
-                                        {{-- Array Of Links --}}
-                                        @if (is_array($element))
-                                            @foreach ($element as $page => $url)
-                                                @if ($page == $orders->currentPage())
-                                                    <li class="page-item active">
-                                                        <span class="page-link">{{ $page }}</span>
-                                                    </li>
-                                                @else
-                                                    <li class="page-item">
-                                                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                                                    </li>
-                                                @endif
-                                            @endforeach
+                                        @else
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                            </li>
                                         @endif
                                     @endforeach
 
@@ -313,20 +305,21 @@
                                     @if ($orders->hasMorePages())
                                         <li class="page-item">
                                             <a class="page-link" href="{{ $orders->nextPageUrl() }}" rel="next">
-                                                <i class="bi bi-chevron-left"></i>
+                                                <i class="fas fa-chevron-left"></i>
                                             </a>
                                         </li>
                                     @else
                                         <li class="page-item disabled">
-                                            <span class="page-link">
-                                                <i class="bi bi-chevron-left"></i>
+                                            <span class="page-link" aria-hidden="true">
+                                                <i class="fas fa-chevron-left"></i>
                                             </span>
                                         </li>
                                     @endif
                                 </ul>
                             </nav>
                         </div>
-                    @endif
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -336,5 +329,5 @@
 @endsection
 
 @section('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/admin/orders.css') }}">
+<link rel="stylesheet" href="/assets/css/admin/orders.css">
 @endsection

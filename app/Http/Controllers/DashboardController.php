@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Order, User, Appointment, CartItem, Cart};
+use App\Models\{Order, User, CartItem, Cart};
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -31,7 +31,6 @@ class DashboardController extends Controller
 
         $stats = [
             'orders_count' => $user->orders()->count(),
-            'appointments_count' => $user->appointments()->count(),
             'cart_items_count' => $cartItemsCount,
             'unread_notifications' => $user->unreadNotifications()->count(),
         ];
@@ -50,19 +49,6 @@ class DashboardController extends Controller
                     'status_color' => $this->getStatusColor($order->order_status),
                     'status_text' => $this->getStatusText($order->order_status)
                 ];
-            });
-
-        // المواعيد القادمة
-        $upcoming_appointments = $user->appointments()
-            ->where('appointment_date', '>=', now())
-            ->orderBy('appointment_date')
-            ->orderBy('appointment_time')
-            ->take(4)
-            ->get()
-            ->map(function ($appointment) {
-                $appointment->status_color = $this->getStatusColor($appointment->status);
-                $appointment->status_text = $this->getStatusText($appointment->status);
-                return $appointment;
             });
 
         // آخر الإشعارات
@@ -105,7 +91,6 @@ class DashboardController extends Controller
         return view('dashboard', compact(
             'stats',
             'recent_orders',
-            'upcoming_appointments',
             'recent_notifications',
             'addresses',
             'phones'

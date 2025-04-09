@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #4A3AFF;
-    --secondary-color: #7B6EFF;
+    --primary-color: #009245;
+    --secondary-color: #00b050;
     --success-color: #2ECC71;
     --warning-color: #F39C12;
     --danger-color: #FF4D4D;
@@ -8,7 +8,7 @@
     --background-color: #F0F4FF;
     --glass-background: rgba(255, 255, 255, 0.75);
     --glass-background-dark: rgba(255, 255, 255, 0.65);
-    --glass-border: 1px solid rgba(74, 58, 255, 0.25);
+    --glass-border: 1px solid rgba(0, 146, 69, 0.25);
     --card-shadow: none;
     --text-color: #1E2A38;
     --text-light: #2C3E50;

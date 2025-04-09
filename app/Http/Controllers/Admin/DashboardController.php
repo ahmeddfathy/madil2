@@ -243,9 +243,7 @@ class DashboardController extends Controller
             ]);
 
             $user = Auth::user();
-            $user->update([
-                'fcm_token' => $request->token
-            ]);
+            User::where('id', $user->id)->update(['fcm_token' => $request->token]);
 
             Log::info('FCM token updated successfully', [
                 'admin_id' => $user->id

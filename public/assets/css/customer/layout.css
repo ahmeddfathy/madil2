@@ -1,7 +1,7 @@
 /* Variables */
 :root {
-    --primary-color: #4834d4;
-    --secondary-color: #686de0;
+    --primary-color: #009245;
+    --secondary-color: #00b050;
     --background-color: #f8f9fa;
     --white-color: #ffffff;
     --text-color: #333;
@@ -56,7 +56,7 @@ body {
 
 .navbar-nav .nav-link:hover,
 .navbar-nav .nav-link.active {
-    background: rgba(108, 92, 231, 0.1);
+    background: rgba(0, 146, 69, 0.1);
     color: var(--primary-color);
     transform: translateY(-2px);
 }
@@ -98,7 +98,7 @@ body {
 .sidebar-user-info {
     padding: 1.5rem 1rem;
     text-align: center;
-    background: rgba(108, 92, 231, 0.05);
+    background: rgba(0, 146, 69, 0.05);
 }
 
 .user-avatar {
@@ -126,7 +126,7 @@ body {
 
 .sidebar-menu .nav-link:hover,
 .sidebar-menu .nav-link.active {
-    background: rgba(108, 92, 231, 0.1);
+    background: rgba(0, 146, 69, 0.1);
     color: var(--primary-color);
 }
 
@@ -156,7 +156,7 @@ body {
 }
 
 .nav-buttons .btn-link:hover {
-    background: rgba(108, 92, 231, 0.1);
+    background: rgba(0, 146, 69, 0.1);
     color: var(--primary-color);
     transform: translateY(-2px);
 }
@@ -171,7 +171,7 @@ body {
 
 .nav-buttons .btn-outline-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(108, 92, 231, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 146, 69, 0.2);
 }
 
 .nav-buttons .badge {
@@ -222,12 +222,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(108, 92, 231, 0.5);
+    background: rgba(0, 146, 69, 0.5);
     border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(108, 92, 231, 0.7);
+    background: rgba(0, 146, 69, 0.7);
 }
 
 /* Responsive Design */

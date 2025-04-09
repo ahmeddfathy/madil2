@@ -1,9 +1,9 @@
 /* Modern Admin Dashboard Styles with Bootstrap Integration */
 :root {
-    --primary: #4338CA;
-    --primary-hover: #3730A3;
-    --primary-light: rgba(67, 56, 202, 0.12);
-    --secondary: #3730A3;
+    --primary: #009245;
+    --primary-hover: #007a38;
+    --primary-light: rgba(0, 146, 69, 0.12);
+    --secondary: #00b050;
     --success: #059669;
     --success-light: rgba(5, 150, 105, 0.12);
     --info: #0284C7;
@@ -17,7 +17,7 @@
     --border-radius: 1rem;
     --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     --card-shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.1);
-    --gradient-primary: linear-gradient(135deg, #4338CA 0%, #3730A3 100%);
+    --gradient-primary: linear-gradient(135deg, #009245 0%, #00b050 100%);
     --gradient-success: linear-gradient(135deg, #059669 0%, #047857 100%);
     --gradient-danger: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
     --gradient-warning: linear-gradient(135deg, #D97706 0%, #B45309 100%);

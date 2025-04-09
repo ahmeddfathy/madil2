@@ -2,94 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SearchProductsRequest;
-use App\Models\Category;
 use App\Models\Product;
-use App\Models\Cart;
 use App\Models\CartItem;
-use App\Models\Appointment;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\Customer\Products\ProductService;
+use App\Services\Customer\Products\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    protected $productService;
+    protected $cartService;
+
+    public function __construct(ProductService $productService, CartService $cartService)
+    {
+        $this->productService = $productService;
+        $this->cartService = $cartService;
+    }
+
     public function index(Request $request)
     {
-        $query = Product::query()
-            ->with(['category', 'images', 'colors', 'sizes'])
-            ->where('is_available', true)
-            ->when($request->search, function (Builder $query, $search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('description', 'like', "%{$search}%");
-                });
-            })
-            ->when($request->category, function (Builder $query, $category) {
-                $query->whereHas('category', function($q) use ($category) {
-                    $q->where('slug', $category);
-                });
-            })
-            ->when($request->max_price, function (Builder $query, $maxPrice) {
-                $query->where('price', '<=', $maxPrice);
-            });
-
-        $query->when($request->sort, function (Builder $query, $sort) {
-            match ($sort) {
-                'price-low' => $query->orderBy('price', 'asc'),
-                'price-high' => $query->orderBy('price', 'desc'),
-                'newest' => $query->latest(),
-                default => $query->orderBy('created_at', 'desc')
-            };
-        });
-
-        $products = $query->paginate($request->per_page ?? 12);
-
-        $categories = Category::select('id', 'name', 'slug')
-            ->withCount(['products' => function($query) {
-                $query->where('is_available', true);
-            }])
-            ->get();
-
-        $priceRange = [
-            'min' => Product::min('price'),
-            'max' => Product::max('price')
-        ];
+        $products = $this->productService->getFilteredProducts($request);
+        $categories = $this->productService->getCategories();
+        $priceRange = $this->productService->getPriceRange();
 
         if ($request->ajax()) {
             return response()->json([
-                'products' => collect($products->items())->map(function($product) {
-                    return [
-                        'id' => $product->id,
-                        'name' => $product->name,
-                        'slug' => $product->slug,
-                        'category' => [
-                            'name' => $product->category->name,
-                            'slug' => $product->category->slug
-                        ],
-                        'price' => $product->price,
-                        'image_url' => $product->images->first() ? asset('storage/' . $product->images->first()->image_path) : asset('images/placeholder.jpg'),
-                        'images' => collect($product->images)->map(function($image) {
-                            return asset('storage/' . $image->image_path);
-                        })->toArray(),
-                        'colors' => collect($product->colors)->map(function($color) {
-                            return [
-                                'name' => $color->color,
-                                'is_available' => $color->is_available
-                            ];
-                        })->toArray(),
-                        'sizes' => collect($product->sizes)->map(function($size) {
-                            return [
-                                'name' => $size->size,
-                                'is_available' => $size->is_available
-                            ];
-                        })->toArray(),
-                        'rating' => $product->rating ?? 0,
-                        'reviews' => $product->reviews ?? 0,
-                        'is_available' => $product->stock > 0
-                    ];
-                }),
+                'products' => $this->productService->formatProductsForJson($products),
                 'pagination' => [
                     'current_page' => $products->currentPage(),
                     'last_page' => $products->lastPage(),
@@ -110,116 +49,39 @@ class ProductController extends Controller
 
         $product->load(['category', 'images', 'colors', 'sizes']);
 
-        $availableFeatures = [];
+        $availableFeatures = $this->productService->getAvailableFeatures($product);
+        $relatedProducts = $this->productService->getRelatedProducts($product);
 
-        if ($product->allow_color_selection && $product->colors->isNotEmpty()) {
-            $availableFeatures[] = [
-                'icon' => 'palette',
-                'text' => 'يمكنك اختيار لون من الألوان المتاحة'
-            ];
-        }
-
-        if ($product->allow_custom_color) {
-            $availableFeatures[] = [
-                'icon' => 'paint-brush',
-                'text' => 'يمكنك إضافة لون مخصص حسب رغبتك'
-            ];
-        }
-
-        if ($product->allow_size_selection && $product->sizes->isNotEmpty()) {
-            $availableFeatures[] = [
-                'icon' => 'ruler',
-                'text' => 'يمكنك اختيار مقاس من المقاسات المتاحة'
-            ];
-        }
-
-        if ($product->allow_custom_size) {
-            $availableFeatures[] = [
-                'icon' => 'ruler-combined',
-                'text' => 'يمكنك إضافة مقاس مخصص حسب رغبتك'
-            ];
-        }
-
-        if ($product->allow_appointment) {
-            $availableFeatures[] = [
-                'icon' => 'tape',
-                'text' => 'يمكنك طلب موعد لأخذ المقاسات'
-            ];
-        }
-
-        $relatedProducts = Product::where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
-            ->where('is_available', true)
-            ->with(['category', 'images'])
-            ->take(4)
-            ->get();
-
-        $pendingAppointment = null;
-        if (Auth::check()) {
-            $pendingAppointment = CartItem::whereHas('cart', function($query) {
-                $query->where('user_id', Auth::id());
-            })
-            ->where('needs_appointment', true)
-            ->whereHas('product', function($query) use ($product) {
-                $query->where('id', $product->id);
-            })
-            ->whereDoesntHave('appointment')
-            ->first();
-        }
-
-        return view('products.show', compact('product', 'relatedProducts', 'availableFeatures', 'pendingAppointment'));
+        return view('products.show', compact(
+            'product',
+            'relatedProducts',
+            'availableFeatures'
+        ));
     }
 
     public function filter(Request $request)
     {
         try {
-            $query = Product::with(['category', 'images', 'colors', 'sizes'])
-                ->where('is_available', true);
+            // Ensure we get the maxPrice parameter from the request
+            $validatedData = $request->validate([
+                'categories' => 'nullable|array',
+                'minPrice' => 'nullable|numeric|min:0',
+                'maxPrice' => 'nullable|numeric|min:0',
+                'sort' => 'nullable|string|in:newest,price-low,price-high'
+            ]);
 
-            if ($request->has('categories') && !empty($request->categories)) {
-                $query->whereHas('category', function($q) use ($request) {
-                    $q->whereIn('slug', $request->categories);
-                });
-            }
+            // Merge the validated data back to the request so it's accessible in the service
+            $request->merge([
+                'max_price' => $validatedData['maxPrice'] ?? null,
+                'category' => !empty($validatedData['categories']) ? $validatedData['categories'][0] : null,
+                'sort' => $validatedData['sort'] ?? 'newest'
+            ]);
 
-            if ($request->has('minPrice') && is_numeric($request->minPrice)) {
-                $query->where('price', '>=', (float) $request->minPrice);
-            }
-            if ($request->has('maxPrice') && is_numeric($request->maxPrice)) {
-                $query->where('price', '<=', (float) $request->maxPrice);
-            }
-
-            if ($request->has('sort')) {
-                match ($request->sort) {
-                    'price-low' => $query->orderBy('price', 'asc'),
-                    'price-high' => $query->orderBy('price', 'desc'),
-                    'newest' => $query->latest(),
-                    default => $query->latest()
-                };
-            } else {
-                $query->latest();
-            }
-
-            $products = $query->paginate($request->per_page ?? 12);
+            $products = $this->productService->getFilteredProducts($request);
 
             return response()->json([
                 'success' => true,
-                'products' => collect($products->items())->map(function($product) {
-                    return [
-                        'id' => $product->id,
-                        'name' => $product->name,
-                        'slug' => $product->slug,
-                        'category' => $product->category->name,
-                        'price' => number_format($product->price, 2),
-                        'image_url' => $product->images->first() ?
-                            asset('storage/' . $product->images->first()->image_path) :
-                            asset('images/placeholder.jpg'),
-                        'rating' => $product->rating ?? 0,
-                        'reviews' => $product->reviews ?? 0,
-                        'is_available' => $product->stock > 0,
-                        'description' => Str::limit($product->description, 100)
-                    ];
-                }),
+                'products' => $this->productService->formatProductsForFilter($products),
                 'pagination' => [
                     'current_page' => $products->currentPage(),
                     'last_page' => $products->lastPage(),
@@ -247,38 +109,7 @@ class ProductController extends Controller
 
         $product->load(['category', 'images', 'colors', 'sizes']);
 
-        return response()->json([
-            'id' => $product->id,
-            'name' => $product->name,
-            'slug' => $product->slug,
-            'description' => $product->description,
-            'price' => $product->price,
-            'category' => $product->category->name,
-            'image_url' => $product->images->first() ? asset('storage/' . $product->images->first()->image_path) : asset('images/placeholder.jpg'),
-            'images' => collect($product->images)->map(function($image) {
-                return asset('storage/' . $image->image_path);
-            })->toArray(),
-            'colors' => $product->allow_color_selection ? collect($product->colors)->map(function($color) {
-                return [
-                    'name' => $color->color,
-                    'is_available' => $color->is_available
-                ];
-            })->toArray() : [],
-            'sizes' => $product->allow_size_selection ? collect($product->sizes)->map(function($size) {
-                return [
-                    'name' => $size->size,
-                    'is_available' => $size->is_available
-                ];
-            })->toArray() : [],
-            'is_available' => $product->stock > 0,
-            'features' => [
-                'allow_custom_color' => $product->allow_custom_color,
-                'allow_custom_size' => $product->allow_custom_size,
-                'allow_color_selection' => $product->allow_color_selection,
-                'allow_size_selection' => $product->allow_size_selection,
-                'allow_appointment' => $product->allow_appointment
-            ]
-        ]);
+        return response()->json($this->productService->getProductDetails($product));
     }
 
     public function addToCart(Request $request)
@@ -287,168 +118,32 @@ class ProductController extends Controller
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
             'color' => 'nullable|string|max:50',
-            'size' => 'nullable|string|max:50',
-            'needs_appointment' => 'required|boolean'
+            'size' => 'nullable|string|max:50'
         ]);
 
-        $product = Product::findOrFail($request->product_id);
+        $result = $this->cartService->addToCart($request);
 
-        if (!$product->is_available) {
+        if (!$result['success']) {
             return response()->json([
-                'success' => false,
-                'message' => 'عذراً، هذا المنتج غير متاح حالياً'
-            ], 422);
+                'success' => $result['success'],
+                'message' => $result['message']
+            ], $result['status']);
         }
-
-        $needs_appointment = $request->needs_appointment;
-
-        if ($needs_appointment && !$product->allow_appointment) {
-            return response()->json([
-                'success' => false,
-                'message' => 'عذراً، خيار حجز الموعد غير متاح لهذا المنتج'
-            ], 422);
-        }
-
-        if (!$needs_appointment) {
-            $errors = [];
-
-            if ($product->allow_color_selection && !$request->color) {
-                if ($product->allow_custom_color) {
-                    $errors[] = 'يرجى اختيار لون أو كتابة اللون المطلوب';
-                } else {
-                    $errors[] = 'يرجى اختيار لون للمنتج';
-                }
-            }
-
-            if ($product->allow_size_selection && !$request->size) {
-                if ($product->allow_custom_size) {
-                    $errors[] = 'يرجى اختيار مقاس أو كتابة المقاس المطلوب';
-                } else {
-                    $errors[] = 'يرجى اختيار مقاس للمنتج';
-                }
-            }
-
-            if (!empty($errors)) {
-                $errorMessage = 'يرجى ' . implode(' و', $errors);
-
-                if ($product->allow_appointment) {
-                    $errorMessage .= ' أو اختيار خيار "أحتاج إلى أخذ المقاسات"';
-                }
-
-                return response()->json([
-                    'success' => false,
-                    'message' => $errorMessage
-                ], 422);
-            }
-        }
-
-        $cart = null;
-        if (Auth::check()) {
-            $cart = Cart::firstOrCreate(
-                ['user_id' => Auth::id()],
-                ['session_id' => Str::random(40)]
-            );
-        } else {
-            $sessionId = $request->session()->get('cart_session_id');
-            if (!$sessionId) {
-                $sessionId = Str::random(40);
-                $request->session()->put('cart_session_id', $sessionId);
-            }
-            $cart = Cart::firstOrCreate(
-                ['session_id' => $sessionId],
-                ['total_amount' => 0]
-            );
-        }
-
-        $cartItem = CartItem::where('cart_id', $cart->id)
-            ->where('product_id', $product->id)
-            ->where('needs_appointment', $needs_appointment)
-            ->where(function($query) use ($request) {
-                $query->where('color', $request->color)
-                      ->orWhereNull('color');
-            })
-            ->where(function($query) use ($request) {
-                $query->where('size', $request->size)
-                      ->orWhereNull('size');
-            })
-            ->first();
-
-        if ($cartItem) {
-            $cartItem->quantity += $request->quantity;
-            $cartItem->subtotal = $cartItem->quantity * $product->price;
-            $cartItem->save();
-        } else {
-            $cartItem = CartItem::create([
-                'cart_id' => $cart->id,
-                'product_id' => $product->id,
-                'quantity' => $request->quantity,
-                'unit_price' => $product->price,
-                'subtotal' => $request->quantity * $product->price,
-                'color' => $request->color,
-                'size' => $request->size,
-                'needs_appointment' => $needs_appointment
-            ]);
-        }
-
-        $cart->total_amount = $cart->items()->sum('subtotal');
-        $cart->save();
 
         return response()->json([
-            'success' => true,
-            'message' => 'تمت إضافة المنتج إلى سلة التسوق',
-            'cart_count' => $cart->items()->sum('quantity'),
-            'cart_total' => $cart->total_amount,
-            'show_appointment' => $needs_appointment,
-            'product_name' => $product->name,
-            'product_id' => $product->id,
-            'cart_item_id' => $cartItem->id,
-            'show_modal' => $needs_appointment
+            'success' => $result['success'],
+            'message' => $result['message'],
+            'cart_count' => $result['cart_count'],
+            'cart_total' => $result['cart_total'],
+            'product_name' => $result['product_name'],
+            'product_id' => $result['product_id'],
+            'cart_item_id' => $result['cart_item_id']
         ]);
     }
 
     public function getCartItems(Request $request)
     {
-        $cart = null;
-        if (Auth::check()) {
-            $cart = Cart::where('user_id', Auth::id())->first();
-        } else {
-            $sessionId = $request->session()->get('cart_session_id');
-            if ($sessionId) {
-                $cart = Cart::where('session_id', $sessionId)->first();
-            }
-        }
-
-        if (!$cart) {
-            return response()->json([
-                'items' => [],
-                'total' => 0,
-                'count' => 0
-            ]);
-        }
-
-        $items = $cart->items()->with('product.images')->get()->map(function($item) {
-            return [
-                'id' => $item->id,
-                'product_id' => $item->product_id,
-                'name' => $item->product->name,
-                'image' => $item->product->images->first() ?
-                    asset('storage/' . $item->product->images->first()->image_path) :
-                    asset('images/placeholder.jpg'),
-                'quantity' => $item->quantity,
-                'price' => $item->unit_price,
-                'subtotal' => $item->subtotal,
-                'color' => $item->color,
-                'size' => $item->size,
-                'needs_appointment' => $item->needs_appointment,
-                'has_appointment' => $item->appointment()->exists()
-            ];
-        });
-
-        return response()->json([
-            'items' => $items,
-            'total' => $cart->total_amount,
-            'count' => $cart->items()->sum('quantity')
-        ]);
+        return response()->json($this->cartService->getCartItems($request));
     }
 
     public function updateCartItem(Request $request, CartItem $cartItem)
@@ -457,64 +152,24 @@ class ProductController extends Controller
             'quantity' => 'required|integer|min:1'
         ]);
 
-        $cartItem->quantity = $request->quantity;
-        $cartItem->subtotal = $cartItem->quantity * $cartItem->unit_price;
-        $cartItem->save();
+        $result = $this->cartService->updateCartItem($cartItem, $request->quantity);
 
-        $cart = $cartItem->cart;
-        $cart->total_amount = $cart->items()->sum('subtotal');
-        $cart->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'تم تحديث الكمية بنجاح',
-            'item_subtotal' => $cartItem->subtotal,
-            'cart_total' => $cart->total_amount,
-            'cart_count' => $cart->items()->sum('quantity')
-        ]);
+        return response()->json($result);
     }
 
     public function removeCartItem(CartItem $cartItem)
     {
         try {
-            if ($cartItem->cart->user_id !== Auth::id()) {
+            $result = $this->cartService->removeCartItem($cartItem);
+
+            if (!$result['success']) {
                 return response()->json([
-                    'success' => false,
-                    'message' => 'غير مصرح بهذا الإجراء'
-                ], 403);
+                    'success' => $result['success'],
+                    'message' => $result['message']
+                ], $result['status'] ?? 403);
             }
 
-            $cart = $cartItem->cart;
-
-            // First find the appointment ID
-            $appointment = Appointment::where('cart_item_id', $cartItem->id)->first();
-
-            if ($appointment) {
-                // Force delete the appointment first
-                $appointment->forceDelete();
-            }
-
-            // Then delete cart item
-            $cartItem->delete();
-
-            $cart->updateTotals();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'تم حذف المنتج من السلة بنجاح',
-                'count' => $cart->items->count(),
-                'total' => number_format($cart->total_amount, 2) . ' ر.س',
-                'items' => $cart->items->map(function($item) {
-                    return [
-                        'id' => $item->id,
-                        'name' => $item->product->name,
-                        'price' => number_format($item->price, 2),
-                        'quantity' => $item->quantity,
-                        'subtotal' => number_format($item->subtotal, 2),
-                        'image' => $item->product->image_url
-                    ];
-                })
-            ]);
+            return response()->json($result);
 
         } catch (\Exception $e) {
             return response()->json([

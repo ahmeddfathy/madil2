@@ -4,21 +4,8 @@
 
 @section('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-<link rel="stylesheet" href="{{ asset('assets/css/customer/cart.css') }}">
+<link rel="stylesheet" href="/assets/css/customer/cart.css">
 <style>
-  .appointment-alert {
-    border-right: 4px solid #ffc107;
-    background-color: #fff8e1;
-  }
-
-  .alert-warning {
-    border-right: 4px solid #ffc107;
-  }
-
-  .alert-warning .alert-heading {
-    color: #856404;
-    font-size: 1.1rem;
-  }
 </style>
 @endsection
 
@@ -37,13 +24,14 @@
       <div class="col-lg-8">
         @foreach($cart_items as $item)
         @php
-          $needsAppointment = $item->needs_appointment && !$item->appointment()->exists();
+          $itemPrice = $item->unit_price;
+          $itemSubtotal = $item->subtotal;
         @endphp
         <div class="cart-item d-flex gap-3" data-item-id="{{ $item->id }}">
           @php
           // Get any available image for the product, not just primary
           $productImage = $item->product->images->first();
-          $imagePath = $productImage ? Storage::url($productImage->image_path) : asset('images/no-image.png');
+          $imagePath = $productImage ? url('storage/' . $productImage->image_path) : url('images/no-image.png');
           @endphp
           <img src="{{ $imagePath }}" alt="{{ $item->product->name }}" class="cart-item-image">
           <div class="cart-item-details">
@@ -59,17 +47,6 @@
                   @endif
                   @if($item->color)
                   <span>اللون: {{ $item->color }}</span>
-                  @endif
-                  @if($needsAppointment)
-                  <div class="alert alert-warning mt-2 mb-0 appointment-alert">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    <strong>مطلوب حجز موعد:</strong> يرجى الضغط على الزر أدناه لحجز موعد لأخذ المقاسات
-                    <a href="{{ route('products.show', $item->product) }}?pending_appointment={{ $item->id }}"
-                       class="btn btn-warning ms-2 mt-2 d-block">
-                      <i class="bi bi-calendar-plus me-1"></i>
-                      اضغط هنا لحجز موعد
-                    </a>
-                  </div>
                   @endif
                 </div>
               </div>
@@ -88,8 +65,11 @@
                   <i class="bi bi-plus"></i>
                 </button>
               </div>
-              <div class="cart-item-price" id="price-{{ $item->id }}">
-                {{ number_format($item->product->price * $item->quantity, 2) }} ريال
+              <div class="cart-item-price">
+                <div class="unit-price">{{ number_format($itemPrice, 2) }} ريال</div>
+                <div class="subtotal" id="price-{{ $item->id }}">
+                  {{ number_format($itemSubtotal, 2) }} ريال
+                </div>
               </div>
             </div>
           </div>
@@ -98,33 +78,6 @@
       </div>
 
       <div class="col-lg-4">
-        @php
-          $hasItemsNeedingAppointment = $cart_items->contains(function($item) {
-              return $item->needs_appointment && !$item->appointment()->exists();
-          });
-        @endphp
-        @if($hasItemsNeedingAppointment)
-          <div class="alert alert-warning mb-4">
-            <h5 class="alert-heading d-flex align-items-center">
-              <i class="bi bi-exclamation-triangle me-2"></i>
-              تنبيه هام
-            </h5>
-            <p class="mb-0">يوجد منتجات تحتاج لحجز موعد لأخذ المقاسات. يرجى حجز المواعيد أولاً قبل متابعة الشراء</p>
-            <button class="btn btn-warning mt-3" onclick="scrollToAppointmentItem()">
-              <i class="bi bi-arrow-down me-1"></i>
-              عرض المنتج المطلوب له موعد
-            </button>
-          </div>
-          <script>
-            function scrollToAppointmentItem() {
-              const appointmentAlert = document.querySelector('.appointment-alert');
-              if (appointmentAlert) {
-                appointmentAlert.scrollIntoView({ behavior: 'smooth' });
-                appointmentAlert.querySelector('.btn-warning').focus();
-              }
-            }
-          </script>
-        @endif
         <div class="cart-summary">
           <h4 class="mb-4">ملخص الطلب</h4>
           <div class="summary-item">
@@ -135,15 +88,9 @@
             <span class="summary-label">الإجمالي الكلي</span>
             <span class="total-amount" id="total">{{ number_format($total, 2) }} ريال</span>
           </div>
-          @if($hasItemsNeedingAppointment)
-            <button class="btn btn-primary checkout-btn w-100" disabled>
-              متابعة الشراء
-            </button>
-          @else
-            <a href="{{ route('checkout.index') }}" class="btn btn-primary checkout-btn w-100">
-              متابعة الشراء
-            </a>
-          @endif
+          <a href="{{ route('checkout.index') }}" class="btn btn-primary checkout-btn w-100">
+            متابعة الشراء
+          </a>
           <div class="continue-shopping mt-3">
             <a href="{{ route('products.index') }}">
               <i class="bi bi-arrow-right"></i>
@@ -171,7 +118,7 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('assets/js/customer/products-show.js') }}"></script>
+<script src="/assets/js/customer/products-show.js"></script>
 <script>
 function showAlert(message, type = 'success') {
     const alertsContainer = document.getElementById('alerts-container');
@@ -182,6 +129,19 @@ function showAlert(message, type = 'success') {
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     `;
     alertsContainer.appendChild(alert);
+
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+        alert.classList.remove('show');
+        setTimeout(() => alert.remove(), 150);
+    }, 3000);
+}
+
+function formatPrice(price) {
+    return new Intl.NumberFormat('ar-SA', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(price) + ' ريال';
 }
 
 function updateQuantity(itemId, change, newValue = null) {
@@ -206,25 +166,19 @@ function updateQuantity(itemId, change, newValue = null) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // تحديث الكمية
             input.value = quantity;
 
             // تحديث السعر الفرعي للمنتج
-            document.getElementById(`price-${itemId}`).textContent =
-                new Intl.NumberFormat('ar-SA', { style: 'currency', currency: 'SAR' })
-                    .format(data.item_subtotal)
-                    .replace('SAR', 'ريال');
+            document.getElementById(`price-${itemId}`).textContent = formatPrice(data.item_subtotal);
 
             // تحديث إجمالي السلة
-            document.getElementById('total').textContent =
-                new Intl.NumberFormat('ar-SA', { style: 'currency', currency: 'SAR' })
-                    .format(data.cart_total)
-                    .replace('SAR', 'ريال');
+            document.getElementById('total').textContent = formatPrice(data.cart_total);
+            document.getElementById('subtotal').textContent = formatPrice(data.cart_total);
 
             showAlert('تم تحديث الكمية بنجاح');
         } else {
             input.value = currentValue;
-            showAlert(data.message, 'error');
+            showAlert(data.message, 'danger');
         }
     })
     .catch(error => {
@@ -255,7 +209,6 @@ function removeCartItem(itemId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // تأثير حذف المنتج
             cartItem.style.transform = 'translateX(100px)';
             cartItem.style.opacity = '0';
 
@@ -263,10 +216,8 @@ function removeCartItem(itemId) {
                 cartItem.remove();
 
                 // تحديث إجمالي السلة
-                document.getElementById('total').textContent =
-                    new Intl.NumberFormat('ar-SA', { style: 'currency', currency: 'SAR' })
-                        .format(data.cart_total)
-                        .replace('SAR', 'ريال');
+                document.getElementById('total').textContent = formatPrice(data.cart_total);
+                document.getElementById('subtotal').textContent = formatPrice(data.cart_total);
 
                 // إذا أصبحت السلة فارغة
                 if (data.cart_count === 0) {

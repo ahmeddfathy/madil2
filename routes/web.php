@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\{
     ProductController,
     OrderController,
-    AppointmentController,
     CartController,
     CheckoutController,
     ProfileController,
@@ -17,7 +16,6 @@ use App\Http\Controllers\{
     AddressController,
     ContactController,
     PolicyController,
-
 };
 
 // Admin Controllers
@@ -25,26 +23,33 @@ use App\Http\Controllers\Admin\{
     OrderController as AdminOrderController,
     ProductController as AdminProductController,
     CategoryController as AdminCategoryController,
-    AppointmentController as AdminAppointmentController,
     ReportController as AdminReportController,
-    DashboardController as AdminDashboardController
+    DashboardController as AdminDashboardController,
+    CouponController,
+    QuantityDiscountController
 };
 
 // Public Routes
 Route::get('/', function () {
-
     return view('index');
 })->name('home');
 
 // Static Pages Routes
-
-// About Page
 Route::get('/about', function () {
     return view('about');
 })->name('about');
 
+Route::get('/services', function () {
+    return view('services');
+})->name('services');
 
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
 
+Route::get('/shop', function () {
+    return view('shop');
+})->name('shop');
 
 // Products Routes (Public)
 Route::prefix('products')->name('products.')->group(function () {
@@ -106,22 +111,13 @@ Route::middleware([
         Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store')->middleware('web');
+            Route::post('/apply-coupon', 'applyCoupon')->name('apply-coupon');
         });
 
         // Orders
         Route::prefix('orders')->name('orders.')->group(function () {
             Route::get('/', [OrderController::class, 'index'])->name('index');
             Route::get('/{order:uuid}', [OrderController::class, 'show'])->name('show');
-        });
-
-        // Appointments
-        Route::prefix('appointments')->name('appointments.')->group(function () {
-            Route::get('/', [AppointmentController::class, 'index'])->name('index');
-            Route::get('/create', [AppointmentController::class, 'create'])->name('create');
-            Route::post('/', [AppointmentController::class, 'store'])->name('store');
-            Route::get('/available-slots', [AppointmentController::class, 'getAvailableTimeSlots'])->name('available-slots');
-            Route::get('/{appointment:reference_number}', [AppointmentController::class, 'show'])->name('show');
-            Route::delete('/{appointment:reference_number}/cancel', [AppointmentController::class, 'cancel'])->name('cancel');
         });
     });
 
@@ -139,6 +135,12 @@ Route::middleware([
                 Route::resource('categories', AdminCategoryController::class);
             });
 
+            // Coupons & Discounts Management
+            Route::middleware(['permission:manage products'])->group(function () {
+                Route::resource('coupons', CouponController::class);
+                Route::post('coupons/generate-code', [CouponController::class, 'generateCode'])->name('coupons.generate-code');
+            });
+
             // Orders Management
             Route::middleware(['permission:manage orders'])->group(function () {
                 Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
@@ -151,26 +153,13 @@ Route::middleware([
                     ->name('orders.update-payment');
             });
 
-            // Appointments Management
-            Route::middleware(['permission:manage appointments'])->group(function () {
-                Route::resource('appointments', AdminAppointmentController::class)
-                    ->except(['create', 'store', 'edit', 'update'])
-                    ->parameters(['appointment' => 'appointment:reference_number']);
-
-                Route::patch('/appointments/{appointment:reference_number}/update-status', [AdminAppointmentController::class, 'updateStatus'])
-                    ->name('appointments.update-status');
-
-                Route::patch('/appointments/{appointment:reference_number}/cancel', [AdminAppointmentController::class, 'cancel'])
-                    ->name('appointments.cancel');
-
-                Route::patch('/appointments/{appointment:reference_number}/update-datetime', [AdminAppointmentController::class, 'updateDateTime'])
-                    ->name('appointments.update-datetime');
-            });
-
             // Reports Management
             Route::middleware(['permission:manage reports'])->group(function () {
                 Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
             });
+
+            // Quantity Discounts Routes
+            Route::resource('quantity-discounts', QuantityDiscountController::class);
         });
 });
 
@@ -181,7 +170,6 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::get('/cart/items', [ProductController::class, 'getCartItems'])->name('cart.items');
     Route::patch('/cart/items/{cartItem}', [ProductController::class, 'updateCartItem'])->name('cart.update-item');
     Route::delete('/cart/remove/{cartItem}', [ProductController::class, 'removeCartItem'])->name('cart.remove-item');
-    Route::get('/cart/items/{cartItem}/check-appointment', [CartController::class, 'checkAppointment']);
 });
 
 // مسارات لوحة تحكم العميل

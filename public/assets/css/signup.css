@@ -10,8 +10,8 @@
 
 /* Global Styles */
 :root {
-    --primary-color: #6c5ce7;
-    --secondary-color: #a8a6ff;
+    --primary-color: #009245;
+    --secondary-color: #00b050;
     --background-color: #f0f3ff;
     --glass-background: rgba(255, 255, 255, 0.35);
     --glass-background-dark: rgba(255, 255, 255, 0.25);
@@ -76,7 +76,7 @@ body {
 
 .input-group {
     background: rgba(255, 255, 255, 0.9);
-    border: 2px solid rgba(108, 92, 231, 0.1);
+    border: 2px solid rgba(0, 146, 69, 0.1);
     border-radius: 12px;
     transition: all 0.3s ease;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
@@ -85,7 +85,7 @@ body {
 .input-group:focus-within {
     border-color: var(--primary-color);
     background: #ffffff;
-    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 146, 69, 0.1);
 }
 
 .input-group-text {
@@ -136,7 +136,7 @@ body {
     background: var(--secondary-color);
     border-color: var(--secondary-color);
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(108, 92, 231, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 146, 69, 0.2);
 }
 
 /* Decorative Elements */
@@ -229,7 +229,7 @@ body {
 .form-check-input:checked {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
+    box-shadow: 0 0 0 2px rgba(0, 146, 69, 0.1);
 }
 
 .form-check-label {
@@ -325,7 +325,7 @@ body {
     margin-left: 0.8rem;
     font-size: 1rem;
     transition: all 0.3s ease;
-    color: #6c5ce7; /* Updated circle color */
+    color: #009245; /* Updated circle color */
 }
 
 .password-requirements li.valid {

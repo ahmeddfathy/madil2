@@ -17,17 +17,14 @@ class CartItem extends Model
     'quantity',
     'unit_price',
     'subtotal',
-    'needs_appointment',
     'color',
-    'size',
-    'appointment_id'
+    'size'
   ];
 
   protected $casts = [
     'unit_price' => 'integer',
     'subtotal' => 'integer',
-    'quantity' => 'integer',
-    'needs_appointment' => 'boolean'
+    'quantity' => 'integer'
   ];
 
   public function cart(): BelongsTo
@@ -38,15 +35,5 @@ class CartItem extends Model
   public function product(): BelongsTo
   {
     return $this->belongsTo(Product::class);
-  }
-
-  public function appointment()
-  {
-    return $this->hasOne(Appointment::class);
-  }
-
-  public function needsAppointment(): bool
-  {
-    return $this->needs_appointment && !$this->appointment()->exists();
   }
 }

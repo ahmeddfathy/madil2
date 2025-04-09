@@ -135,19 +135,33 @@
     </div>
     @endcan
 
-    @can('viewAny', App\Models\Appointment::class)
+    @can('manage products')
     <div class="col-12 col-md-6 col-lg-4">
-        <div class="action-card bg-white rounded-3 shadow-sm p-3 h-100">
+        <a href="{{ route('admin.coupons.index') }}" class="action-card bg-white rounded-3 shadow-sm p-3 h-100 d-block text-decoration-none">
             <div class="d-flex align-items-center justify-content-end">
-                <div class="action-icon bg-success ms-3">
-                    <i class="fas fa-calendar"></i>
+                <div class="action-icon bg-warning ms-3">
+                    <i class="fas fa-ticket-alt"></i>
                 </div>
                 <div class="text-end">
-                    <h5 class="mb-1">المواعيد</h5>
-                    <p class="mb-0 text-muted small">إدارة مواعيد العملاء</p>
+                    <h5 class="mb-1">كوبونات الخصم</h5>
+                    <p class="mb-0 text-muted small">إدارة كوبونات الخصم للعملاء</p>
                 </div>
             </div>
-        </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4">
+        <a href="{{ route('admin.quantity-discounts.index') }}" class="action-card bg-white rounded-3 shadow-sm p-3 h-100 d-block text-decoration-none">
+            <div class="d-flex align-items-center justify-content-end">
+                <div class="action-icon bg-success ms-3">
+                    <i class="fas fa-percent"></i>
+                </div>
+                <div class="text-end">
+                    <h5 class="mb-1">خصومات الكمية</h5>
+                    <p class="mb-0 text-muted small">إدارة خصومات الكميات الكبيرة</p>
+                </div>
+            </div>
+        </a>
     </div>
     @endcan
 </div>

@@ -8,15 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Log;
+use App\Notifications\OrderCreated;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-
-        $orders = $user->orders()
+        $orders = Auth::user()->orders()
             ->with(['items.product'])
             ->latest()
             ->paginate(10);
@@ -68,12 +66,7 @@ class OrderController extends Controller
                 'shipping_address' => $validated['shipping_address'],
                 'phone' => $validated['phone'],
                 'notes' => $validated['notes'],
-                'order_status' => Order::ORDER_STATUS_PENDING
-            ]);
-
-            Log::info('New order created', [
-                'order_id' => $order->id,
-                'order_number' => $order->order_number
+                'status' => Order::STATUS_PENDING
             ]);
 
             // Create order items and update stock
@@ -91,6 +84,9 @@ class OrderController extends Controller
 
             // Clear cart after successful order
             Session::forget('cart');
+
+            // Send order confirmation notification
+            Auth::user()->notify(new OrderCreated($order));
 
             return redirect()->route('orders.show', $order)
                 ->with('success', 'Order placed successfully.');

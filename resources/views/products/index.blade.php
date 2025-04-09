@@ -3,11 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="تسوق منتجات بر الليث - ملابس أطفال عالية الجودة، تصاميم عصرية، وخامات ممتازة. منتجات متميزة بأسعار مناسبة في محافظة الليث التابعة لمكة المكرمة.">
+    <meta name="keywords" content="بر الليث، ملابس أطفال، مصنع ملابس، ملابس عصرية، ملابس أطفال جودة عالية، محافظة الليث، مكة المكرمة">
+    <meta name="author" content="بر الليث">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="msapplication-TileColor" content="#ffffff">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:site_name" content="بر الليث">
+    <meta property="og:title" content="متجر بر الليث | ملابس أطفال عالية الجودة في محافظة الليث">
+    <meta property="og:description" content="تسوق منتجات بر الليث - ملابس أطفال عالية الجودة، تصاميم عصرية، وخامات ممتازة. منتجات متميزة بأسعار مناسبة في محافظة الليث التابعة لمكة المكرمة.">
+    <meta property="og:image" content="/assets/images/logo.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ar_SA">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="متجر بر الليث | ملابس أطفال عالية الجودة في محافظة الليث">
+    <meta name="twitter:description" content="تسوق منتجات بر الليث - ملابس أطفال عالية الجودة، تصاميم عصرية، وخامات ممتازة. منتجات متميزة بأسعار مناسبة في محافظة الليث التابعة لمكة المكرمة.">
+    <meta name="twitter:image" content="/assets/images/logo.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url()->current() }}">
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>المنتجات - Madil</title>
+    <title>متجر بر الليث | ملابس أطفال عالية الجودة في محافظة الليث</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('assets/css/customer/products.css') }}">
+    <link rel="stylesheet" href="/assets/css/customer/products.css">
 </head>
 <body class="{{ auth()->check() ? 'user-logged-in' : '' }}">
     <!-- Fixed Buttons Group -->
@@ -29,7 +57,7 @@
     <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
       <div class="container">
             <a class="navbar-brand" href="/">
-               <img src="{{ asset('assets/images/logo.png') }}" alt="Madil" height="70">
+               <img src="/assets/images/logo.png" alt="Madil" height="70">
             </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
               <span class="navbar-toggler-icon"></span>
@@ -46,7 +74,7 @@
                         <a class="nav-link active" href="/products">المنتجات</a>
                   </li>
                   <li class="nav-item">
-                        <a class="nav-link" href="/user/profile">حسابي</a>
+                        <a class="nav-link" href="/profile">حسابي</a>
                   </li>
               </ul>
               <div class="nav-buttons">
@@ -110,15 +138,16 @@
 
                     <div class="filter-section">
                         <h4>نطاق السعر</h4>
-                        <div class="price-range">
+                        <div class="form-group mb-4">
+                            <label for="priceRange" class="form-label">السعر</label>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>{{ number_format($priceRange['min']) }} ر.س</span>
+                                <span id="priceValue">{{ number_format($priceRange['max']) }} ر.س</span>
+                            </div>
                             <input type="range" class="form-range" id="priceRange"
                                 min="{{ $priceRange['min'] }}"
                                 max="{{ $priceRange['max'] }}"
                                 value="{{ $priceRange['max'] }}">
-                            <div class="price-labels">
-                                <span>{{ number_format($priceRange['min']) }} ر.س</span>
-                                <span id="priceValue">{{ number_format($priceRange['max']) }} ر.س</span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -146,11 +175,11 @@
                         <div class="product-card">
                             <a href="{{ route('products.show', $product->slug) }}" class="product-image-wrapper">
                                 @if($product->images->isNotEmpty())
-                                    <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
+                                    <img src="{{ url('storage/' . $product->images->first()->image_path) }}"
                                          alt="{{ $product->name }}"
                                          class="product-image">
                                 @else
-                                    <img src="{{ asset('images/placeholder.jpg') }}"
+                                    <img src="{{ url('images/placeholder.jpg') }}"
                                          alt="{{ $product->name }}"
                                          class="product-image">
                                 @endif
@@ -164,7 +193,13 @@
                                     <div class="stars" style="--rating: {{ $product['rating'] }}"></div>
                                     <span class="reviews">({{ $product['reviews'] }} تقييم)</span>
                                 </div>
-                                <p class="product-price">{{ number_format($product->price, 2) }} ر.س</p>
+                                <p class="product-price">
+                                    @if($product->min_price == $product->max_price)
+                                        {{ number_format($product->min_price, 2) }} ر.س
+                                    @else
+                                        {{ number_format($product->min_price, 2) }} - {{ number_format($product->max_price, 2) }} ر.س
+                                    @endif
+                                </p>
                                 <div class="product-actions">
                                     <a href="{{ route('products.show', $product->slug) }}" class="order-product-btn">
                                         <i class="fas fa-shopping-cart me-2"></i>
@@ -301,13 +336,10 @@
         <div class="row">
           <div class="col-lg-4">
             <div class="footer-about">
-              <h5>عن المتجر</h5>
-              <p>نقدم خدمات التفصيل والخياطة بأعلى جودة وأفضل الأسعار مع الالتزام بالمواعيد</p>
+              <h5>عن المصنع</h5>
+              <p>نقدم ملابس أطفال عالية الجودة بتصاميم عصرية وخامات ممتازة بأفضل الأسعار</p>
               <div class="social-links">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://www.instagram.com/barallaith/?igsh=d2ZvaHZqM2VoMWsw#"><i class="fab fa-instagram"></i></a>
               </div>
             </div>
           </div>
@@ -318,7 +350,6 @@
                 <li><a href="/">الرئيسية</a></li>
                 <li><a href="/products">المنتجات</a></li>
                 <li><a href="/about">من نحن</a></li>
-                <li><a href="#contact">تواصل معنا</a></li>
               </ul>
             </div>
           </div>
@@ -328,15 +359,15 @@
               <ul class="list-unstyled">
                 <li class="mb-2 d-flex align-items-center">
                   <i class="fas fa-phone-alt ms-2"></i>
-                  <span dir="ltr">054 315 4437</span>
+                  <span dir="ltr">+966561667885</span>
                 </li>
                 <li class="mb-2 d-flex align-items-center">
                   <i class="fas fa-envelope ms-2"></i>
-                  <a href="mailto:info@madil-sa.com" class="text-decoration-none">info@madil-sa.com</a>
+                  <a href="mailto:barallaith@outlook.sa" class="text-decoration-none">barallaith@outlook.sa</a>
                 </li>
                 <li class="d-flex align-items-center">
                   <i class="fas fa-map-marker-alt ms-2"></i>
-                    <span>مدينه جدة</span>
+                  <span>محافظة الليث - مكة المكرمة</span>
                 </li>
               </ul>
             </div>
@@ -345,7 +376,7 @@
       </div>
       <div class="footer-bottom">
         <div class="container">
-          <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} Madil</p>
+          <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} بر الليث</p>
         </div>
       </div>
     </footer>
@@ -364,6 +395,6 @@
             }
         };
     </script>
-    <script src="{{ asset('assets/js/customer/products.js') }}"></script>
+    <script src="/assets/js/customer/products.js"></script>
 </body>
 </html>
