@@ -1,3 +1,6 @@
+@extends('layouts.customer')
+
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
@@ -45,147 +48,63 @@
     <link rel="stylesheet" href="{{ asset('assets/kids-clothes/css2/owl.carousel.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('assets/kids-clothes/css2/slicknav.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('assets/kids-clothes/css2/style.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ asset('assets/kids-clothes/css2/bootstrap-rtl.min.css') }}">
+    <!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+    /* Add margin to account for fixed navbar */
+    body {
+        padding-top: 10px; /* Adjust based on your navbar height */
+    }
+    
+    /* RTL specific styles */
+    html[dir="rtl"] .hero-slider-section,
+    html[dir="rtl"] .banner,
+    html[dir="rtl"] .categories,
+    html[dir="rtl"] .instagram {
+        direction: rtl;
+        text-align: right;
+    }
+    
+    /* Ensure content is not hidden behind sidebar */
+    .main-content {
+        margin-right: 300px; /* Adjust based on sidebar width */
+        transition: margin-right 0.3s;
+    }
+    
+    /* When sidebar is closed */
+    .sidebar-collapsed .main-content {
+        margin-right: 0;
+    }
+</style>
 </head>
 
 <body>
-    <!-- Offcanvas Menu Begin -->
-    <div class="offcanvas-menu-overlay"></div>
-    <div class="offcanvas-menu-wrapper">
-        <div class="offcanvas__option">
-            <div class="offcanvas__links">
-                <a href="Signup.html">Sign in</a>
-                <a href="#">FAQs</a>
-            </div>
-            <div class="offcanvas__top__hover">
-                <span>Usd <i class="arrow_carrot-down"></i></span>
-                <ul>
-                    <li>USD</li>
-                    <li>EUR</li>
-                    <li>USD</li>
-                </ul>
-            </div>
-        </div>
-        <div class="offcanvas__nav__option">
-
-            <a href="#" class="search-switch"><img src="{{ asset('assets/kids-clothes/img/icon/search.png') }}" alt=""></a>
-            <a href="#"><img src="{{ asset('assets/kids-clothes/img/icon/heart.png') }}" alt=""></a>
-            <a href="#"><img src="{{ asset('assets/kids-clothes/img/icon/cart.png') }}" alt=""> <span>0</span></a>
-            <div class="price">$0.00</div>
-        </div>
-
-        <div id="mobile-menu-wrap"></div>
-        <div class="offcanvas__text">
-            <p>Free shipping, 30-day return or refund guarantee.</p>
-        </div>
-    </div>
-    <!-- Offcanvas Menu End -->
-
+<main class="main-content">
     <!-- Header Section Begin -->
-    <header class="header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container">
-                <!-- Logo -->
-                <a class="navbar-brand" href="{{ route('home') }}">
-                    <img src="{{ asset('assets/kids-clothes/img/logo.png') }}" alt="E-Commerce Logo" height="60">
-                </a>
-
-                <!-- Toggler/collapsible Button -->
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- Navbar links -->
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav mx-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="{{ route('home') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('services') }}">Services</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('shop') }}">Shop</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('about') }}">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('contact') }}">Contact</a>
-                        </li>
-                    </ul>
-
-                    <!-- Right-side Icons -->
-                    <div class="navbar-nav ml-auto">
-                        <a href="#" class="nav-link"><i class="fa fa-heart"></i></a>
-                        <a href="#" class="nav-link cart-icon" id="cart-icon">
-                            <i class="fa fa-shopping-cart"></i>
-                            <span class="cart-count">0</span>
-                        </a>
-                        <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-user"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="Login.html">Login</a>
-                                <a class="dropdown-item" href="Signup.html">Sign Up</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <!-- Header Section End -->
-
+    
     <!-- Hero Section Begin -->
-    <section class="hero">
-        <div class="hero__slider owl-carousel">
-            <div class="hero__items set-bg" data-setbg="{{ asset('assets/kids-clothes/img/hero/hero-1.jpg') }}">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-xl-5 col-lg-7 col-md-8">
-                            <div class="hero__text">
-                                <h6>Winter Collection</h6>
-                                <h2>Fall - Winter Collections 2030</h2>
-                                <p>A specialist label creating luxury essentials. Ethically crafted with an unwavering
-                                commitment to exceptional quality.</p>
-                                <a href="shop.html" class="primary-btn">Shop now <span class="arrow_right"></span></a>
-                                <div class="hero__social">
-                                    <a href="#"><i class="fa fa-facebook"></i></a>
-                                    <a href="#"><i class="fa fa-twitter"></i></a>
-                                    <a href="#"><i class="fa fa-pinterest"></i></a>
-                                    <a href="#"><i class="fa fa-instagram"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="hero__items set-bg" data-setbg="{{ asset('assets/kids-clothes/img/hero/hero-2.jpg') }}">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-xl-5 col-lg-7 col-md-8">
-                            <div class="hero__text">
-                                <h6>Summer Collection</h6>
-                                <h2>Fall - Winter Collections 2030</h2>
-                                <p>A specialist label creating luxury essentials. Ethically crafted with an unwavering
-                                commitment to exceptional quality.</p>
-                                <a href="#" class="primary-btn">Shop now <span class="arrow_right"></span></a>
-                                <div class="hero__social">
-                                    <a href="#"><i class="fa fa-facebook"></i></a>
-                                    <a href="#"><i class="fa fa-twitter"></i></a>
-                                    <a href="#"><i class="fa fa-pinterest"></i></a>
-                                    <a href="#"><i class="fa fa-instagram"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <section class="hero-slider-section">
+  <div class="swiper heroSwiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide" style="background-image: url('{{ asset('assets/kids-clothes/img/hero/hero-1.jpg') }}');">
+        
+      </div>
+      <div class="swiper-slide" style="background-image: url('{{ asset('assets/kids-clothes/img/hero/hero-2.jpg') }}');">
+        
+      </div>
+    </div>
+
+    <!-- Optional controls -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
     <!-- Hero Section End -->
 
     <!-- Banner Section Begin -->
@@ -343,7 +262,7 @@
 
 
     <!-- Footer Section Begin -->
-    <footer class="footer">
+    <footer class="footer" >
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-md-6 col-sm-6">
@@ -405,7 +324,7 @@
         </div>
     </div>
     <!-- Search End -->
-
+    </main>
     <!-- Js Plugins -->
     <script src="{{ asset('assets/kids-clothes/js2/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ asset('assets/kids-clothes/js2/bootstrap.min.js') }}"></script>
@@ -419,11 +338,6 @@
     <script src="{{ asset('assets/kids-clothes/js2/main.js') }}"></script>
 
 <script>
-
-document.addEventListener("DOMContentLoaded", function () {
-    updateNavbar();
-});
-
 document.addEventListener("DOMContentLoaded", function () {
     updateNavbar();
 });
@@ -466,94 +380,33 @@ function updateNavbar() {
     }
 }
 
-
-////
-
-/* document.addEventListener("DOMContentLoaded", function () {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    if (!user) {
-        window.location.href = "login.html"; // Redirect to login if not logged in
-        return;
-    }
-
-    document.getElementById("name").value = user.name;
-    document.getElementById("email").value = user.email;
-    document.getElementById("address").value = user.address || ""; // Show empty field if no address
-
-    // Logout Button Click
-    const logoutBtn = document.getElementById("logout-btn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", function (event) {
-            event.preventDefault();
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
-            window.location.href = "index.html"; // Redirect to homepage after logout
-        });
-    }
-}); */
-
-////
-
-    document.addEventListener("DOMContentLoaded", function () {
-    const cartIcon = document.getElementById("cart-icon");
-    const sideCart = document.querySelector(".side-cart");
-    const closeCartBtn = document.querySelector(".close-cart");
-    const cartOverlay = document.querySelector(".cart-overlay");
-
-    // Function to open cart
-    function openCart() {
-        sideCart.classList.add("open");
-        cartOverlay.classList.add("show");
-    }
-
-    // Function to close cart
-    function closeCart() {
-        sideCart.classList.remove("open");
-        cartOverlay.classList.remove("show");
-    }
-
-    // Event Listeners
-    cartIcon.addEventListener("click", function (e) {
-        e.preventDefault();
-        openCart();
-    });
-
-    closeCartBtn.addEventListener("click", closeCart);
-    cartOverlay.addEventListener("click", closeCart);
-});
-
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    const wishlistIcon = document.querySelector(".fa-heart"); // Heart icon in navbar
-    const sideWishlist = document.querySelector(".side-wishlist");
-    const closeWishlistBtn = document.querySelector(".close-wishlist");
-    const wishlistOverlay = document.querySelector(".wishlist-overlay");
-
-    // Function to open wishlist
-    function openWishlist() {
-        sideWishlist.classList.add("open");
-        wishlistOverlay.classList.add("show");
-    }
-
-    // Function to close wishlist
-    function closeWishlist() {
-        sideWishlist.classList.remove("open");
-        wishlistOverlay.classList.remove("show");
-    }
-
-    // Event Listeners
-    wishlistIcon.addEventListener("click", function (e) {
-        e.preventDefault();
-        openWishlist();
-    });
-
-    closeWishlistBtn.addEventListener("click", closeWishlist);
-    wishlistOverlay.addEventListener("click", closeWishlist);
-});
-
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ asset('assets/kids-clothes/js2/owl.carousel.min.js') }}"></script>
+
+    <script>
+const swiper = new Swiper('.heroSwiper', {
+    loop: true,
+    autoplay: {
+        delay: 4000,
+        disableOnInteraction: false,
+    },
+    pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+    },
+    navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+    },
+    effect: 'fade',
+    fadeEffect: {
+        crossFade: true
+    },
+    rtl: true // Add this for RTL support
+});
+</script>
+
 
 </body>
 

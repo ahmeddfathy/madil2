@@ -1,417 +1,306 @@
+@extends('layouts.customer')
+
+
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="تسوق منتجات بر الليث - ملابس أطفال عالية الجودة، تصاميم عصرية، وخامات ممتازة. منتجات متميزة بأسعار مناسبة في محافظة الليث التابعة لمكة المكرمة.">
-    <meta name="keywords" content="بر الليث، ملابس أطفال، مصنع ملابس، ملابس عصرية، ملابس أطفال جودة عالية، محافظة الليث، مكة المكرمة">
+    <meta name="description" content="متجر بر الليث - ملابس أطفال عالية الجودة، تصاميم عصرية، وخامات ممتازة">
+    <meta name="keywords" content="ملابس أطفال, ملابس أطفال سعودية, ملابس أطفال مكة">
     <meta name="author" content="بر الليث">
-    <meta name="robots" content="index, follow">
-    <meta name="googlebot" content="index, follow">
     <meta name="theme-color" content="#ffffff">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>بر الليث | خدماتنا</title>
 
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:site_name" content="بر الليث">
-    <meta property="og:title" content="متجر بر الليث | ملابس أطفال عالية الجودة في محافظة الليث">
-    <meta property="og:description" content="تسوق منتجات بر الليث - ملابس أطفال عالية الجودة، تصاميم عصرية، وخامات ممتازة. منتجات متميزة بأسعار مناسبة في محافظة الليث التابعة لمكة المكرمة.">
-    <meta property="og:image" content="/assets/images/logo.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="ar_SA">
-
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="متجر بر الليث | ملابس أطفال عالية الجودة في محافظة الليث">
-    <meta name="twitter:description" content="تسوق منتجات بر الليث - ملابس أطفال عالية الجودة، تصاميم عصرية، وخامات ممتازة. منتجات متميزة بأسعار مناسبة في محافظة الليث التابعة لمكة المكرمة.">
-    <meta name="twitter:image" content="/assets/images/logo.png">
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="{{ url()->current() }}">
-
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>متجر بر الليث | خدماتنا</title>
-
-    <!-- Google Font -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Css Styles -->
-    <link rel="stylesheet" href="{{ asset('assets/kids-clothes/css2/bootstrap.min.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('assets/kids-clothes/css2/font-awesome.min.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('assets/kids-clothes/css2/magnific-popup.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('assets/kids-clothes/css2/nice-select.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('assets/kids-clothes/css2/owl.carousel.min.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('assets/kids-clothes/css2/slicknav.min.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('assets/kids-clothes/css2/style.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('assets/kids-clothes/ourservices.css') }}">
+    
+    <!-- Bootstrap RTL -->
+   <!--  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+     -->
+    <style>
+        :root {
+            --primary-color: #009245;
+            --secondary-color: #007d3a;
+            --light-bg: #f9f9f9;
+        }
+        body {
+    padding-top: 130px; /* Adjust this based on navbar height */
+    padding-bottom:0 px;
+}
+
+@media (min-width: 992px) {
+    body {
+        padding-right: 290px; /* Adjust if your sidebar is fixed and has width */
+    }
+}
+        body {
+            font-family: 'Tajawal', sans-serif;
+            padding-top: 130px;
+            background-color: var(--light-bg);
+        }
+        
+        
+        
+        /* Services Section */
+        .services {
+            padding: 60px 0;
+            background-color: var(--light-bg);
+        }
+        
+        .services h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .services h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+        
+        .service-box {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 90%;
+            text-align: right;
+            border-bottom: 4px solid transparent;
+        }
+        
+        .service-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .service-box i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .service-box h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .service-box p {
+            color: #555;
+            line-height: 1.7;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: #222;
+            color: #fff;
+            padding: 50px 0 20px;
+        }
+        
+        .footer__about img {
+            margin-bottom: 20px;
+        }
+        
+        .footer__widget h6 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .footer__widget ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer__widget ul li a {
+            color: #bbb;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer__widget ul li a:hover {
+            color: #fff;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .service-box {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .service-box:nth-child(1) { animation-delay: 0.1s; }
+        .service-box:nth-child(2) { animation-delay: 0.2s; }
+        .service-box:nth-child(3) { animation-delay: 0.3s; }
+        .service-box:nth-child(4) { animation-delay: 0.4s; }
+        .service-box:nth-child(5) { animation-delay: 0.5s; }
+        .service-box:nth-child(6) { animation-delay: 0.6s; }
+        
+        /* Responsive */
+        @media (max-width: 767px) {
+            .services h2 {
+                font-size: 1.5rem;
+            }
+            
+            .service-box {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<!-- Header Section Begin -->
-<header class="header">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <!-- Logo -->
-            <a class="navbar-brand" href="{{ route('home') }}">
-                <img src="{{ asset('assets/kids-clothes/img/logo.png') }}" alt="E-Commerce Logo" height="60">
-            </a>
-
-            <!-- Toggler/collapsible Button -->
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Navbar links -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('home') }}">Home</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ route('services') }}">Services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('shop') }}">Shop</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('about') }}">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('contact') }}">Contact</a>
-                    </li>
-                </ul>
-
-                <!-- Right-side Icons -->
-                <div class="navbar-nav ml-auto">
-                    <a href="#" class="nav-link"><i class="fa fa-heart"></i></a>
-                    <a href="#" class="nav-link cart-icon" id="cart-icon">
-                        <i class="fa fa-shopping-cart"></i>
-                        <span class="cart-count">0</span>
-                    </a>
-                    <div class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-user"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="Login.html">Login</a>
-                            <a class="dropdown-item" href="Signup.html">Sign Up</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-</header>
-<!-- Header Section End -->
-
-    <!-- Breadcrumb Section -->
-    <section class="breadcrumb-option">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="breadcrumb__text">
-                        <h4>Our Services</h4>
-                        <div class="breadcrumb__links">
-                            <a href="./index.html">Home</a>
-                            <span>Our Services</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Services Section -->
     <section class="services">
         <div class="container">
-            <h2>What We Offer</h2>
+            <h2>الخدمات التي نقدمها</h2>
             <div class="row">
                 <div class="col-lg-4 col-md-6">
                     <div class="service-box">
-                        <i class="fa fa-tshirt"></i>
-                        <h4>Custom Kids Apparel</h4>
-                        <p>We design and manufacture stylish and comfortable kids' clothing, using premium fabrics.</p>
+                        <i class="fas fa-tshirt"></i>
+                        <h4>ملابس أطفال مخصصة</h4>
+                        <p>نصمم ونصنع ملابس أطفال أنيقة ومريحة باستخدام أفضل أنواع الأقمشة ذات الجودة العالية.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="service-box">
-                        <i class="fa fa-recycle"></i>
-                        <h4>Eco-Friendly Fabrics</h4>
-                        <p>Our production process ensures sustainability with organic and safe materials for kids.</p>
+                        <i class="fas fa-leaf"></i>
+                        <h4>أقمشة صديقة للبيئة</h4>
+                        <p>نحرص على استخدام مواد عضوية وآمنة للأطفال في جميع عمليات التصنيع لدينا.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="service-box">
-                        <i class="fa fa-truck"></i>
-                        <h4>Fast & Secure Delivery</h4>
-                        <p>We provide quick and safe shipping to ensure your little ones get their outfits on time.</p>
+                        <i class="fas fa-truck"></i>
+                        <h4>توصيل سريع وآمن</h4>
+                        <p>نوفر خدمة توصيل سريعة وآمنة لضمان وصول ملابس أطفالكم في الوقت المطلوب.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="service-box">
-                        <i class="fa fa-hand-holding-heart"></i>
-                        <h4>Ethical Manufacturing</h4>
-                        <p>Our factory ensures fair labor practices, keeping safety and quality a priority.</p>
+                        <i class="fas fa-hands-helping"></i>
+                        <h4>تصنيع أخلاقي</h4>
+                        <p>نلتزم بممارسات عمل عادلة ونحرص على السلامة والجودة في مصنعنا.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="service-box">
-                        <i class="fa fa-shopping-cart"></i>
-                        <h4>Bulk Orders & Wholesale</h4>
-                        <p>We offer attractive deals for bulk orders, perfect for retailers and event organizers.</p>
+                        <i class="fas fa-boxes"></i>
+                        <h4>طلبات الجملة</h4>
+                        <p>نقدم عروضًا مميزة للطلبات بالجملة، مثالية للمتاجر ومنظمي الفعاليات.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="service-box">
-                        <i class="fa fa-headset"></i>
-                        <h4>24/7 Customer Support</h4>
-                        <p>Our support team is available round the clock to assist you with any queries.</p>
+                        <i class="fas fa-headset"></i>
+                        <h4>دعم فني على مدار الساعة</h4>
+                        <p>فريق الدعم لدينا متاح 24/7 لمساعدتكم في أي استفسارات أو مشكلات.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-
-
-
-
-
-
-<!-- Side Cart Section -->
-<div class="side-cart">
-    <div class="cart-header">
-        <h4>Your Cart</h4>
-        <button class="close-cart">&times;</button>
-    </div>
-    <div class="cart-items">
-        <!-- Cart items will be dynamically added here -->
-    </div>
-    <div class="cart-footer">
-        <p>Total: <span id="cart-total">$0.00</span></p>
-        <a href="checkout.html" class="checkout-btn">Checkout</a>
-    </div>
-</div>
-
-
-<!-- Wishlist Sidebar Section -->
-<div class="side-wishlist">
-    <div class="wishlist-header">
-        <h4>Your Wishlist</h4>
-        <button class="close-wishlist">&times;</button>
-    </div>
-    <div class="wishlist-items">
-        <!-- Wishlist items will be dynamically added here -->
-    </div>
-    <div class="wishlist-footer">
-        <a href="My wishlist.html" class="view-wishlist-btn">View Wishlist</a>
-    </div>
-</div>
-<div class="wishlist-overlay"></div>
-
-    <!-- Footer Section Begin -->
+    <!-- Footer Section -->
     <footer class="footer">
         <div class="container">
             <div class="row">
-                <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="col-lg-3 col-md-6">
                     <div class="footer__about">
                         <div class="footer__logo">
-                            <a href="#"><img src="{{ asset('assets/kids-clothes/img/logo.png') }}" width="100" height="150" alt=""></a>
+                            <a href="#"><img src="/assets/images/logo.png" alt="بر الليث"width="120"></a>
+                            
                         </div>
-                        <p>The customer is at the heart of our unique business model, which includes design.</p>
-                        <a href="#"><img src="{{ asset('assets/kids-clothes/img/payment.png') }}" alt=""></a>
+                        <p>متخصصون في تصميم وتصنيع ملابس الأطفال بأعلى معايير الجودة والأناقة.</p>
+                        <div class="social-links mt-3">
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-snapchat"></i></a>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
+                <div class="col-lg-3 col-md-6">
                     <div class="footer__widget">
-                        <h6>Shopping</h6>
+                        <h6>روابط سريعة</h6>
                         <ul>
-                            <li><a href="#">Clothing Store</a></li>
-                            <li><a href="#">Trending Shoes</a></li>
-                            <li><a href="#">Accessories</a></li>
-                            <li><a href="#">Sale</a></li>
+                            <li><a href="/">الرئيسية</a></li>
+                            <li><a href="/services">خدماتنا</a></li>
+                            <li><a href="/products">المنتجات</a></li>
+                            <li><a href="/about">من نحن</a></li>
                         </ul>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-3 col-sm-6">
+                <div class="col-lg-3 col-md-6">
                     <div class="footer__widget">
-                        <h6>Shopping</h6>
+                        <h6>خدمة العملاء</h6>
                         <ul>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Payment Methods</a></li>
-                            <li><a href="#">Delivary</a></li>
-                            <li><a href="#">Return & Exchanges</a></li>
+                            <li><a href="/contact">اتصل بنا</a></li>
+                            <li><a href="#">طرق الدفع</a></li>
+                            <li><a href="#">الشحن والتوصيل</a></li>
+                            <li><a href="#">الإرجاع والاستبدال</a></li>
                         </ul>
                     </div>
                 </div>
-                <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
+                <div class="col-lg-3 col-md-6">
                     <div class="footer__widget">
-                        <h6>NewLetter</h6>
-                        <div class="footer__newslatter">
-                            <p>Be the first to know about new arrivals, look books, sales & promos!</p>
-                            <form action="#">
-                                <input type="text" placeholder="Your email">
-                                <button type="submit"><span class="icon_mail_alt"></span></button>
-                            </form>
-                        </div>
+                        <h6>النشرة البريدية</h6>
+                        <p>كن أول من يعرف عن أحدث المنتجات والعروض الخاصة</p>
+                        <form class="footer__newslatter">
+                            <input type="text" placeholder="بريدك الإلكتروني">
+                            <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                        </form>
                     </div>
                 </div>
             </div>
-
+            <div class="footer__copyright text-center mt-4">
+                <p>جميع الحقوق محفوظة &copy; <script>document.write(new Date().getFullYear())</script> بر الليث</p>
+            </div>
         </div>
     </footer>
-    <!-- Footer Section End -->
 
-    <!-- Search Begin -->
-    <div class="search-model">
-        <div class="h-100 d-flex align-items-center justify-content-center">
-            <div class="search-close-switch">+</div>
-            <form class="search-model-form">
-                <input type="text" id="search-input" placeholder="Search here.....">
-            </form>
-        </div>
-    </div>
-    <!-- Search End -->
-
-    <!-- Js Plugins -->
-    <script src="{{ asset('assets/kids-clothes/js2/jquery-3.3.1.min.js') }}"></script>
-    <script src="{{ asset('assets/kids-clothes/js2/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('assets/kids-clothes/js2/jquery.nice-select.min.js') }}"></script>
-    <script src="{{ asset('assets/kids-clothes/js2/jquery.nicescroll.min.js') }}"></script>
-    <script src="{{ asset('assets/kids-clothes/js2/jquery.magnific-popup.min.js') }}"></script>
-    <script src="{{ asset('assets/kids-clothes/js2/jquery.countdown.min.js') }}"></script>
-    <script src="{{ asset('assets/kids-clothes/js2/jquery.slicknav.js') }}"></script>
-    <script src="{{ asset('assets/kids-clothes/js2/mixitup.min.js') }}"></script>
-    <script src="{{ asset('assets/kids-clothes/js2/owl.carousel.min.js') }}"></script>
-    <script src="{{ asset('assets/kids-clothes/js2/main.js') }}"></script>
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-         ////
-document.addEventListener("DOMContentLoaded", function () {
-    updateNavbar();
-});
-
-
-function updateNavbar() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const navIcons = document.querySelector(".nav-icons");
-
-    if (user) {
-        // If user is logged in, show Profile and Logout
-        navIcons.innerHTML = `
-            <a href="wishlist.html" class="nav-icon"><i class="fa fa-heart"></i></a>
-            <a href="#" class="nav-icon cart-icon" id="cart-icon">
-                <i class="fa fa-shopping-cart"></i>
-                <span class="cart-count">0</span>
-            </a>
-            <div class="user-dropdown">
-                <button class="user-btn"><i class="fa fa-user"></i></button>
-                <ul class="user-menu">
-                    <li><a href="profile.html">Profile</a></li>
-                    <li><a href="#" id="logout-btn">Logout</a></li>
-                </ul>
-            </div>
-        `;
-
-        // Logout functionality
-        document.getElementById("logout-btn").addEventListener("click", function (event) {
-            event.preventDefault();
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
-            updateNavbar(); // Reset navbar to show Login & Sign Up
-            window.location.href = "index.html"; // Redirect to homepage after logout
+        // Simple animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const serviceBoxes = document.querySelectorAll('.service-box');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            serviceBoxes.forEach(box => {
+                box.style.opacity = '0';
+                box.style.transform = 'translateY(20px)';
+                box.style.transition = 'all 0.5s ease';
+                observer.observe(box);
+            });
         });
-    } else {
-        // If user is NOT logged in, show Login and Sign Up
-        navIcons.innerHTML = `
-            <a href="login.html" class="nav-icon">Login</a>
-            <a href="signup.html" class="nav-icon">Sign Up</a>
-        `;
-    }
-}
-
-
-/////
-
-document.addEventListener("DOMContentLoaded", function () {
-    let menuToggle = document.querySelector(".menu-toggle");
-    let mobileMenu = document.querySelector(".mobile-menu");
-
-    if (menuToggle) {
-        menuToggle.addEventListener("click", function () {
-            mobileMenu.classList.toggle("active");
-        });
-    }
-});
-
-
-//cart js
-document.addEventListener("DOMContentLoaded", function () {
-    const cartIcon = document.getElementById("cart-icon");
-    const sideCart = document.querySelector(".side-cart");
-    const closeCartBtn = document.querySelector(".close-cart");
-    const cartOverlay = document.querySelector(".cart-overlay");
-
-    // Function to open cart
-    function openCart() {
-        sideCart.classList.add("open");
-        cartOverlay.classList.add("show");
-    }
-
-    // Function to close cart
-    function closeCart() {
-        sideCart.classList.remove("open");
-        cartOverlay.classList.remove("show");
-    }
-
-    // Event Listeners
-    cartIcon.addEventListener("click", function (e) {
-        e.preventDefault();
-        openCart();
-    });
-
-    closeCartBtn.addEventListener("click", closeCart);
-    cartOverlay.addEventListener("click", closeCart);
-});
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    const wishlistIcon = document.querySelector(".fa-heart"); // Heart icon in navbar
-    const sideWishlist = document.querySelector(".side-wishlist");
-    const closeWishlistBtn = document.querySelector(".close-wishlist");
-    const wishlistOverlay = document.querySelector(".wishlist-overlay");
-
-    // Function to open wishlist
-    function openWishlist() {
-        sideWishlist.classList.add("open");
-        wishlistOverlay.classList.add("show");
-    }
-
-    // Function to close wishlist
-    function closeWishlist() {
-        sideWishlist.classList.remove("open");
-        wishlistOverlay.classList.remove("show");
-    }
-
-    // Event Listeners
-    wishlistIcon.addEventListener("click", function (e) {
-        e.preventDefault();
-        openWishlist();
-    });
-
-    closeWishlistBtn.addEventListener("click", closeWishlist);
-    wishlistOverlay.addEventListener("click", closeWishlist);
-});
-
-
     </script>
-
 </body>
-
 </html>

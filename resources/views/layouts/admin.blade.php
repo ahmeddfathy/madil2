@@ -11,6 +11,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/admin/admin-layout.css') }}">
+    <style>
+        .sidebar-header {
+    padding: 1rem;
+    position: relative;
+}
+
+.sidebar-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar-logo img {
+    max-width: 20%;
+    height: auto;
+}
+
+.btn-close {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+    </style>
+
     @yield('styles')
 </head>
 <body class="h-100">
@@ -22,8 +47,8 @@
         <aside class="sidebar shadow-sm" id="sidebar">
             <div class="sidebar-header">
                 <a href="{{ route('admin.dashboard') }}" class="sidebar-logo">
-                    <i class="fas fa-tshirt me-2"></i>
-                    بر الليث
+                    <img src="{{ asset('assets/images/logo.png') }}" alt="بر الليث" height="40" class="me-2">
+                   
                 </a>
                 <button class="d-lg-none btn btn-close" id="closeSidebar" aria-label="Close"></button>
             </div>

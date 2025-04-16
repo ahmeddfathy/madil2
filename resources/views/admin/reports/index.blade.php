@@ -1,519 +1,432 @@
-<x-app-layout>
-  <x-slot name="header">
-    <div class="flex justify-between items-center">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        {{ __('Reports & Analytics') }}
-      </h2>
+@extends('layouts.admin')
+
+@section('title', 'التقارير')
+@section('page_title', 'التقارير')
+
+@section('content')
+<div class="container-fluid">
+    <!-- Filters Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">تصفية التقارير</h5>
+        </div>
+        <div class="card-body">
+            @include('admin.reports._filters')
+        </div>
     </div>
-  </x-slot>
 
-  <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <!-- الفلتر الجديد -->
-      @include('admin.reports._filters')
-
-      <!-- Growth Indicators -->
-      <div class="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <!-- Key Metrics Cards -->
+    <div class="row mb-4">
         <!-- Sales Growth -->
-        <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-          <div class="p-6">
-            <div class="flex items-center">
-              <div class="flex-shrink-0 {{ $salesReport['growth']['trend'] === 'up' ? 'bg-green-500' : 'bg-red-500' }} rounded-md p-3">
-                <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M{{ $salesReport['growth']['trend'] === 'up' ? '13 7l5 5m0 0l-5 5m5-5H6' : '11 17l-5-5m0 0l5-5m-5 5h12' }}" />
-                </svg>
-              </div>
-              <div class="ml-5 w-0 flex-1">
-                <dl>
-                  <dt class="text-sm font-medium text-gray-500 truncate">Sales Growth</dt>
-                  <dd class="flex items-baseline">
-                    <div class="text-2xl font-semibold text-gray-900">
-                      {{ number_format($salesReport['growth']['percentage'], 1) }}%
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 {{ $salesReport['growth']['trend'] === 'up' ? 'bg-success' : 'bg-danger' }} rounded p-3">
+                            <i class="fas {{ $salesReport['growth']['trend'] === 'up' ? 'fa-arrow-up' : 'fa-arrow-down' }} text-white"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">نمو المبيعات</h6>
+                            <h4 class="mb-0">{{ number_format($salesReport['growth']['percentage'], 1) }}%</h4>
+                            <small class="text-muted">مقارنة بالفترة السابقة</small>
+                        </div>
                     </div>
-                    <div class="ml-2 flex items-baseline text-sm font-semibold {{ $salesReport['growth']['trend'] === 'up' ? 'text-green-600' : 'text-red-600' }}">
-                      {{ $salesReport['growth']['trend'] === 'up' ? '↑' : '↓' }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Sales -->
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 bg-primary rounded p-3">
+                            <i class="fas fa-money-bill-wave text-white"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">إجمالي المبيعات</h6>
+                            <h4 class="mb-0">{{ number_format($salesReport['total_sales'], 2) }} ر.س</h4>
+                        </div>
                     </div>
-                  </dd>
-                </dl>
-              </div>
+                </div>
             </div>
-            <div class="mt-2 text-xs text-gray-500">
-              Compared to previous period
-            </div>
-          </div>
         </div>
 
-        <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-          <div class="p-6">
-            <div class="flex items-center">
-              <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
-                <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div class="ml-5 w-0 flex-1">
-                <dl>
-                  <dt class="text-sm font-medium text-gray-500 truncate">Total Sales</dt>
-                  <dd class="text-lg font-semibold text-gray-900">{{ number_format($salesReport['total_sales'], 2) }} ريال</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-          <div class="p-6">
-            <div class="flex items-center">
-              <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
-                <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-              </div>
-              <div class="ml-5 w-0 flex-1">
-                <dl>
-                  <dt class="text-sm font-medium text-gray-500 truncate">Total Orders</dt>
-                  <dd class="text-lg font-semibold text-gray-900">{{ $salesReport['orders_count'] }}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-          <div class="p-6">
-            <div class="flex items-center">
-              <div class="flex-shrink-0 bg-yellow-500 rounded-md p-3">
-                <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-              <div class="ml-5 w-0 flex-1">
-                <dl>
-                  <dt class="text-sm font-medium text-gray-500 truncate">Average Order Value</dt>
-                  <dd class="text-lg font-semibold text-gray-900">{{ number_format($salesReport['average_order_value'], 2) }} ريال</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Period Comparison -->
-      <div class="mb-8 bg-white overflow-hidden shadow-sm rounded-lg">
-        <div class="p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Period Comparison</h3>
-          <div class="grid grid-cols-2 gap-4">
-            <div class="p-4 bg-gray-50 rounded-lg">
-              <h4 class="text-sm font-medium text-gray-500">Current Period</h4>
-              <p class="mt-2 text-2xl font-semibold text-gray-900">
-                {{ number_format($salesReport['growth']['current_amount'], 2) }} ريال
-              </p>
-            </div>
-            <div class="p-4 bg-gray-50 rounded-lg">
-              <h4 class="text-sm font-medium text-gray-500">Previous Period</h4>
-              <p class="mt-2 text-2xl font-semibold text-gray-900">
-                {{ number_format($salesReport['growth']['previous_amount'], 2) }} ريال
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sales Chart -->
-      <div class="mb-8 bg-white overflow-hidden shadow-sm rounded-lg">
-        <div class="p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Sales Trend</h3>
-          <div class="h-96">
-            <canvas id="salesChart"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Stock Distribution Chart -->
-      <div class="mb-8 bg-white overflow-hidden shadow-sm rounded-lg">
-        <div class="p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Stock Distribution</h3>
-          <div class="h-80">
-            <canvas id="stockDistributionChart"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Top Products Analysis -->
-      <div class="mb-8 bg-white overflow-hidden shadow-sm rounded-lg">
-        <div class="p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Top Selling Products</h3>
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead>
-                <tr>
-                  <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                  <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Units Sold</th>
-                  <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Revenue</th>
-                  <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Trend</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                @forelse($salesReport['top_products'] as $product)
-                <tr>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {{ $product['name'] }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                    {{ number_format($product['total_quantity']) }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                    {{ number_format($product['total_revenue'], 2) }} ريال
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-right">
-                    @if($product['trend'] != 0)
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $product['trend'] > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                            {{ $product['trend'] > 0 ? '↑' : '↓' }} {{ abs($product['trend']) }}%
-                        </span>
-                    @else
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            -
-                        </span>
-                    @endif
-                  </td>
-                </tr>
-                @empty
-                <tr>
-                  <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
-                    No products found
-                  </td>
-                </tr>
-                @endforelse
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <!-- Top Products -->
-        <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-          <div class="p-6">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-medium text-gray-900">Top Products</h3>
-            </div>
-            <div class="flow-root">
-              <ul role="list" class="-my-5 divide-y divide-gray-200">
-                @foreach($topProducts as $product)
-                <li class="py-4">
-                  <div class="flex items-center space-x-4">
-                    <div class="flex-1 min-w-0">
-                      <p class="text-sm font-medium text-gray-900 truncate">
-                        {{ $product->name }}
-                      </p>
+        <!-- Total Orders -->
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 bg-info rounded p-3">
+                            <i class="fas fa-shopping-cart text-white"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">إجمالي الطلبات</h6>
+                            <h4 class="mb-0">{{ $salesReport['orders_count'] }}</h4>
+                        </div>
                     </div>
-                  </div>
-                </li>
-                @endforeach
-              </ul>
+                </div>
             </div>
-          </div>
         </div>
 
-        <!-- Inventory Status -->
-        <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-          <div class="p-6">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-medium text-gray-900">Inventory Status</h3>
+        <!-- Average Order Value -->
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 bg-warning rounded p-3">
+                            <i class="fas fa-receipt text-white"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">متوسط قيمة الطلب</h6>
+                            <h4 class="mb-0">{{ number_format($salesReport['average_order_value'], 2) }} ر.س</h4>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <dl class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <div class="px-4 py-5 bg-gray-50 rounded-lg overflow-hidden sm:p-6">
-                <dt class="text-sm font-medium text-gray-500 truncate">Total Products</dt>
-                <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $inventoryReport['total_products'] }}</dd>
-              </div>
-              <div class="px-4 py-5 bg-gray-50 rounded-lg overflow-hidden sm:p-6">
-                <dt class="text-sm font-medium text-gray-500 truncate">Low Stock Items</dt>
-                <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $inventoryReport['low_stock_count'] }}</dd>
-              </div>
-              <div class="px-4 py-5 bg-gray-50 rounded-lg overflow-hidden sm:p-6">
-                <dt class="text-sm font-medium text-gray-500 truncate">Out of Stock</dt>
-                <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $inventoryReport['out_of_stock_count'] }}</dd>
-              </div>
-              <div class="px-4 py-5 bg-gray-50 rounded-lg overflow-hidden sm:p-6">
-                <dt class="text-sm font-medium text-gray-500 truncate">Average Stock Level</dt>
-                <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $inventoryReport['average_stock'] }}</dd>
-              </div>
-            </dl>
-          </div>
         </div>
-      </div>
-
-      <!-- Peak Hours Analysis -->
-      <div class="mb-8 bg-white overflow-hidden shadow-sm rounded-lg">
-        <div class="p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Peak Hours Analysis</h3>
-          <div class="h-80">
-            <canvas id="peakHoursChart"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Customer Analysis -->
-      <div class="mb-8 bg-white overflow-hidden shadow-sm rounded-lg">
-        <div class="p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Top Customers</h3>
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead>
-                <tr>
-                  <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                  <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Orders</th>
-                  <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total Spent</th>
-                  <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Average Order</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                @foreach($salesReport['top_customers'] as $customer)
-                <tr>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {{ $customer->user->name }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                    {{ $customer->orders }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                    ${{ number_format($customer->total / 100, 2) }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                    ${{ number_format(($customer->total / $customer->orders) / 100, 2) }}
-                  </td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 
-  @push('scripts')
-  <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Debug data
-    console.log('Sales Data:', @json($salesReport['daily_data']));
-    console.log('Stock Data:', @json($inventoryReport['stock_distribution']));
+    <!-- Period Comparison -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">مقارنة الفترات</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="p-4 bg-light rounded">
+                        <h6 class="text-muted">الفترة الحالية</h6>
+                        <h3 class="mb-0">{{ number_format($salesReport['growth']['current_amount'], 2) }} ر.س</h3>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-4 bg-light rounded">
+                        <h6 class="text-muted">الفترة السابقة</h6>
+                        <h3 class="mb-0">{{ number_format($salesReport['growth']['previous_amount'], 2) }} ر.س</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    // Sales Trend Chart
+    <!-- Sales Chart -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">اتجاه المبيعات</h5>
+        </div>
+        <div class="card-body">
+            <div class="chart-container" style="height: 400px;">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Distribution -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">توزيع المخزون</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="stockChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge bg-success me-2">متوفر</span></td>
+                                    <td class="text-end">{{ $inventoryReport['stock_distribution']['متوفر'] ?? 0 }}</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-warning me-2">منخفض</span></td>
+                                    <td class="text-end">{{ $inventoryReport['stock_distribution']['منخفض'] ?? 0 }}</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-danger me-2">نفذ</span></td>
+                                    <td class="text-end">{{ $inventoryReport['stock_distribution']['نفذ'] ?? 0 }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Products -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title">أفضل المنتجات مبيعاً</h5>
+                <a href="{{ route('admin.products.index') }}" class="btn btn-sm btn-outline-primary">عرض الكل</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>المنتج</th>
+                            <th class="text-end">الكمية المباعة</th>
+                            <th class="text-end">الإيرادات</th>
+                            <th class="text-end">الاتجاه</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($salesReport['top_products'] as $product)
+                        <tr>
+                            <td>{{ $product['name'] }}</td>
+                            <td class="text-end">{{ number_format($product['total_quantity']) }}</td>
+                            <td class="text-end">{{ number_format($product['total_revenue'], 2) }} ر.س</td>
+                            <td class="text-end">
+                                @if($product['trend'] != 0)
+                                <span class="badge {{ $product['trend'] > 0 ? 'bg-success' : 'bg-danger' }}">
+                                    {{ $product['trend'] > 0 ? '↑' : '↓' }} {{ abs($product['trend']) }}%
+                                </span>
+                                @else
+                                <span class="badge bg-secondary">-</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="text-center">لا توجد بيانات</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Status -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">حالة المخزون</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="p-3 bg-light rounded text-center">
+                        <h6 class="text-muted">إجمالي المنتجات</h6>
+                        <h3 class="mb-0">{{ $inventoryReport['total_products'] }}</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="p-3 bg-light rounded text-center">
+                        <h6 class="text-muted">منخفضة المخزون</h6>
+                        <h3 class="mb-0">{{ $inventoryReport['low_stock_count'] }}</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="p-3 bg-light rounded text-center">
+                        <h6 class="text-muted">منتهية</h6>
+                        <h3 class="mb-0">{{ $inventoryReport['out_of_stock_count'] }}</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="p-3 bg-light rounded text-center">
+                        <h6 class="text-muted">متوسط المخزون</h6>
+                        <h3 class="mb-0">{{ $inventoryReport['average_stock'] }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Peak Hours -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">ساعات الذروة</h5>
+        </div>
+        <div class="card-body">
+            <div class="chart-container" style="height: 300px;">
+                <canvas id="peakHoursChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Customers -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">أفضل العملاء</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>العميل</th>
+                            <th class="text-end">عدد الطلبات</th>
+                            <th class="text-end">إجمالي المشتريات</th>
+                            <th class="text-end">متوسط الطلب</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($salesReport['top_customers'] as $customer)
+                        <tr>
+                            <td>{{ $customer->user->name }}</td>
+                            <td class="text-end">{{ $customer->orders }}</td>
+                            <td class="text-end">{{ number_format($customer->total / 100, 2) }} ر.س</td>
+                            <td class="text-end">{{ number_format(($customer->total / $customer->orders) / 100, 2) }} ر.س</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sales Chart
     const salesCtx = document.getElementById('salesChart').getContext('2d');
     const salesData = @json($salesReport['daily_data']);
-
+    
     new Chart(salesCtx, {
-      type: 'line',
-      data: {
-        labels: Object.keys(salesData),
-        datasets: [{
-          label: 'المبيعات',
-          data: Object.values(salesData).map(d => d.sales),
-          borderColor: '#4CAF50',
-          backgroundColor: 'rgba(76, 175, 80, 0.1)',
-          fill: true,
-          tension: 0.3,
-          borderWidth: 3
-        }, {
-          label: 'الطلبات',
-          data: Object.values(salesData).map(d => d.orders),
-          borderColor: '#2196F3',
-          backgroundColor: 'rgba(33, 150, 243, 0.1)',
-          fill: true,
-          tension: 0.3,
-          borderWidth: 3
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          intersect: false,
-          mode: 'index'
+        type: 'line',
+        data: {
+            labels: Object.keys(salesData),
+            datasets: [{
+                label: 'المبيعات',
+                data: Object.values(salesData).map(d => d.sales),
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                fill: true,
+                tension: 0.3,
+                borderWidth: 3
+            }, {
+                label: 'الطلبات',
+                data: Object.values(salesData).map(d => d.orders),
+                borderColor: '#17a2b8',
+                backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                fill: true,
+                tension: 0.3,
+                borderWidth: 3
+            }]
         },
-        plugins: {
-          legend: {
-            position: 'top',
-            labels: {
-              font: {
-                size: 14,
-                weight: 'bold'
-              },
-              padding: 20
-            }
-          },
-          tooltip: {
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            titleColor: '#000',
-            titleFont: {
-              size: 16,
-              weight: 'bold'
-            },
-            bodyColor: '#000',
-            bodyFont: {
-              size: 14
-            },
-            borderColor: '#ddd',
-            borderWidth: 1,
-            padding: 15,
-            callbacks: {
-              label: function(context) {
-                if (context.dataset.label === 'المبيعات') {
-                  return `المبيعات: ${Number(context.raw).toLocaleString('ar-SA', {
-                    style: 'currency',
-                    currency: 'SAR'
-                  })}`;
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    rtl: true
+                },
+                tooltip: {
+                    rtl: true,
+                    callbacks: {
+                        label: function(context) {
+                            if (context.dataset.label === 'المبيعات') {
+                                return `المبيعات: ${context.raw.toLocaleString('ar-SA')} ر.س`;
+                            }
+                            return `الطلبات: ${context.raw}`;
+                        }
+                    }
                 }
-                return `الطلبات: ${context.raw}`;
-              }
-            }
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            grid: {
-              color: '#f0f0f0'
             },
-            ticks: {
-              callback: function(value) {
-                return Number(value).toLocaleString('ar-SA', {
-                  style: 'currency',
-                  currency: 'SAR'
-                });
-              }
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString('ar-SA');
+                        }
+                    }
+                }
             }
-          },
-          x: {
-            grid: {
-              display: false
-            },
-            ticks: {
-              font: {
-                size: 12
-              }
-            }
-          }
         }
-      }
     });
 
-    // Stock Distribution Chart
-    const stockCtx = document.getElementById('stockDistributionChart').getContext('2d');
+    // Stock Chart
+    const stockCtx = document.getElementById('stockChart').getContext('2d');
     const stockData = @json($inventoryReport['stock_distribution']);
-
-    // إضافة console.log للتأكد من البيانات
-    console.log('Stock Distribution Data:', stockData);
-
+    
     new Chart(stockCtx, {
-      type: 'bar',
-      data: {
-        labels: ['متوفر', 'منخفض', 'نفذ'],
-        datasets: [{
-          label: 'عدد المنتجات',
-          data: [
-            stockData['متوفر'] || 0,
-            stockData['منخفض'] || 0,
-            stockData['نفذ'] || 0
-          ],
-          backgroundColor: [
-            '#4CAF50',  // متوفر - أخضر
-            '#FFC107',  // منخفض - أصفر
-            '#F44336'   // نفذ - أحمر
-          ],
-          borderWidth: 0,
-          borderRadius: 5
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            titleColor: '#000',
-            bodyColor: '#000',
-            callbacks: {
-              label: function(context) {
-                return `عدد المنتجات: ${context.raw} منتج`;
-              }
-            }
-          }
+        type: 'doughnut',
+        data: {
+            labels: ['متوفر', 'منخفض', 'نفذ'],
+            datasets: [{
+                data: [
+                    stockData['متوفر'] || 0,
+                    stockData['منخفض'] || 0,
+                    stockData['نفذ'] || 0
+                ],
+                backgroundColor: [
+                    '#28a745',
+                    '#ffc107',
+                    '#dc3545'
+                ]
+            }]
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            grid: {
-              color: '#f0f0f0'
-            },
-            ticks: {
-              stepSize: 1,
-              font: {
-                size: 12
-              }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    rtl: true
+                }
             }
-          },
-          x: {
-            grid: {
-              display: false
-            },
-            ticks: {
-              font: {
-                size: 12,
-                weight: 'bold'
-              }
-            }
-          }
         }
-      }
     });
 
     // Peak Hours Chart
-    const peakHoursCtx = document.getElementById('peakHoursChart').getContext('2d');
-    const peakHoursData = @json($salesReport['peak_hours']);
-
-    new Chart(peakHoursCtx, {
-      type: 'bar',
-      data: {
-        labels: peakHoursData.map(d => `${d.hour}:00`),
-        datasets: [{
-          label: 'Orders',
-          data: peakHoursData.map(d => d.count),
-          backgroundColor: 'rgba(59, 130, 246, 0.8)',
-          borderColor: 'rgb(37, 99, 235)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            callbacks: {
-              title: (items) => `Hour: ${items[0].label}`,
-              label: (item) => `Orders: ${item.raw}`
-            }
-          }
+    const peakCtx = document.getElementById('peakHoursChart').getContext('2d');
+    const peakData = @json($salesReport['peak_hours']);
+    
+    new Chart(peakCtx, {
+        type: 'bar',
+        data: {
+            labels: peakData.map(d => `${d.hour}:00`),
+            datasets: [{
+                label: 'عدد الطلبات',
+                data: peakData.map(d => d.count),
+                backgroundColor: '#007bff'
+            }]
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              stepSize: 1
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
             }
-          }
         }
-      }
     });
-  });
-  </script>
-  @endpush
-</x-app-layout>
+});
+</script>
+@endsection
+
+@section('styles')
+<style>
+.chart-container {
+    position: relative;
+    margin: auto;
+}
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+</style>
+@endsection

@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="{{ asset('assets/css/customer/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/customer/layout.css') }}">
     @yield('styles')
+    <style>
+       
+    </style>
 </head>
 
 <body>
@@ -24,43 +27,55 @@
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="بر الليث" height="100" >
+        <div class="container-fluid">
+            <!-- Logo positioned at the beginning -->
+            <a class="navbar-brand logo-container" href="/">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="بر الليث" height="60">
             </a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="/"><i class="fas fa-home ms-1"></i>الرئيسية</a>
+                        <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{ route('home') }}"><i class="fas fa-home ms-1"></i>الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('products*') ? 'active' : '' }}" href="/services"><i class="fas fa-tshirt ms-1"></i>خدماتنا</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('products*') ? 'active' : '' }}" href="/products"><i class="fas fa-tshirt ms-1"></i>المنتجات</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('dashboard*') ? 'active' : '' }}" href="/dashboard"><i class="fas fa-user ms-1"></i>حسابي</a>
+                        <a class="nav-link {{ request()->is('products*') ? 'active' : '' }}" href="/about"><i class="fas fa-info-circle ms-1"></i>من نحن</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('products*') ? 'active' : '' }}" href="/contact"><i class="fas fa-envelope ms-1"></i>تواصل معنا</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('dashboard*') ? 'active' : '' }}" href="/user/profile"><i class="fas fa-user ms-1"></i>حسابي</a>
                     </li>
                 </ul>
                 <div class="nav-buttons d-flex align-items-center">
-                    <a href="/cart" class="btn btn-link position-relative me-3">
-                        <i class="fas fa-shopping-cart fa-lg"></i>
+                    <a href="/cart" class="btn btn-link position-relative">
+                        <i class="fas fa-shopping-cart"></i>
                         @if($stats['cart_items_count'] > 0)
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             {{ $stats['cart_items_count'] }}
                         </span>
                         @endif
                     </a>
-                    <a href="/notifications" class="btn btn-link position-relative me-3">
-                        <i class="fas fa-bell fa-lg"></i>
+                    <a href="/notifications" class="btn btn-link position-relative ms-2">
+                        <i class="fas fa-bell"></i>
                         @if($stats['unread_notifications'] > 0)
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             {{ $stats['unread_notifications'] }}
                         </span>
                         @endif
                     </a>
-                    <a href="{{ route('logout') }}" class="btn btn-outline-primary"
+                    <a href="{{ route('logout') }}" class="btn btn-outline-primary ms-3"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="fas fa-sign-out-alt ms-1"></i>تسجيل الخروج
                     </a>
@@ -74,13 +89,7 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <div class="sidebar-header">
-            <a href="/" class="d-block">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="بر الليث" class="img-fluid">
-            </a>
-        </div>
         <div class="sidebar-user-info">
-            <!-- <img src="{{ asset('images/default-avatar.png') }}" alt="{{ Auth::user()->name }}" class="user-avatar"> -->
             <h5 class="mb-2">{{ Auth::user()->name }}</h5>
             <span class="badge bg-primary">{{ Auth::user()->role === 'admin' ? 'مدير' : 'عميل' }}</span>
         </div>
@@ -100,7 +109,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('orders*') ? 'active' : '' }}" href="/orders">
-                        <i class="fas fa-shopping-bag"></i>
+                        <i class="fas fa-clipboard-list"></i>
                         الطلبات
                     </a>
                 </li>
@@ -130,17 +139,20 @@
                 </li>
                 <li class="nav-item mt-3">
                     <a class="nav-link text-danger" href="{{ route('logout') }}"
-                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        onclick="event.preventDefault(); document.getElementById('logout-form-sidebar').submit();">
                         <i class="fas fa-sign-out-alt"></i>
                         تسجيل الخروج
                     </a>
+                    <form id="logout-form-sidebar" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
                 </li>
             </ul>
         </div>
     </div>
 
     <!-- Main Content -->
-    <div class="main-content" style="margin-top: 60px;">
+    <div class="main-content">
         @yield('content')
     </div>
 
@@ -148,25 +160,59 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        // تهيئة CSRF token
+        // CSRF token setup
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
 
-        // Add Sidebar Toggle Functionality
+        // Sidebar functionality
         $(document).ready(function() {
-            $('.sidebar-toggle').on('click', function() {
-                $('.sidebar').toggleClass('show');
+            const sidebar = $('.sidebar');
+            const sidebarToggle = $('.sidebar-toggle');
+            const mainContent = $('.main-content');
+            const navbarHeight = $('.glass-navbar').outerHeight();
+
+            // Set initial sidebar position
+            sidebar.css('top', navbarHeight + 'px');
+            sidebar.css('height', 'calc(100vh - ' + navbarHeight + 'px)');
+
+            // Toggle sidebar
+            sidebarToggle.on('click', function(e) {
+                e.stopPropagation();
+                sidebar.toggleClass('show');
+                
+                // Adjust main content margin for desktop
+                if ($(window).width() >= 992) {
+                    if (sidebar.hasClass('show')) {
+                        mainContent.css('margin-right', '280px');
+                    } else {
+                        mainContent.css('margin-right', '0');
+                    }
+                }
             });
 
             // Close sidebar when clicking outside on mobile
             $(document).on('click', function(e) {
                 if ($(window).width() < 992) {
                     if (!$(e.target).closest('.sidebar').length && !$(e.target).closest('.sidebar-toggle').length) {
-                        $('.sidebar').removeClass('show');
+                        sidebar.removeClass('show');
                     }
+                }
+            });
+
+            // Handle window resize
+            $(window).resize(function() {
+                const newNavbarHeight = $('.glass-navbar').outerHeight();
+                sidebar.css('top', newNavbarHeight + 'px');
+                sidebar.css('height', 'calc(100vh - ' + newNavbarHeight + 'px)');
+                
+                if ($(window).width() >= 992) {
+                    sidebar.removeClass('show');
+                    mainContent.css('margin-right', '280px');
+                } else {
+                    mainContent.css('margin-right', '0');
                 }
             });
         });

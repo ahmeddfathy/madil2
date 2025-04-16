@@ -31,7 +31,7 @@ use App\Http\Controllers\Admin\{
 
 // Public Routes
 Route::get('/', function () {
-    return view('index');
+    return view('indexx');
 })->name('home');
 
 // Static Pages Routes

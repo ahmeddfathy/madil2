@@ -1,3 +1,6 @@
+@extends('layouts.customer')
+
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -10,6 +13,20 @@
     <link rel="stylesheet" href="/assets/css/customer/products-show.css">
     <link rel="stylesheet" href="/assets/css/customer/products.css">
     <link rel="stylesheet" href="/assets/css/customer/quantity-pricing.css">
+
+
+    <style>
+        body {
+    padding-top: 140px; /* Adjust this based on navbar height */
+}
+
+@media (min-width: 992px) {
+    body {
+        padding-right: 300px; /* Adjust if your sidebar is fixed and has width */
+    }
+}
+
+    </style>
 </head>
 <body>
     <!-- Fixed Buttons Group -->
@@ -26,71 +43,6 @@
             Dashboard
         </a>
         @endauth
-    </div>
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="/assets/images/logo.png" alt="Madil" height="70">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">الرئيسية</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">من نحن</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/products">المنتجات</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/profile">حسابي</a>
-                    </li>
-                </ul>
-                <div class="nav-buttons">
-                    <button class="btn btn-outline-primary position-relative me-2" id="cartToggle">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-count">
-                            0
-                        </span>
-                    </button>
-                            @auth
-                                <a href="/dashboard" class="btn btn-primary">لوحة التحكم</a>
-                            @else
-                                <a href="/login" class="btn btn-outline-primary me-2">تسجيل الدخول</a>
-                                <a href="/register" class="btn btn-primary">إنشاء حساب</a>
-                            @endauth
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Add this after navbar -->
-    <div class="cart-sidebar" id="cartSidebar">
-        <div class="cart-header">
-            <h3>سلة التسوق</h3>
-            <button class="close-cart" id="closeCart">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="cart-items" id="cartItems">
-            <!-- Cart items will be dynamically added here -->
-        </div>
-        <div class="cart-footer">
-            <div class="cart-total">
-                <span>الإجمالي:</span>
-                <span id="cartTotal">0 ر.س</span>
-            </div>
-            <a href="{{ route('checkout.index') }}" class="checkout-btn">
-                <i class="fas fa-shopping-cart ml-2"></i>
-                إتمام الشراء
-            </a>
-        </div>
     </div>
 
     <!-- Main Content -->
@@ -406,7 +358,7 @@
       </div>
       <div class="footer-bottom">
         <div class="container">
-          <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} عدسة سوما</p>
+          <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} بر الليث</p>
         </div>
       </div>
     </footer>
