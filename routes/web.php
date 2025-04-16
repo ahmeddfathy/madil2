@@ -16,6 +16,7 @@ use App\Http\Controllers\{
     AddressController,
     ContactController,
     PolicyController,
+    HomeController,
 };
 
 // Admin Controllers
@@ -30,9 +31,7 @@ use App\Http\Controllers\Admin\{
 };
 
 // Public Routes
-Route::get('/', function () {
-    return view('indexx');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Static Pages Routes
 Route::get('/about', function () {

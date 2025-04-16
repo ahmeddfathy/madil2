@@ -1,7 +1,7 @@
 @extends('layouts.customer')
 
 @section('content')
-<div class="profile-page-container">
+<div class="profile-page-container overflow-y-auto">
     <!-- User Profile Card -->
 
     <!-- Profile Content Area -->
@@ -13,7 +13,7 @@
                 <h2 class="section-title">Profile Information</h2>
             </div>
             <p class="section-description">Update your account's profile information and email address</p>
-            
+
             @if (Laravel\Fortify\Features::canUpdateProfileInformation())
                 <div class="livewire-form">
                     @livewire('profile.update-profile-information-form')
@@ -28,7 +28,7 @@
                 <h2 class="section-title">Update Password</h2>
             </div>
             <p class="section-description">Ensure your account is using a long, random password to stay secure</p>
-            
+
             @if (Laravel\Fortify\Features::enabled(Laravel\Fortify\Features::updatePasswords()))
                 <div class="livewire-form">
                     @livewire('profile.update-password-form')
@@ -71,10 +71,19 @@
 </div>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 :root {
     --primary-color: #009245;
     --border-color: #e0e0e0;
     --text-muted: #777;
+    --gradient-primary: linear-gradient(135deg, #009245, #FCEE21);
+    --shadow-soft: 0 4px 20px rgba(0,0,0,0.08), 0 8px 32px rgba(0,146,69,0.1);
+    --font-family: 'Poppins', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
 }
 
 .profile-page-container {
@@ -84,18 +93,24 @@
     max-width: 1200px;
     margin: 0 auto;
     min-height: calc(100vh - 160px);
+    background: #f8f9fa;
 }
 
 /* Profile Card Styles */
 .profile-card {
     width: 320px;
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
     padding: 2rem;
     position: sticky;
     top: 120px;
     height: fit-content;
+    transition: transform 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
 }
 
 .profile-header {
@@ -104,28 +119,36 @@
 }
 
 .avatar {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 1rem;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1.5rem;
     border-radius: 50%;
-    background: rgba(0, 146, 69, 0.1);
+    background: var(--gradient-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 3.5rem;
-    color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0,146,69,0.2);
+    transition: transform 0.3s ease;
+}
+
+.avatar:hover {
+    transform: scale(1.05);
 }
 
 .user-name {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.75rem;
+    font-weight: 600;
     margin-bottom: 0.25rem;
-    color: #333;
+    color: #2d3436;
+    letter-spacing: -0.5px;
 }
 
 .user-email {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 1rem;
+    font-weight: 300;
 }
 
 .profile-details {
@@ -139,16 +162,17 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
+    transition: transform 0.2s ease;
 }
 
-.detail-item:last-child {
-    margin-bottom: 0;
+.detail-item:hover {
+    transform: translateX(5px);
 }
 
 .detail-icon {
     color: var(--primary-color);
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     width: 24px;
     text-align: center;
 }
@@ -159,48 +183,52 @@
 }
 
 .detail-label {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
     margin-bottom: 0.25rem;
+    font-weight: 400;
 }
 
 .detail-value {
-    font-size: 0.95rem;
-    color: #333;
+    font-size: 1rem;
+    color: #2d3436;
     font-weight: 500;
 }
 
 .profile-menu {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
 }
 
 .menu-item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    color: #555;
+    padding: 1rem;
+    border-radius: 12px;
+    color: #2d3436;
     text-decoration: none;
-    transition: all 0.2s ease;
-}
-
-.menu-item:hover {
-    background: rgba(0, 146, 69, 0.05);
-    color: var(--primary-color);
-}
-
-.menu-item.active {
-    background: rgba(0, 146, 69, 0.1);
-    color: var(--primary-color);
+    transition: all 0.3s ease;
     font-weight: 500;
 }
 
+.menu-item:hover {
+    background: rgba(0, 146, 69, 0.08);
+    color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.menu-item.active {
+    background: var(--gradient-primary);
+    color: white;
+    font-weight: 600;
+}
+
 .menu-item i {
-    width: 20px;
+    width: 24px;
     text-align: center;
+    font-size: 1.1rem;
 }
 
 /* Profile Content Styles */
@@ -213,34 +241,42 @@
 
 .content-section {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
+    padding: 2.5rem;
+    transition: transform 0.3s ease;
+}
+
+.content-section:hover {
+    transform: translateY(-5px);
 }
 
 .section-header {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .section-icon {
     color: var(--primary-color);
-    font-size: 1.5rem;
+    font-size: 1.75rem;
 }
 
 .section-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #333;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3436;
     margin: 0;
+    letter-spacing: -0.5px;
 }
 
 .section-description {
     color: var(--text-muted);
-    margin-bottom: 1.5rem;
-    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.6;
 }
 
 /* Form Input Styles */
@@ -248,12 +284,13 @@
 .livewire-form textarea,
 .livewire-form select {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    margin-bottom: 1rem;
+    padding: 1rem 1.25rem;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: var(--font-family);
+    transition: all 0.3s ease;
+    margin-bottom: 1.25rem;
 }
 
 .livewire-form input:focus,
@@ -261,50 +298,54 @@
 .livewire-form select:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 146, 69, 0.1);
+    box-shadow: 0 0 0 4px rgba(0, 146, 69, 0.1);
 }
 
 .livewire-form label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
     font-weight: 500;
-    color: #555;
+    color: #2d3436;
 }
 
 /* Button Styles */
 .livewire-form button {
-    background-color: var(--primary-color);
+    background: var(--primary-color);
     color: white;
     border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 500;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,146,69,0.2);
 }
 
 .livewire-form button:hover {
-    background-color: #008a4f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,146,69,0.3);
 }
 
 /* Form Group Styling */
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 /* Error Message Styling */
 .text-sm.text-red-600 {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: #e74c3c;
-    margin-top: -0.5rem;
-    margin-bottom: 1rem;
+    margin-top: -0.75rem;
+    margin-bottom: 1.25rem;
     display: block;
+    font-weight: 500;
 }
 
 .danger-zone {
     border-left: 4px solid #e74c3c;
+    background: #fff5f5;
 }
 
 .danger-zone .section-icon {
@@ -316,7 +357,7 @@
     .profile-page-container {
         flex-direction: column;
     }
-    
+
     .profile-card {
         width: 100%;
         position: static;
@@ -327,7 +368,7 @@
     .profile-page-container {
         padding: 1rem;
     }
-    
+
     .profile-card,
     .content-section {
         padding: 1.5rem;

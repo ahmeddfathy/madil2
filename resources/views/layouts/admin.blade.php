@@ -8,33 +8,9 @@
 
     <!-- Styles -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/admin/admin-layout.css') }}">
-    <style>
-        .sidebar-header {
-    padding: 1rem;
-    position: relative;
-}
-
-.sidebar-logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.sidebar-logo img {
-    max-width: 20%;
-    height: auto;
-}
-
-.btn-close {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-}
-    </style>
 
     @yield('styles')
 </head>
@@ -48,9 +24,10 @@
             <div class="sidebar-header">
                 <a href="{{ route('admin.dashboard') }}" class="sidebar-logo">
                     <img src="{{ asset('assets/images/logo.png') }}" alt="بر الليث" height="40" class="me-2">
-                   
                 </a>
-                <button class="d-lg-none btn btn-close" id="closeSidebar" aria-label="Close"></button>
+                <button class="d-lg-none btn btn-close" id="closeSidebar" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
             <nav class="sidebar-nav">
@@ -131,16 +108,21 @@
         <!-- Main Content -->
         <main class="main-content-wrapper">
             <!-- Top Navigation -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+            <nav class="navbar navbar-expand-lg navbar-light glass-effect">
                 <div class="container-fluid">
                     <div class="d-flex align-items-center">
-                        <h1 class="h4 mb-0 text-truncate">@yield('page_title', 'لوحة التحكم')</h1>
+                        <div>
+                            <h1 class="h4 mb-0 page-title text-truncate">@yield('page_title', 'لوحة التحكم')</h1>
+                            <div class="page-subtitle">@yield('page_subtitle', 'مرحباً بك في لوحة التحكم')</div>
+                        </div>
                     </div>
 
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle"></i>
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="user-avatar">
+                                    {{ substr(Auth::user()->name, 0, 1) }}
+                                </div>
                                 <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -167,7 +149,7 @@
             </nav>
 
             <!-- Page Content -->
-            <div class="container-fluid">
+            <div class="container-fluid fade-in">
                 @yield('content')
             </div>
         </main>
@@ -205,6 +187,27 @@
             if (window.innerWidth >= 992 && sidebar.classList.contains('active')) {
                 closeSidebarFunc();
             }
+        });
+
+        // Add animation to dropdown items
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(-5px)';
+            });
+
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+
+        // Add animation to cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.classList.add('hover-card');
+        });
+
+        // Add animation to buttons
+        document.querySelectorAll('.btn-primary').forEach(btn => {
+            btn.classList.add('btn-modern');
         });
     </script>
     @yield('scripts')

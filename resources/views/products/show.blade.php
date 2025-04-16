@@ -1,33 +1,17 @@
-@extends('layouts.customer')
-
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $product->name }} - lens-soma</title>
+    <title>{{ $product->name }} بر الليث</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/assets/css/customer/products-show.css">
-    <link rel="stylesheet" href="/assets/css/customer/products.css">
-    <link rel="stylesheet" href="/assets/css/customer/quantity-pricing.css">
-
-
-    <style>
-        body {
-    padding-top: 140px; /* Adjust this based on navbar height */
-}
-
-@media (min-width: 992px) {
-    body {
-        padding-right: 300px; /* Adjust if your sidebar is fixed and has width */
-    }
-}
-
-    </style>
-</head>
+                <link rel="stylesheet" href="{{ asset('assets/css/customer/products-show.css') }}">
+                <link rel="stylesheet" href="{{ asset('assets/css/customer/products.css') }}">
+                <link rel="stylesheet" href="{{ asset('assets/css/customer/quantity-pricing.css') }}">
+    @include('parts.head')
+            </head>
 <body>
     <!-- Fixed Buttons Group -->
     <div class="fixed-buttons-group">
@@ -43,6 +27,31 @@
             Dashboard
         </a>
         @endauth
+    </div>
+
+    @include('parts.navbar')
+
+    <!-- Add this after navbar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>سلة التسوق</h3>
+            <button class="close-cart" id="closeCart">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Cart items will be dynamically added here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>الإجمالي:</span>
+                <span id="cartTotal">0 ر.س</span>
+            </div>
+            <a href="{{ route('checkout.index') }}" class="checkout-btn">
+                <i class="fas fa-shopping-cart ml-2"></i>
+                إتمام الشراء
+            </a>
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -308,60 +317,7 @@
         </div>
     </div>
 
-    <!-- Footer -->
-
-<footer class="glass-footer">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-4">
-            <div class="footer-about">
-              <h5>عن الاستوديو</h5>
-              <p>نقدم خدمات التصوير الاحترافي وطباعة الصور والألبومات بأعلى جودة، مع التركيز على توثيق أجمل لحظات حياتكم</p>
-              <div class="social-links">
-
-                <a href="/https://www.instagram.com/lens_soma_studio/?igsh=d2ZvaHZqM2VoMWsw#"><i class="fab fa-instagram"></i></a>
-
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4">
-            <div class="footer-links">
-              <h5>روابط سريعة</h5>
-              <ul>
-                <li><a href="/">الرئيسية</a></li>
-                <li><a href="/products">منتجاتنا</a></li>
-                <li><a href="/about">من نحن</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-lg-4">
-            <div class="footer-contact">
-              <h5>معلومات التواصل</h5>
-              <ul class="list-unstyled">
-                <li class="mb-2 d-flex align-items-center">
-                  <i class="fas fa-phone-alt ms-2"></i>
-                  <span dir="ltr">0561667885</span>
-                </li>
-                <li class="mb-2 d-flex align-items-center">
-                  <i class="fas fa-envelope ms-2"></i>
-                  <a href="mailto:info@somalens.com" class="text-decoration-none">lens_soma@outlook.sa
-</a>
-                </li>
-                <li class="d-flex align-items-center">
-                  <i class="fas fa-map-marker-alt ms-2"></i>
-                  <span>أبها . المحالة</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <div class="container">
-          <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} بر الليث</p>
-        </div>
-      </div>
-    </footer>
+    @include('parts.footer')
 
     <!-- Login Prompt Modal -->
     <div class="modal fade" id="loginPromptModal" tabindex="-1" aria-hidden="true">
@@ -396,6 +352,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/assets/js/customer/products-show.js"></script>
+    <script src="{{ asset('assets/js/customer/products-show.js') }}"></script>
 </body>
 </html>

@@ -54,7 +54,7 @@
                 <i class="bi bi-x-circle"></i>
               </button>
             </div>
-            <div class="d-flex justify-content-between align-items-center mt-3">
+            <div class="d-flex justify-content-between align-items-center mt-3 w-100">
               <div class="quantity-control">
                 <button type="button" class="quantity-btn decrease" onclick="updateQuantity({{ $item->id }}, -1)">
                   <i class="bi bi-dash"></i>
@@ -66,9 +66,17 @@
                 </button>
               </div>
               <div class="cart-item-price">
-                <div class="unit-price">{{ number_format($itemPrice, 2) }} ريال</div>
-                <div class="subtotal" id="price-{{ $item->id }}">
-                  {{ number_format($itemSubtotal, 2) }} ريال
+                <div class="d-flex align-items-center">
+                  <span class="price-label me-2">سعر الوحدة:</span>
+                  <div class="price-box unit-price">
+                    {{ number_format($itemPrice, 2) }} ريال
+                  </div>
+                </div>
+                <div class="d-flex align-items-center">
+                  <span class="price-label me-2">الإجمالي الفرعي:</span>
+                  <div class="price-box subtotal" id="price-{{ $item->id }}">
+                    {{ number_format($itemSubtotal, 2) }} ريال
+                  </div>
                 </div>
               </div>
             </div>

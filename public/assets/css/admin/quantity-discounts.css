@@ -11,6 +11,81 @@
     --discount-purple: #6f42c1;
 }
 
+/* Icon Colors */
+.fas,
+.fa-eye,
+.fa-edit,
+.fa-trash,
+.fa-plus-circle,
+.fa-percentage,
+.fa-arrow-right,
+.fa-save,
+.fa-times,
+.fa-check-circle,
+.fa-spinner,
+.fa-sync-alt,
+.fa-key,
+.fa-tag,
+.fa-calendar-alt,
+.fa-calendar-times,
+.fa-times-circle,
+.fa-user-times,
+.fa-shopping-cart {
+    color: #009245 !important;
+}
+
+/* Override specific icon colors */
+.btn-primary .fas,
+.btn-primary .fa-eye,
+.btn-primary .fa-edit,
+.btn-primary .fa-trash,
+.btn-primary .fa-plus-circle,
+.btn-primary .fa-percentage,
+.btn-primary .fa-arrow-right,
+.btn-primary .fa-save,
+.btn-primary .fa-times,
+.btn-primary .fa-check-circle,
+.btn-primary .fa-spinner,
+.btn-primary .fa-sync-alt,
+.btn-primary .fa-key,
+.btn-primary .fa-tag,
+.btn-primary .fa-calendar-alt,
+.btn-primary .fa-calendar-times,
+.btn-primary .fa-times-circle,
+.btn-primary .fa-user-times,
+.btn-primary .fa-shopping-cart {
+    color: white !important;
+}
+
+/* Override Bootstrap styles */
+.card-header.bg-primary {
+    background-color: #009245 !important;
+    border-color: #009245 !important;
+}
+
+.btn-primary {
+    background-color: #009245 !important;
+    border-color: #009245 !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #007a38 !important;
+    border-color: #007a38 !important;
+}
+
+.btn-outline-primary {
+    color: #009245 !important;
+    border-color: #009245 !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background-color: #009245 !important;
+    border-color: #009245 !important;
+    color: #fff !important;
+}
+
 /* Discount Card Styles */
 .discount-card {
     border-radius: 0.5rem;
@@ -29,7 +104,7 @@
 
 .discount-header {
     padding: 1.5rem;
-    background: var(--discount-primary);
+    background-color: #009245 !important;
     color: white;
     position: relative;
     display: flex;
@@ -101,7 +176,7 @@
 }
 
 .badge-fixed {
-    background-color: var(--discount-primary);
+    background-color: #009245 !important;
     color: white;
     padding: 0.35rem 0.65rem;
     border-radius: 4px;
@@ -125,7 +200,7 @@
 }
 
 .discount-value.fixed {
-    color: var(--discount-primary);
+    color: #009245 !important;
 }
 
 /* Discount Status Toggle */
@@ -155,7 +230,7 @@
 }
 
 .discount-form-title {
-    border-bottom: 2px solid var(--discount-primary);
+    border-bottom: 2px solid #009245;
     padding-bottom: 0.75rem;
     margin-bottom: 1.5rem;
     color: var(--discount-dark);
@@ -223,8 +298,8 @@
 
 .discount-table .btn-group .btn-primary,
 .discount-table .btn-group .btn-info {
-    background-color: var(--discount-primary);
-    border-color: var(--discount-primary);
+    background-color: #009245 !important;
+    border-color: #009245 !important;
 }
 
 .discount-table .btn-group .btn-warning {
@@ -350,8 +425,8 @@
 
 .discount-form .form-control:focus,
 .discount-form .form-select:focus {
-    border-color: var(--discount-primary);
-    box-shadow: 0 0 0 0.25rem rgba(0, 146, 69, 0.25);
+    border-color: #009245 !important;
+    box-shadow: 0 0 0 0.25rem rgba(0, 146, 69, 0.25) !important;
 }
 
 .discount-form .invalid-feedback {
@@ -361,8 +436,8 @@
 }
 
 .discount-form .btn-primary {
-    background-color: var(--discount-primary);
-    border-color: var(--discount-primary);
+    background-color: #009245;
+    border-color: #009245;
 }
 
 .discount-form .btn-primary:hover {
@@ -437,4 +512,11 @@
         margin-left: 0;
         margin-bottom: 0.5rem;
     }
+}
+
+/* Alert Styles */
+.alert-success {
+    background-color: rgba(0, 146, 69, 0.1) !important;
+    border-color: rgba(0, 146, 69, 0.2) !important;
+    color: #009245 !important;
 }

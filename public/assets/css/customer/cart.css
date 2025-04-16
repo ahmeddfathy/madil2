@@ -155,19 +155,39 @@ body {
 }
 
 .cart-item-price {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    transition: none;
+}
+
+.cart-item-price:hover {
+    border-color: initial;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Style for each price box (unit and subtotal) */
+.price-box {
     color: var(--primary-color);
     font-weight: 700;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     background: var(--glass-background-dark);
     padding: 0.5rem 1.5rem;
     border-radius: 15px;
     border: 2px solid var(--primary-border-color-light);
     box-shadow: 0 2px 8px var(--primary-shadow-color);
     transition: all 0.3s ease;
-    margin: 0;
+    min-width: 120px;
+    text-align: center;
 }
 
-.cart-item-price:hover {
+.price-box:hover {
     border-color: var(--primary-border-color);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px var(--primary-shadow-color-darker);
@@ -466,6 +486,15 @@ body {
     .cart-item-price {
         font-size: 1.1rem;
         padding: 0.4rem 1rem;
+        gap: 0.3rem;
+        align-items: center;
+        margin-top: 0.5rem;
+    }
+
+    .price-box {
+        font-size: 1rem;
+        padding: 0.4rem 1rem;
+        min-width: 100px;
     }
 
     .quantity-control {
@@ -545,6 +574,11 @@ body {
 
     .cart-item-price {
         font-size: 1.1rem;
+        align-items: center;
+    }
+
+    .price-box {
+        font-size: 1rem;
     }
 }
 

@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/customer/layout.css') }}">
     @yield('styles')
     <style>
-       
+
     </style>
 </head>
 
@@ -32,30 +32,50 @@
             <a class="navbar-brand logo-container" href="/">
                 <img src="{{ asset('assets/images/logo.png') }}" alt="بر الليث" height="60">
             </a>
-            
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{ route('home') }}"><i class="fas fa-home ms-1"></i>الرئيسية</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle btn btn-light btn-sm" href="#" id="mainMenuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-th-large ms-1"></i>القائمة الرئيسية
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="mainMenuDropdown">
+                            <li><a class="dropdown-item {{ request()->is('/') ? 'active' : '' }}" href="{{ route('home') }}">
+                                <i class="fas fa-home ms-1"></i>الرئيسية
+                            </a></li>
+                            <li><a class="dropdown-item {{ request()->is('services*') ? 'active' : '' }}" href="/services">
+                                <i class="fas fa-cogs ms-1"></i>خدماتنا
+                            </a></li>
+                            <li><a class="dropdown-item {{ request()->is('products*') ? 'active' : '' }}" href="/products">
+                                <i class="fas fa-tshirt ms-1"></i>المنتجات
+                            </a></li>
+                            <li><a class="dropdown-item {{ request()->is('about*') ? 'active' : '' }}" href="/about">
+                                <i class="fas fa-info-circle ms-1"></i>من نحن
+                            </a></li>
+                            <li><a class="dropdown-item {{ request()->is('contact*') ? 'active' : '' }}" href="/contact">
+                                <i class="fas fa-envelope ms-1"></i>تواصل معنا
+                            </a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('products*') ? 'active' : '' }}" href="/services"><i class="fas fa-tshirt ms-1"></i>خدماتنا</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('products*') ? 'active' : '' }}" href="/products"><i class="fas fa-tshirt ms-1"></i>المنتجات</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('products*') ? 'active' : '' }}" href="/about"><i class="fas fa-info-circle ms-1"></i>من نحن</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('products*') ? 'active' : '' }}" href="/contact"><i class="fas fa-envelope ms-1"></i>تواصل معنا</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('dashboard*') ? 'active' : '' }}" href="/user/profile"><i class="fas fa-user ms-1"></i>حسابي</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle btn btn-light btn-sm" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user ms-1"></i>حسابي
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="accountDropdown">
+                            <li><a class="dropdown-item {{ request()->is('dashboard*') ? 'active' : '' }}" href="/dashboard">
+                                <i class="fas fa-tachometer-alt ms-1"></i>لوحة التحكم
+                            </a></li>
+                            <li><a class="dropdown-item {{ request()->is('profile*') ? 'active' : '' }}" href="/user/profile">
+                                <i class="fas fa-user-circle ms-1"></i>الملف الشخصي
+                            </a></li>
+                            <li><a class="dropdown-item {{ request()->is('orders*') ? 'active' : '' }}" href="/orders">
+                                <i class="fas fa-clipboard-list ms-1"></i>طلباتي
+                            </a></li>
+                        </ul>
                     </li>
                 </ul>
                 <div class="nav-buttons d-flex align-items-center">
@@ -167,8 +187,24 @@
             }
         });
 
-        // Sidebar functionality
-        $(document).ready(function() {
+        // Initialize Bootstrap components and functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enable all dropdowns
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+            var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
+
+            // Add touch-friendly behavior
+            if ('ontouchstart' in document.documentElement) {
+                $('.dropdown-toggle').on('click', function(e) {
+                    // For touch devices, prevent clicks from navigating
+                    // Allow the dropdown to toggle instead
+                    e.preventDefault();
+                });
+            }
+
+            // Sidebar functionality
             const sidebar = $('.sidebar');
             const sidebarToggle = $('.sidebar-toggle');
             const mainContent = $('.main-content');
@@ -182,7 +218,7 @@
             sidebarToggle.on('click', function(e) {
                 e.stopPropagation();
                 sidebar.toggleClass('show');
-                
+
                 // Adjust main content margin for desktop
                 if ($(window).width() >= 992) {
                     if (sidebar.hasClass('show')) {
@@ -207,7 +243,7 @@
                 const newNavbarHeight = $('.glass-navbar').outerHeight();
                 sidebar.css('top', newNavbarHeight + 'px');
                 sidebar.css('height', 'calc(100vh - ' + newNavbarHeight + 'px)');
-                
+
                 if ($(window).width() >= 992) {
                     sidebar.removeClass('show');
                     mainContent.css('margin-right', '280px');

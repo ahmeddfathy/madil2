@@ -94,7 +94,7 @@ class Product extends Model
 
   public function discounts()
   {
-    return $this->hasMany(Discount::class);
+    return $this->belongsToMany(Coupon::class, 'coupon_product');
   }
 
   public function quantityDiscounts()

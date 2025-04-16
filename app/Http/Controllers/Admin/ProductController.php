@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 
 class ProductController extends Controller
@@ -417,6 +418,10 @@ class ProductController extends Controller
             $product->colors()->delete();
             $product->sizes()->delete();
             $product->orderItems()->delete();
+            $product->quantities()->delete();
+            // Detach coupons instead of deleting them
+            $product->discounts()->detach();
+            $product->quantityDiscounts()->delete();
 
             // Delete all associated images and their files
             foreach ($product->images as $image) {
@@ -425,7 +430,7 @@ class ProductController extends Controller
             }
 
             // Finally delete the product
-            $product->forceDelete(); // not needed anymore since we removed SoftDeletes, but kept for clarity
+            $product->delete();
 
             DB::commit();
             return redirect()->route('admin.products.index')
@@ -438,8 +443,22 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        $product->load(['category', 'images', 'colors', 'sizes', 'orderItems']);
+        $product->load(['category', 'images', 'colors', 'sizes', 'quantities']);
         return view('admin.products.show', compact('product'));
+    }
+
+    /**
+     * Delete a file from storage
+     *
+     * @param string $path
+     * @return bool
+     */
+    protected function deleteFile($path)
+    {
+        if (Storage::disk('public')->exists($path)) {
+            return Storage::disk('public')->delete($path);
+        }
+        return false;
     }
 
     protected function getValidationRules(): array

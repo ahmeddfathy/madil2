@@ -7,9 +7,9 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-lg border-0 rounded-lg">
-                <div class="card-header bg-primary text-white py-3">
+                <div class="card-header" style="background-color: #009245; border-color: #009245;">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0">
+                        <h3 class="mb-0 text-white">
                             <i class="fas fa-plus-circle me-2"></i>
                             إضافة خصم كمية جديد
                         </h3>
