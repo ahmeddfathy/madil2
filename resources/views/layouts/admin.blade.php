@@ -97,6 +97,17 @@
                         </a>
                     </div>
                 </div>
+
+                <!-- User Management Section -->
+                <div class="nav-section">
+                    <div class="nav-section-title">إدارة المستخدمين</div>
+                    <div class="nav-item">
+                        <a href="/user/profile" class="nav-link {{ request()->routeIs('user.profile') ? 'active' : '' }}">
+                            <i class="fas fa-user"></i>
+                            <span class="nav-title">الملف الشخصي</span>
+                        </a>
+                    </div>
+                </div>
             </nav>
         </aside>
 
@@ -118,31 +129,27 @@
                     </div>
 
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown position-static">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <div class="user-avatar">
                                     {{ substr(Auth::user()->name, 0, 1) }}
                                 </div>
                                 <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                        <i class="fas fa-user-cog"></i>
-                                        <span>الملف الشخصي</span>
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <i class="fas fa-sign-out-alt"></i>
-                                            <span>تسجيل الخروج</span>
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
+                            <div class="dropdown-menu position-absolute" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('profile.show') }}">
+                                    <i class="fas fa-user-cog"></i>
+                                    <span>الملف الشخصي</span>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        <span>تسجيل الخروج</span>
+                                    </button>
+                                </form>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -158,6 +165,15 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Initialize all dropdowns
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl, {
+                offset: [0, 10],
+                placement: 'bottom-start'
+            });
+        });
+
         // Sidebar Toggle
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -192,7 +208,7 @@
         // Add animation to dropdown items
         document.querySelectorAll('.dropdown-item').forEach(item => {
             item.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateX(-5px)';
+                this.style.transform = 'translateX(5px)';
             });
 
             item.addEventListener('mouseleave', function() {

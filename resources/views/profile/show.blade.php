@@ -1,4 +1,4 @@
-@extends('layouts.customer')
+@extends(auth()->user()->hasRole('admin') ? 'layouts.admin' : 'layouts.customer')
 
 @section('content')
 <div class="profile-page-container overflow-y-auto">

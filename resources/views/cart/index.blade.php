@@ -4,8 +4,12 @@
 
 @section('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-<link rel="stylesheet" href="/assets/css/customer/cart.css">
+<link rel="stylesheet" href="{{ asset('assets/css/customer/cart.css') }}">
 <style>
+  /* Ensure right-to-left (RTL) layout */
+  html {
+    direction: rtl;
+  }
 </style>
 @endsection
 
@@ -26,35 +30,36 @@
         @php
           $itemPrice = $item->unit_price;
           $itemSubtotal = $item->subtotal;
-        @endphp
-        <div class="cart-item d-flex gap-3" data-item-id="{{ $item->id }}">
-          @php
           // Get any available image for the product, not just primary
           $productImage = $item->product->images->first();
           $imagePath = $productImage ? url('storage/' . $productImage->image_path) : url('images/no-image.png');
-          @endphp
+        @endphp
+        <div class="cart-item" data-item-id="{{ $item->id }}">
+          <button type="button" class="remove-item" onclick="removeCartItem({{ $item->id }})">
+            <i class="bi bi-x-circle"></i>
+          </button>
+
           <img src="{{ $imagePath }}" alt="{{ $item->product->name }}" class="cart-item-image">
+
           <div class="cart-item-details">
-            <div class="d-flex justify-content-between align-items-start">
+            <div class="d-flex justify-content-between align-items-start w-100">
               <div>
                 <h5 class="cart-item-title">{{ $item->product->name }}</h5>
                 <div class="cart-item-meta">
                   @if($item->product->category)
-                  <span class="me-2">{{ $item->product->category->name }}</span>
+                  <span>{{ $item->product->category->name }}</span>
                   @endif
                   @if($item->size)
-                  <span class="me-2">المقاس: {{ $item->size }}</span>
+                  <span>المقاس: {{ $item->size }}</span>
                   @endif
                   @if($item->color)
                   <span>اللون: {{ $item->color }}</span>
                   @endif
                 </div>
               </div>
-              <button type="button" class="remove-item" onclick="removeCartItem({{ $item->id }})">
-                <i class="bi bi-x-circle"></i>
-              </button>
             </div>
-            <div class="d-flex justify-content-between align-items-center mt-3 w-100">
+
+            <div class="cart-item-bottom">
               <div class="quantity-control">
                 <button type="button" class="quantity-btn decrease" onclick="updateQuantity({{ $item->id }}, -1)">
                   <i class="bi bi-dash"></i>
@@ -65,15 +70,16 @@
                   <i class="bi bi-plus"></i>
                 </button>
               </div>
+
               <div class="cart-item-price">
                 <div class="d-flex align-items-center">
-                  <span class="price-label me-2">سعر الوحدة:</span>
+                  <span class="price-label">سعر الوحدة:</span>
                   <div class="price-box unit-price">
                     {{ number_format($itemPrice, 2) }} ريال
                   </div>
                 </div>
                 <div class="d-flex align-items-center">
-                  <span class="price-label me-2">الإجمالي الفرعي:</span>
+                  <span class="price-label">الإجمالي الفرعي:</span>
                   <div class="price-box subtotal" id="price-{{ $item->id }}">
                     {{ number_format($itemSubtotal, 2) }} ريال
                   </div>
@@ -87,7 +93,7 @@
 
       <div class="col-lg-4">
         <div class="cart-summary">
-          <h4 class="mb-4">ملخص الطلب</h4>
+          <h4>ملخص الطلب</h4>
           <div class="summary-item">
             <span class="summary-label">إجمالي المنتجات</span>
             <span class="summary-value" id="subtotal">{{ number_format($subtotal, 2) }} ريال</span>
@@ -96,10 +102,10 @@
             <span class="summary-label">الإجمالي الكلي</span>
             <span class="total-amount" id="total">{{ number_format($total, 2) }} ريال</span>
           </div>
-          <a href="{{ route('checkout.index') }}" class="btn btn-primary checkout-btn w-100">
+          <a href="{{ route('checkout.index') }}" class="checkout-btn">
             متابعة الشراء
           </a>
-          <div class="continue-shopping mt-3">
+          <div class="continue-shopping">
             <a href="{{ route('products.index') }}">
               <i class="bi bi-arrow-right"></i>
               متابعة التسوق
@@ -115,7 +121,7 @@
       </div>
       <h3>السلة فارغة</h3>
       <p>لم تقم بإضافة أي منتجات إلى سلة التسوق بعد</p>
-      <a href="{{ route('products.index') }}" class="btn btn-primary">
+      <a href="{{ route('products.index') }}" class="btn">
         تصفح المنتجات
       </a>
     </div>
@@ -126,7 +132,6 @@
 @endsection
 
 @section('scripts')
-<script src="/assets/js/customer/products-show.js"></script>
 <script>
 function showAlert(message, type = 'success') {
     const alertsContainer = document.getElementById('alerts-container');

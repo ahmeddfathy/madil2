@@ -13,7 +13,7 @@
             padding: 0;
             direction: rtl;
             text-align: right;
-            background-color: #F0F4FF;
+            background-color: #f0fff5;
         }
         .email-container {
             max-width: 600px;
@@ -21,10 +21,10 @@
             background-color: rgba(255, 255, 255, 0.75);
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(74, 58, 255, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 146, 69, 0.08);
         }
         .email-header {
-            background-color: #4A3AFF;
+            background-color: #009245;
             color: white;
             padding: 20px;
             text-align: center;
@@ -40,7 +40,7 @@
             font-size: 20px;
             font-weight: bold;
             margin-bottom: 15px;
-            color: #4A3AFF;
+            color: #009245;
         }
         .intro {
             font-size: 16px;
@@ -48,7 +48,7 @@
         }
         .section {
             margin-bottom: 25px;
-            border-bottom: 1px solid rgba(74, 58, 255, 0.25);
+            border-bottom: 1px solid rgba(0, 146, 69, 0.25);
             padding-bottom: 15px;
         }
         .section:last-child {
@@ -58,19 +58,19 @@
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 10px;
-            color: #4A3AFF;
+            color: #009245;
         }
         .section-item {
             padding: 5px 0;
         }
         .divider {
             height: 1px;
-            background-color: rgba(74, 58, 255, 0.25);
+            background-color: rgba(0, 146, 69, 0.25);
             margin: 15px 0;
         }
         .action-button {
             display: inline-block;
-            background-color: #4A3AFF;
+            background-color: #009245;
             color: white !important;
             text-decoration: none;
             padding: 12px 25px;
@@ -85,15 +85,15 @@
             color: #2C3E50;
         }
         .footer {
-            background-color: rgba(74, 58, 255, 0.05);
+            background-color: rgba(0, 146, 69, 0.05);
             padding: 15px;
             text-align: center;
             font-size: 12px;
             color: #2C3E50;
         }
         .payment-info {
-            background-color: rgba(74, 58, 255, 0.05);
-            border-right: 4px solid #4A3AFF;
+            background-color: rgba(0, 146, 69, 0.05);
+            border-right: 4px solid #009245;
             padding: 15px;
             border-radius: 5px;
             margin-bottom: 20px;
@@ -109,6 +109,7 @@
 <body>
     <div class="email-container">
         <div class="email-header">
+            <img src="{{ asset('assets/kids/img/logo.png') }}" alt="بر الليث" style="max-width: 150px; margin-bottom: 10px;">
             <h1>{{ $title }}</h1>
         </div>
         <div class="email-body">
@@ -144,7 +145,7 @@
             </div>
         </div>
         <div class="footer">
-            © {{ date('Y') }} madil - جميع الحقوق محفوظة
+            © {{ date('Y') }} بر الليث - جميع الحقوق محفوظة
         </div>
     </div>
 </body>

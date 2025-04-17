@@ -13,7 +13,7 @@ class FirebaseNotificationService
 
     public function __construct()
     {
-        $firebaseKey = file_get_contents(storage_path('app/firebase/madil-notifications-firebase-adminsdk-fbsvc-5567a68d80.json'));
+        $firebaseKey = file_get_contents(storage_path('app/firebase/clothes-shop-6f181-firebase-adminsdk-fbsvc-8797108639.json'));
         $this->credentials = json_decode($firebaseKey, true);
     }
 

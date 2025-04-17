@@ -31,12 +31,21 @@
               <div class="d-flex align-items-center gap-2">
                   <!-- Cart Button -->
                   <div class="cart-wrapper">
-                      <button class="btn btn-outline-primary position-relative" id="cartToggle" style="min-width: 44px;">
+                      @auth
+                      <a href="{{ route('cart.index') }}" class="btn btn-outline-primary position-relative" id="cartToggle" style="min-width: 44px;">
+                          <i class="fas fa-shopping-cart"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-count">
+                                {{ app(\App\Http\Controllers\CartController::class)->getCartCount() }}
+                            </span>
+                      </a>
+                      @else
+                      <button class="btn btn-outline-primary position-relative" id="cartToggle" style="min-width: 44px;" onclick="window.location.href='{{ route('login') }}'">
                           <i class="fas fa-shopping-cart"></i>
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-count">
                                 0
                             </span>
                       </button>
+                      @endauth
                   </div>
 
                   <!-- Profile Dropdown (updated to a simpler implementation) -->
@@ -203,3 +212,59 @@
             }
         });
     </script>
+
+    @auth
+    <!-- إضافة كود JavaScript لتحديث عداد السلة للمستخدمين المسجلين -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function updateCartCounter() {
+            fetch('{{ route('cart.count') }}')
+                .then(response => response.json())
+                .then(data => {
+                    const cartCounterElements = document.querySelectorAll('.cart-count');
+                    cartCounterElements.forEach(element => {
+                        element.textContent = data.count;
+                        // إخفاء العداد إذا كان صفر
+                        if (data.count == 0) {
+                            element.classList.add('d-none');
+                        } else {
+                            element.classList.remove('d-none');
+                        }
+                    });
+                })
+                .catch(error => console.error('خطأ في تحديث عداد السلة:', error));
+        }
+
+        // تحديث العداد عند تحميل الصفحة
+        updateCartCounter();
+
+        // تحديث العداد كل دقيقة
+        setInterval(updateCartCounter, 60000);
+
+        // تعريف الدالة التي تستمع لأحداث إضافة أو حذف منتجات من السلة
+        function setupCartListeners() {
+            // الاستماع لأزرار إضافة المنتج للسلة
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // تأخير قصير للسماح للطلب بالانتهاء
+                    setTimeout(updateCartCounter, 500);
+                });
+            });
+
+            // الاستماع لأزرار حذف المنتج من السلة
+            document.querySelectorAll('.remove-from-cart-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // تأخير قصير للسماح للطلب بالانتهاء
+                    setTimeout(updateCartCounter, 500);
+                });
+            });
+        }
+
+        // تنفيذ الاستماع عند تحميل الصفحة
+        setupCartListeners();
+
+        // إعادة تنفيذ الاستماع عند التنقل بين الصفحات بـ Ajax
+        document.addEventListener('page-loaded', setupCartListeners);
+    });
+    </script>
+    @endauth

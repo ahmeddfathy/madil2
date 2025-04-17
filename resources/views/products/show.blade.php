@@ -7,11 +7,35 @@
     <title>{{ $product->name }} بر الليث</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-                <link rel="stylesheet" href="{{ asset('assets/css/customer/products-show.css') }}">
-                <link rel="stylesheet" href="{{ asset('assets/css/customer/products.css') }}">
-                <link rel="stylesheet" href="{{ asset('assets/css/customer/quantity-pricing.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/customer/products-show.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/customer/products.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/customer/custom-green-theme.css') }}">
+    <style>
+        :root {
+            --primary-color: #009245;
+        }
+        /* Override blue buttons with green */
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        .btn-lg.btn-primary,
+        .btn-primary.btn-lg,
+        button.btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        .alert-info {
+            background-color: rgba(0, 146, 69, 0.1) !important;
+            border-color: rgba(0, 146, 69, 0.2) !important;
+            color: #0c5f36 !important;
+        }
+        .badge.bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+    </style>
     @include('parts.head')
-            </head>
+</head>
 <body>
     <!-- Fixed Buttons Group -->
     <div class="fixed-buttons-group">
@@ -48,27 +72,31 @@
                 <span id="cartTotal">0 ر.س</span>
             </div>
             <a href="{{ route('checkout.index') }}" class="checkout-btn">
-                <i class="fas fa-shopping-cart ml-2"></i>
+                <i class="fas fa-shopping-cart me-2"></i>
                 إتمام الشراء
             </a>
         </div>
     </div>
 
     <!-- Main Content -->
-    <div class="container py-5">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
-                <li class="breadcrumb-item"><a href="/products">المنتجات</a></li>
-                <li class="breadcrumb-item"><a href="/products?category={{ $product->category->slug }}">{{ $product->category->name }}</a></li>
-                <li class="breadcrumb-item active">{{ $product->name }}</li>
-            </ol>
-        </nav>
+    <div class="container py-3">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb" class="px-2">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
+                        <li class="breadcrumb-item"><a href="/products">المنتجات</a></li>
+                        <li class="breadcrumb-item"><a href="/products?category={{ $product->category->slug }}">{{ $product->category->name }}</a></li>
+                        <li class="breadcrumb-item active">{{ $product->name }}</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
 
-        <div class="row g-5">
+        <div class="row g-3">
             <!-- Product Images -->
             <div class="col-md-6">
-                <div class="product-gallery card">
+                <div class="product-gallery card shadow mx-1">
                     <div class="card-body">
                         @if($product->images->count() > 0)
                             <div class="main-image-wrapper mb-3">
@@ -101,17 +129,17 @@
 
             <!-- Product Details -->
             <div class="col-md-6">
-                <div class="product-info">
+                <div class="product-info shadow mx-1">
                     <h1 class="product-title">{{ $product->name }}</h1>
 
-                    <div class="category-badge mb-3">
+                    <div class="category-badge mb-2">
                         <i class="fas fa-tag me-1"></i>
                         {{ $product->category->name }}
                     </div>
 
                     <!-- Product Price -->
-                    <div class="price-container">
-                        <div class="product-price">
+                    <div class="price-container mb-2">
+                        <div class="product-price" id="product-price">
                             @if($product->min_price == $product->max_price)
                                 <span class="amount">{{ number_format($product->min_price, 2) }}</span>
                                 <span class="currency">ر.س</span>
@@ -122,7 +150,7 @@
                         </div>
                     </div>
 
-                    <div class="stock-info mb-4">
+                    <div class="stock-info mb-3">
                         <span class="stock-badge {{ $product->stock > 0 ? 'in-stock' : 'out-of-stock' }}">
                             <i class="fas {{ $product->stock > 0 ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
                             {{ $product->stock > 0 ? 'متوفر' : 'غير متوفر' }}
@@ -173,7 +201,7 @@
                                         data-color="{{ $color->color }}"
                                         onclick="selectColor(this)">
                                         <div class="d-flex align-items-center gap-2">
-                                            <span class="color-preview" style="background-color: {{ $color->color }};"></span>
+                                            <span class="color-preview" style="background-color: {{ $color->color }}"></span>
                                             <span class="color-name">{{ $color->color }}</span>
                                         </div>
                                         <span class="color-status">
@@ -235,7 +263,7 @@
                             <h4>
                                 <i class="fas fa-cubes"></i>
                                 خيارات الكمية
-                                <span class="badge bg-primary ms-2">مطلوب</span>
+                                <span class="badge bg-success ms-2">مطلوب</span>
                             </h4>
                             <div class="alert alert-info mb-3">
                                 <i class="fas fa-info-circle me-2"></i>
@@ -249,7 +277,7 @@
                             <div class="quantity-options">
                                 @foreach($product->quantities as $quantity)
                                     <div class="quantity-option {{ $quantity->is_available ? 'available' : 'disabled' }}"
-                                        onclick="{{ $quantity->is_available ? 'selectQuantityOption(this)' : 'return false' }}"
+                                        onclick="{{ $quantity->is_available ? 'selectQuantityOption(this)' : 'void(0)' }}"
                                         data-quantity-id="{{ $quantity->id }}"
                                         data-quantity-value="{{ $quantity->quantity_value }}"
                                         data-price="{{ $quantity->price }}">
@@ -353,5 +381,32 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('assets/js/customer/products-show.js') }}"></script>
+    <script src="{{ asset('assets/js/customer/green-theme.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            // Target specific blue elements
+            $('.btn-primary').css({
+                'background-color': '#009245',
+                'border-color': '#009245'
+            });
+
+            // Info alert box
+            $('.alert-info').css({
+                'background-color': 'rgba(0, 146, 69, 0.1)',
+                'border-color': 'rgba(0, 146, 69, 0.2)',
+                'color': '#0c5f36'
+            });
+
+            // Target badges
+            $('.badge.bg-primary').css('background-color', '#009245');
+
+            // Fix any blue links
+            $('.breadcrumb-item a').css('color', '#009245');
+            $('.text-primary').css('color', '#009245');
+
+            // Fix modal text-primary icon
+            $('.modal-body .text-primary').css('color', '#009245');
+        });
+    </script>
 </body>
 </html>

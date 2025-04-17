@@ -1,0 +1,212 @@
+/* Custom override to change blue elements to green */
+
+/* Button overrides */
+.btn-primary,
+.btn-outline-primary:hover,
+.add-to-cart-btn,
+.size-option.active,
+.color-option.active,
+.badge.bg-primary,
+.alert-primary,
+.text-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Fix the specific blue "Add to Cart" button from the screenshot */
+button[onclick="addToCart()"],
+button[class*="btn-primary"],
+a[class*="btn-primary"],
+.btn[class*="btn-primary"],
+[class*="أضف إلى السلة"] {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Fix blue information alert box */
+.alert-info,
+div[class*="alert-info"] {
+    background-color: rgba(0, 146, 69, 0.1) !important;
+    border-color: rgba(0, 146, 69, 0.2) !important;
+    color: #0c5f36 !important;
+}
+
+.alert-info i,
+div[class*="alert-info"] i {
+    color: var(--primary-color) !important;
+}
+
+/* Override all blue bootstrap components */
+.bg-primary,
+.badge.bg-primary,
+.bg-info,
+.alert-info,
+.btn-info,
+.text-info,
+.text-primary,
+[class*="text-primary"],
+[class*="bg-primary"] {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Fix the add to cart button */
+.container button.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Quantity selector buttons */
+.quantity-selector .btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.quantity-selector .btn-outline-primary:hover {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Badge overrides */
+.badge.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+/* Fix blue links in breadcrumb */
+.breadcrumb-item a {
+    color: var(--primary-color) !important;
+}
+
+/* Blue icons to green */
+.text-primary,
+.fa-info-circle,
+.modal-body .fa-user-lock {
+    color: var(--primary-color) !important;
+}
+
+/* Fix specific blue elements in product page */
+.quantity-options .quantity-option.available:hover {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.25rem rgba(0, 146, 69, 0.15) !important;
+}
+
+.quantity-options .quantity-option.available.active {
+    background-color: rgba(0, 146, 69, 0.1) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.quantity-option i,
+.quantity-price {
+    color: var(--primary-color) !important;
+}
+
+.highlight {
+    box-shadow: 0 0 0 4px rgba(0, 146, 69, 0.25) !important;
+}
+
+@keyframes highlight-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 146, 69, 0.5) !important;
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(0, 146, 69, 0) !important;
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 146, 69, 0) !important;
+    }
+}
+
+/* Fix the big blue "Add to Cart" button */
+.btn-lg.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* تحسينات إضافية للتصميم المتجاوب */
+
+/* إصلاح زر أضف إلى السلة بشكل خاص */
+button[class*="btn-primary"],
+button.btn.btn-primary,
+.btn-lg.btn-primary,
+button.btn-lg.btn-primary {
+    background-color: #009245 !important;
+    border-color: #009245 !important;
+    color: white !important;
+}
+
+/* إصلاح زر أضف إلى السلة الكبير والأزرق */
+button.btn-primary.btn-lg.w-100 {
+    background-color: #009245 !important;
+    border-color: #009245 !important;
+    color: white !important;
+}
+
+/* إصلاح مشكلة الفراغات في الحاويات */
+.container-fluid {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+    width: 100%;
+}
+
+.row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+/* تحسين الفراغات في موبايل */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
+    }
+
+    .row > * {
+        padding-right: 0.25rem;
+        padding-left: 0.25rem;
+    }
+
+    .mx-1 {
+        margin-right: 0.15rem !important;
+        margin-left: 0.15rem !important;
+    }
+
+    /* إصلاح مشكلة زر إضافة إلى السلة */
+    button.btn.btn-primary.btn-lg.w-100 {
+        margin-top: 0.75rem;
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        padding: 0.5rem;
+    }
+}
+
+/* إصلاح لمشكلة تعدي الشاشة الصغيرة */
+@media (max-width: 576px) {
+    html, body {
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
+    .container-fluid,
+    .container {
+        max-width: 100vw;
+        padding-right: 0.25rem;
+        padding-left: 0.25rem;
+    }
+
+    .product-gallery,
+    .product-info {
+        margin-right: 0.25rem !important;
+        margin-left: 0.25rem !important;
+    }
+
+    .breadcrumb {
+        padding-right: 0.25rem;
+        font-size: 0.75rem;
+    }
+}

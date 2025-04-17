@@ -15,18 +15,16 @@ class ContactFormMail extends Mailable
 
     public $name;
     public $email;
-    public $phone;
     public $userMessage;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($data)
+    public function __construct($name, $email, $message)
     {
-        $this->name = $data['name'];
-        $this->email = $data['email'];
-        $this->phone = $data['phone'];
-        $this->userMessage = $data['message'];
+        $this->name = $name;
+        $this->email = $email;
+        $this->userMessage = $message;
     }
 
     /**
@@ -35,7 +33,8 @@ class ContactFormMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'رسالة جديدة من نموذج الاتصال',
+            subject: 'رسالة جديدة من ' . $this->name,
+            replyTo: $this->email,
         );
     }
 
@@ -45,7 +44,7 @@ class ContactFormMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.contact-form',
+            view: 'emails.contact',
         );
     }
 
@@ -61,7 +60,7 @@ class ContactFormMail extends Mailable
 
     public function build()
     {
-        return $this->subject('رسالة جديدة من نموذج الاتصال')
-                    ->view('emails.contact-form');
+        return $this->subject('رسالة جديدة من ' . $this->name)
+                    ->view('emails.contact');
     }
 }

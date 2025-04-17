@@ -379,4 +379,29 @@ class CartController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * الحصول على عدد عناصر السلة للمستخدم الحالي
+     *
+     * @return \Illuminate\Http\Response|int
+     */
+    public function getCartCount()
+    {
+        if (!Auth::check()) {
+            return request()->ajax() ?
+                response()->json(['count' => 0]) :
+                0;
+        }
+
+        $cart = Cart::where('user_id', Auth::id())->first();
+
+        $count = 0;
+        if ($cart) {
+            $count = $cart->items->sum('quantity');
+        }
+
+        return request()->ajax() ?
+            response()->json(['count' => $count]) :
+            $count;
+    }
 }

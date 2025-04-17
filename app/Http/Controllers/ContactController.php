@@ -2,24 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ContactFormMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactFormMail;
 
 class ContactController extends Controller
 {
-    public function send(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'phone' => 'required|string|max:20',
+            'email' => 'required|email|max:255',
             'message' => 'required|string',
         ]);
 
-        // Send email
-        Mail::to('info@madil-sa.com')->send(new ContactFormMail($validated));
+        Mail::to('ahmeddfathy087@gmail.com')
+            ->send(new ContactFormMail(
+                $validated['name'],
+                $validated['email'],
+                $validated['message']
+            ));
 
-        return redirect()->back()->with('success', 'تم إرسال رسالتك بنجاح!');
+        return back()->with('success', 'تم إرسال رسالتك بنجاح. سنتواصل معك قريباً.');
     }
 }

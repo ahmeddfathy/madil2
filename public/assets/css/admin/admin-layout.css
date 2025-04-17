@@ -620,9 +620,19 @@ body {
     border: none;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     border-radius: 0.75rem;
-    margin-top: 0.5rem;
     background-color: #fff;
     animation: dropdownFade 0.2s ease;
+    position: absolute !important;
+    right: auto !important;
+    left: 0 !important;
+    top: 110% !important;
+    transform: none !important;
+    z-index: 9999;
+    margin-top: 5px;
+}
+
+.navbar .nav-item.dropdown {
+    position: relative;
 }
 
 @keyframes dropdownFade {
@@ -655,7 +665,7 @@ body {
 .dropdown-item:focus {
     background-color: var(--primary-light);
     color: var(--primary-color);
-    transform: translateX(-5px);
+    transform: translateX(5px);
 }
 
 .dropdown-item.text-danger:hover {
@@ -770,12 +780,9 @@ body {
 
 @media (max-width: 767.98px) {
     .dropdown-menu {
-        position: fixed !important;
-        top: var(--header-height) !important;
+        width: calc(100% - 2rem);
         right: 1rem !important;
         left: 1rem !important;
-        transform: none !important;
-        margin-top: 0;
     }
 }
 

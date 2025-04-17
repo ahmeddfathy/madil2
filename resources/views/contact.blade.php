@@ -28,17 +28,32 @@
                 <div class="col-lg-6">
                     <div class="contact-form">
                         <h2>أرسل لنا رسالة</h2>
-                        <form>
+                        @if(session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                        <form action="{{ route('contact.store') }}" method="POST">
+                            @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <input type="text" class="form-control" placeholder="اسمك">
+                                    <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="اسمك" value="{{ old('name') }}">
+                                    @error('name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <input type="email" class="form-control" placeholder="بريدك الإلكتروني">
+                                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="بريدك الإلكتروني" value="{{ old('email') }}">
+                                    @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="mb-4">
-                                <textarea class="form-control" placeholder="رسالتك"></textarea>
+                                <textarea name="message" class="form-control @error('message') is-invalid @enderror" placeholder="رسالتك">{{ old('message') }}</textarea>
+                                @error('message')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <button type="submit" class="btn btn-success">إرسال الرسالة</button>
                         </form>

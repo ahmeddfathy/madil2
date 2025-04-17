@@ -179,7 +179,7 @@ Route::middleware('client')->group(function () {
 
 
 
-Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
     // Products
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
@@ -191,6 +191,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::patch('/cart/items/{cartItem}', [CartController::class, 'updateItem'])->name('cart.items.update');
     Route::delete('/cart/items/{cartItem}', [CartController::class, 'removeItem'])->name('cart.items.remove');
+    Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
 });
 
 Route::get('/policy', [PolicyController::class, 'index'])->name('policy');
