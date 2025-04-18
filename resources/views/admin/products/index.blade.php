@@ -85,7 +85,7 @@
                             <div class="card-body">
                                 <div class="row g-4">
                                     @forelse($products as $product)
-                                    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
                                         <div class="product-card shadow-sm">
                                             <div class="product-image-container">
                                                 @if($product->primary_image)
@@ -112,10 +112,33 @@
                                             </div>
 
                                             <div class="product-details p-3">
-                                                <span class="category-badge">
-                                                    <i class="fas fa-tag"></i>
-                                                    {{ $product->category->name }}
-                                                </span>
+                                                <!-- Categories -->
+                                                <div class="category-badges">
+                                                    <!-- Main category -->
+                                                    <span class="category-badge main-category">
+                                                        <i class="fas fa-tag"></i>
+                                                        {{ $product->category->name }}
+                                                    </span>
+
+                                                    <!-- Additional categories -->
+                                                    @if($product->categories->count() > 0)
+                                                        @foreach($product->categories->take(2) as $category)
+                                                            @if($category->id != $product->category_id)
+                                                                <span class="category-badge">
+                                                                    <i class="fas fa-tag"></i>
+                                                                    {{ $category->name }}
+                                                                </span>
+                                                            @endif
+                                                        @endforeach
+
+                                                        @if($product->categories->count() > 2)
+                                                            <span class="category-badge">
+                                                                +{{ $product->categories->count() - 2 }}
+                                                            </span>
+                                                        @endif
+                                                    @endif
+                                                </div>
+
                                                 <h5 class="product-title mt-2">{{ $product->name }}</h5>
                                                 <p class="product-description text-muted">
                                                     {{ Str::limit($product->description, 100) }}

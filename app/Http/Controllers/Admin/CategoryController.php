@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -35,10 +36,18 @@ class CategoryController extends Controller
   {
     $validated = $request->validate([
       'name' => 'required|string|max:255|unique:categories',
-      'description' => 'nullable|string'
+      'description' => 'nullable|string',
+      'image' => 'nullable|image|mimes:jpeg,png,jpg,gif'
     ]);
 
     $validated['slug'] = Str::slug($validated['name']);
+
+    // Handle image upload
+    if ($request->hasFile('image')) {
+      $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+      $request->file('image')->storeAs('categories', $imageName, 'public');
+      $validated['image'] = $imageName;
+    }
 
     Category::create($validated);
 
@@ -55,10 +64,23 @@ class CategoryController extends Controller
   {
     $validated = $request->validate([
       'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-      'description' => 'nullable|string'
+      'description' => 'nullable|string',
+      'image' => 'nullable|image|mimes:jpeg,png,jpg,gif'
     ]);
 
     $validated['slug'] = Str::slug($validated['name']);
+
+    // Handle image upload
+    if ($request->hasFile('image')) {
+      // Delete old image if exists
+      if ($category->image && Storage::disk('public')->exists('categories/' . $category->image)) {
+        Storage::disk('public')->delete('categories/' . $category->image);
+      }
+
+      $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+      $request->file('image')->storeAs('categories', $imageName, 'public');
+      $validated['image'] = $imageName;
+    }
 
     $category->update($validated);
 
@@ -70,6 +92,11 @@ class CategoryController extends Controller
   {
     if ($category->products()->exists()) {
       return back()->with('error', 'لا يمكن حذف التصنيف لوجود منتجات مرتبطة به');
+    }
+
+    // Delete image if exists
+    if ($category->image && Storage::disk('public')->exists('categories/' . $category->image)) {
+      Storage::disk('public')->delete('categories/' . $category->image);
     }
 
     $category->delete();

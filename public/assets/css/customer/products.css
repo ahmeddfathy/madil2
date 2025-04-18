@@ -1135,36 +1135,83 @@ body.cart-open {
     transition: all 0.3s ease;
 }
 
-/* Notification Toast */
+/* Notification Toast Styles */
 .notification-toast {
     position: fixed;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
-    padding: 1rem 2rem;
+    min-width: 300px;
+    max-width: 90%;
+    text-align: center;
+    background: #FFFFFF;
+    color: #333333;
     border-radius: 8px;
-    background: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    transition: all 0.3s ease;
+    padding: 15px 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border-right: 4px solid var(--primary-color);
+    animation: slideDown 0.3s ease-out;
+    opacity: 1;
 }
 
 .notification-toast.show {
     opacity: 1;
-    transform: translateX(-50%) translateY(10px);
+    transform: translateX(-50%);
 }
 
 .notification-toast.alert-success {
-    background-color: rgba(0, 146, 69, 0.1);
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    background-color: #009245;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .notification-toast.alert-error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+}
+
+/* Toast Animation */
+@keyframes slideDown {
+    from {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+/* Alert Success Style */
+.alert-success {
+    background-color: #009245;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    padding: 12px 20px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    min-width: 300px;
+    text-align: center;
+    opacity: 1;
+    animation: fadeInOut 4s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -20px); }
+    10% { opacity: 1; transform: translate(-50%, 0); }
+    90% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -20px); }
 }
 
 /* Cart Button in Navbar */
@@ -1568,4 +1615,55 @@ body.cart-open {
     color: white;
     transform: translateY(-3px);
     box-shadow: 0 4px 10px rgba(0, 146, 69, 0.15);
+}
+
+/* Coupon Badge */
+.coupon-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    max-width: 140px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    transition: all 0.3s ease;
+}
+
+.coupon-badge .badge {
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 0.35rem 0.5rem;
+    border-radius: 4px;
+    display: block;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.coupon-badge small {
+    font-size: 0.65rem;
+    opacity: 0.9;
+    margin-top: 2px;
+    font-weight: 500;
+}
+
+.product-card:hover .coupon-badge {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .coupon-badge {
+        top: 5px;
+        left: 5px;
+        max-width: 110px;
+    }
+
+    .coupon-badge .badge {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.35rem;
+    }
+
+    .coupon-badge small {
+        font-size: 0.55rem;
+    }
 }

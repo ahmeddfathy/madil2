@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
@@ -67,6 +68,14 @@ class Product extends Model
     return $this->belongsTo(Category::class);
   }
 
+  /**
+   * علاقة many-to-many مع التصنيفات للكوبونات
+   */
+  public function categories(): BelongsToMany
+  {
+    return $this->belongsToMany(Category::class, 'category_product');
+  }
+
   public function images(): HasMany
   {
     return $this->hasMany(ProductImage::class);
@@ -100,6 +109,40 @@ class Product extends Model
   public function quantityDiscounts()
   {
     return $this->hasMany(QuantityDiscount::class);
+  }
+
+  /**
+   * الحصول على الكوبونات الصالحة المتاحة لهذا المنتج
+   *
+   * @return \Illuminate\Database\Eloquent\Collection
+   */
+  public function getAvailableCoupons()
+  {
+    // جمع كل الكوبونات المتاحة للمنتج
+    $productCoupons = $this->discounts()->where('is_active', true)->get();
+
+    // جمع الكوبونات المتاحة لجميع المنتجات
+    $globalCoupons = Coupon::where('is_active', true)
+                           ->where('applies_to_all_products', true)
+                           ->get();
+
+    // جمع الكوبونات المتاحة عبر فئة المنتج
+    $categoryCoupons = collect();
+    if ($this->category_id) {
+      $categoryCoupons = Coupon::where('is_active', true)
+                              ->whereHas('categories', function ($query) {
+                                $query->where('category_id', $this->category_id);
+                              })
+                              ->get();
+    }
+
+    // دمج المجموعات
+    $allCoupons = $productCoupons->merge($globalCoupons)->merge($categoryCoupons);
+
+    // تصفية الكوبونات لإزالة المكررات والتحقق من الصلاحية
+    return $allCoupons->unique('id')->filter(function ($coupon) {
+      return $coupon->isValid();
+    });
   }
 
   public function scopePriceRange(Builder $query, $min = null, $max = null): Builder
@@ -235,5 +278,25 @@ class Product extends Model
       'min' => $this->min_price,
       'max' => $this->max_price
     ];
+  }
+
+  /**
+   * Check if the product has any active discounts
+   *
+   * @return bool
+   */
+  public function hasDiscounts()
+  {
+    // Check if product has available coupons
+    if ($this->getAvailableCoupons()->isNotEmpty()) {
+      return true;
+    }
+
+    // Check if product has active quantity discounts
+    if ($this->quantityDiscounts()->where('is_active', true)->exists()) {
+      return true;
+    }
+
+    return false;
   }
 }

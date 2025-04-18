@@ -4,88 +4,175 @@ namespace App\Services\Customer\Products;
 
 use App\Models\Category;
 use App\Models\Product;
-use Illuminate\Database\Eloquent\Builder;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+
 
 class ProductService
 {
     public function getFilteredProducts(Request $request)
     {
-        $query = Product::query()
-            ->with(['category', 'images', 'colors', 'sizes', 'quantities'])
-            ->where('is_available', true)
-            ->when($request->search, function (Builder $query, $search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('description', 'like', "%{$search}%");
-                });
-            })
-            ->when($request->category, function (Builder $query, $category) {
-                $query->whereHas('category', function($q) use ($category) {
-                    $q->where('slug', $category);
-                });
-            })
-            ->when($request->max_price, function (Builder $query, $maxPrice) {
-                // فلترة حسب السعر الأقصى باستخدام استعلام فرعي
-                $query->where(function($q) use ($maxPrice) {
-                    // المنتجات التي لها مقاسات بأسعار أقل من أو تساوي الحد الأقصى
-                    $q->whereExists(function($subQuery) use ($maxPrice) {
-                        $subQuery->select(DB::raw(1))
-                            ->from('product_sizes')
-                            ->whereColumn('product_sizes.product_id', 'products.id')
-                            ->where('product_sizes.price', '<=', $maxPrice);
+        $query = Product::with(['category', 'images', 'categories'])
+            ->where('is_available', true);
+
+        // Filter by categories (single category or multiple categories)
+        if ($request->has('categories') && !empty($request->categories)) {
+            $categories = $request->categories;
+            $query->where(function($q) use ($categories) {
+                foreach ($categories as $categorySlug) {
+                    // Primary category (belongs to)
+                    $q->orWhereHas('category', function($query) use ($categorySlug) {
+                        $query->where('slug', $categorySlug);
                     });
 
-                    // أو المنتجات التي لها كميات بأسعار أقل من أو تساوي الحد الأقصى
-                    $q->orWhereExists(function($subQuery) use ($maxPrice) {
-                        $subQuery->select(DB::raw(1))
-                            ->from('product_quantities')
-                            ->whereColumn('product_quantities.product_id', 'products.id')
-                            ->where('product_quantities.price', '<=', $maxPrice);
+                    // Secondary categories (many-to-many)
+                    $q->orWhereHas('categories', function($query) use ($categorySlug) {
+                        $query->where('slug', $categorySlug);
                     });
+                }
+            });
+        }
+        // For backward compatibility - support single category parameter
+        elseif ($request->has('category') && !empty($request->category)) {
+            $categorySlug = $request->category;
+            $query->where(function($q) use ($categorySlug) {
+                $q->whereHas('category', function($query) use ($categorySlug) {
+                    $query->where('slug', $categorySlug);
+                })
+                ->orWhereHas('categories', function($query) use ($categorySlug) {
+                    $query->where('slug', $categorySlug);
                 });
             });
+        }
 
-        $query->when($request->sort, function (Builder $query, $sort) {
-            match ($sort) {
-                'price-low' => $query->orderBy(function($q) {
-                    return $q->select(DB::raw('MIN(COALESCE(ps.price, pq.price, 0))'))
-                        ->from('products as p')
-                        ->leftJoin('product_sizes as ps', 'p.id', '=', 'ps.product_id')
-                        ->leftJoin('product_quantities as pq', 'p.id', '=', 'pq.product_id')
-                        ->whereColumn('p.id', 'products.id')
-                        ->limit(1);
-                }),
-                'price-high' => $query->orderBy(function($q) {
-                    return $q->select(DB::raw('MAX(COALESCE(ps.price, pq.price, 0))'))
-                        ->from('products as p')
-                        ->leftJoin('product_sizes as ps', 'p.id', '=', 'ps.product_id')
-                        ->leftJoin('product_quantities as pq', 'p.id', '=', 'pq.product_id')
-                        ->whereColumn('p.id', 'products.id')
-                        ->limit(1);
-                }, 'desc'),
-                'newest' => $query->latest(),
-                default => $query->orderBy('created_at', 'desc')
-            };
-        });
+        if ($request->has('min_price')) {
+            $query->where(function($q) use ($request) {
+                $q->whereHas('sizes', function($query) use ($request) {
+                    $query->where('price', '>=', $request->min_price);
+                })
+                ->orWhereHas('quantities', function($query) use ($request) {
+                    $query->where('price', '>=', $request->min_price);
+                });
+            });
+        }
 
-        return $query->paginate($request->per_page ?? 12);
+        if ($request->has('max_price')) {
+            $query->where(function($q) use ($request) {
+                $q->whereHas('sizes', function($query) use ($request) {
+                    $query->where('price', '<=', $request->max_price);
+                })
+                ->orWhereHas('quantities', function($query) use ($request) {
+                    $query->where('price', '<=', $request->max_price);
+                });
+            });
+        }
+
+        if ($request->has('has_discounts') && $request->has_discounts) {
+            $query->where(function($q) {
+                $q->whereHas('discounts', function($query) {
+                    $query->where('is_active', true)
+                          ->where(function($q2) {
+                               $q2->whereNull('expires_at')
+                                  ->orWhere('expires_at', '>=', now());
+                           })
+                          ->where(function($q2) {
+                               $q2->whereNull('starts_at')
+                                  ->orWhere('starts_at', '<=', now());
+                           });
+                });
+
+                $q->orWhereHas('quantityDiscounts', function($query) {
+                    $query->where('is_active', true);
+                });
+
+                $q->orWhere(function($subQ) {
+                    $subQ->whereHas('category', function($catQ) {
+                        $catQ->whereHas('coupons', function($couponQ) {
+                            $couponQ->where('is_active', true)
+                                ->where(function($dateQ) {
+                                    $dateQ->whereNull('expires_at')
+                                        ->orWhere('expires_at', '>=', now());
+                                })
+                                ->where(function($dateQ) {
+                                    $dateQ->whereNull('starts_at')
+                                        ->orWhere('starts_at', '<=', now());
+                                });
+                        });
+                    });
+                });
+
+                $q->orWhereExists(function($query) {
+                    $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                          ->from('coupons')
+                          ->where('applies_to_all_products', true)
+                          ->where('is_active', true)
+                          ->where(function($q2) {
+                               $q2->whereNull('expires_at')
+                                  ->orWhere('expires_at', '>=', now());
+                           })
+                          ->where(function($q2) {
+                               $q2->whereNull('starts_at')
+                                  ->orWhere('starts_at', '<=', now());
+                           });
+                });
+            });
+        }
+
+        switch ($request->input('sort', 'newest')) {
+            case 'price-low':
+                $query->orderByRaw('(SELECT MIN(COALESCE(ps.price, pq.price, 999999))
+                                   FROM product_sizes ps
+                                   LEFT JOIN product_quantities pq ON pq.product_id = products.id
+                                   WHERE ps.product_id = products.id) ASC');
+                break;
+            case 'price-high':
+                $query->orderByRaw('(SELECT MAX(COALESCE(ps.price, pq.price, 0))
+                                   FROM product_sizes ps
+                                   LEFT JOIN product_quantities pq ON pq.product_id = products.id
+                                   WHERE ps.product_id = products.id) DESC');
+                break;
+            case 'newest':
+            default:
+                $query->latest();
+                break;
+        }
+
+        return $query->paginate(9);
     }
 
     public function getCategories()
     {
-        return Category::select('id', 'name', 'slug')
+        $categories = Category::select('id', 'name', 'slug')
             ->withCount(['products' => function($query) {
                 $query->where('is_available', true);
             }])
             ->get();
+
+        foreach ($categories as $category) {
+            // Count products associated through the many-to-many relationship
+            // but exclude those already counted through the direct relationship
+            // to avoid duplicated counts
+            $additionalProductsCount = DB::table('category_product')
+                ->join('products', 'category_product.product_id', '=', 'products.id')
+                ->where('category_product.category_id', $category->id)
+                ->where('products.is_available', true)
+                ->whereRaw('products.category_id != ?', [$category->id]) // Exclude direct category products
+                ->count();
+
+            // Set the total count - Direct products (products_count) + Related products
+            $category->total_products_count = $category->products_count + $additionalProductsCount;
+
+            // Display the total count instead of just direct products
+            $category->products_count = $category->total_products_count;
+        }
+
+        return $categories;
     }
 
     public function getPriceRange()
     {
-        // Determine the min and max prices from all available products
         $minPrice = DB::table('products as p')
             ->leftJoin('product_sizes as ps', 'p.id', '=', 'ps.product_id')
             ->leftJoin('product_quantities as pq', 'p.id', '=', 'pq.product_id')
@@ -106,72 +193,146 @@ class ProductService
 
     public function formatProductsForJson($products)
     {
-        return collect($products->items())->map(function($product) {
-            $priceRange = $product->getPriceRange();
-
+        return $products->map(function($product) {
             return [
                 'id' => $product->id,
                 'name' => $product->name,
                 'slug' => $product->slug,
+                'description' => $product->description,
                 'category' => [
-                    'name' => $product->category->name,
-                    'slug' => $product->category->slug
+                    'id' => $product->category_id,
+                    'name' => $product->category->name ?? null
                 ],
-                'price_range' => [
-                    'min' => $priceRange['min'],
-                    'max' => $priceRange['max']
-                ],
-                'image_url' => $product->images->first() ? asset('storage/' . $product->images->first()->image_path) : asset('images/placeholder.jpg'),
-                'images' => collect($product->images)->map(function($image) {
-                    return asset('storage/' . $image->image_path);
-                })->toArray(),
-                'colors' => collect($product->colors)->map(function($color) {
+                'categories' => $product->categories->map(function($category) {
                     return [
-                        'name' => $color->color,
-                        'is_available' => $color->is_available
+                        'id' => $category->id,
+                        'name' => $category->name
                     ];
-                })->toArray(),
-                'sizes' => collect($product->sizes)->map(function($size) {
-                    return [
-                        'name' => $size->size,
-                        'is_available' => $size->is_available,
-                        'price' => $size->price ?? null
-                    ];
-                })->toArray(),
-                'rating' => $product->rating ?? 0,
-                'reviews' => $product->reviews ?? 0,
-                'is_available' => $product->stock > 0
+                }),
+                'image' => $product->image_url,
+                'all_images' => $product->all_images,
+                'price_range' => $product->getPriceRange(),
+                'rating' => 4.5,
+                'reviews' => mt_rand(10, 100),
+                'url' => route('products.show', $product->slug),
+                'coupon_badge' => $this->getProductCouponBadge($product)
             ];
         });
     }
 
     public function formatProductsForFilter($products)
     {
-        return collect($products->items())->map(function($product) {
-            $priceRange = $product->getPriceRange();
-            $priceDisplay = $priceRange['min'] == $priceRange['max']
-                ? number_format($priceRange['min'], 2)
-                : number_format($priceRange['min'], 2) . ' - ' . number_format($priceRange['max'], 2);
+        return $products->map(function($product) {
+            try {
+                $images = $product->images->map(function($image) {
+                    return [
+                        'id' => $image->id,
+                        'image_path' => $image->image_path
+                    ];
+                })->values()->toArray();
 
-            return [
-                'id' => $product->id,
-                'name' => $product->name,
-                'slug' => $product->slug,
-                'category' => $product->category->name,
-                'price_display' => $priceDisplay . ' ر.س',
-                'price_range' => [
-                    'min' => $priceRange['min'],
-                    'max' => $priceRange['max']
-                ],
-                'image_url' => $product->images->first() ?
-                    asset('storage/' . $product->images->first()->image_path) :
-                    asset('images/placeholder.jpg'),
-                'rating' => $product->rating ?? 0,
-                'reviews' => $product->reviews ?? 0,
-                'is_available' => $product->stock > 0,
-                'description' => Str::limit($product->description, 100)
-            ];
+                $priceRange = $product->getPriceRange();
+
+                // Get both primary category and associated categories
+                $allCategories = collect([$product->category])->filter()->merge($product->categories);
+
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'description' => Str::limit($product->description, 100),
+                    'category' => $product->category->name ?? null,
+                    'category_id' => $product->category_id,
+                    'categories' => $allCategories->unique('id')->map(function($category) {
+                        if (!$category) return null;
+                        return [
+                            'id' => $category->id,
+                            'name' => $category->name,
+                            'slug' => $category->slug ?? null
+                        ];
+                    })->filter()->values()->toArray(),
+                    'image_url' => $product->image_url,
+                    'images' => $images,
+                    'price' => $priceRange['min'] ?? 0,
+                    'min_price' => $priceRange['min'] ?? 0,
+                    'max_price' => $priceRange['max'] ?? 0,
+                    'price_range' => [
+                        'min' => $priceRange['min'] ?? 0,
+                        'max' => $priceRange['max'] ?? 0
+                    ],
+                    'rating' => 4.5,
+                    'reviews' => mt_rand(10, 100),
+                    'url' => route('products.show', $product->slug),
+                    'coupon_badge' => $this->getProductCouponBadge($product)
+                ];
+            } catch (\Exception $e) {
+                return [
+                    'id' => $product->id ?? 0,
+                    'name' => $product->name ?? 'منتج غير معروف',
+                    'slug' => $product->slug ?? 'unknown-product',
+                    'description' => Str::limit($product->description ?? '', 100),
+                    'category' => null,
+                    'category_id' => null,
+                    'categories' => [],
+                    'price_range' => ['min' => 0, 'max' => 0],
+                    'image_url' => asset('images/placeholder.jpg'),
+                    'images' => [],
+                    'rating' => 0,
+                    'reviews' => 0
+                ];
+            }
         });
+    }
+
+    public function getProductCouponBadge($product)
+    {
+        $availableCoupons = $product->getAvailableCoupons();
+
+        if ($availableCoupons->isEmpty()) {
+            return null;
+        }
+
+        $bestCoupon = null;
+        $highestDiscount = 0;
+
+        foreach ($availableCoupons as $coupon) {
+            $price = $product->min_price;
+            if ($price <= 0) {
+                continue;
+            }
+
+            $discountAmount = 0;
+
+            if ($coupon->type === 'percentage') {
+                $discountAmount = ($price * $coupon->value) / 100;
+            } else {
+                $discountAmount = $coupon->value;
+            }
+
+            if ($discountAmount > $highestDiscount) {
+                $highestDiscount = $discountAmount;
+                $bestCoupon = $coupon;
+            }
+        }
+
+        if (!$bestCoupon) {
+            return null;
+        }
+
+        $badgeText = '';
+        if ($bestCoupon->type === 'percentage') {
+            $badgeText = "خصم {$bestCoupon->value}%";
+        } else {
+            $badgeText = "خصم {$bestCoupon->value} ر.س";
+        }
+
+        return [
+            'code' => $bestCoupon->code,
+            'discount_text' => $badgeText,
+            'value' => $bestCoupon->value,
+            'type' => $bestCoupon->type,
+            'badge_html' => '<div class="coupon-badge position-absolute"><span class="badge bg-danger"><i class="fas fa-tag me-1"></i>' . $badgeText . '</span><small class="d-block mt-1 text-white bg-dark px-1 rounded">كود: ' . $bestCoupon->code . '</small></div>'
+        ];
     }
 
     public function getProductDetails(Product $product)

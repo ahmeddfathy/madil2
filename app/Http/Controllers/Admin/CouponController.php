@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Coupon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -20,7 +21,8 @@ class CouponController extends Controller
     public function create()
     {
         $products = \App\Models\Product::orderBy('name')->get();
-        return view('admin.coupons.create', compact('products'));
+        $categories = Category::orderBy('name')->get();
+        return view('admin.coupons.create', compact('products', 'categories'));
     }
 
     public function store(Request $request)
@@ -40,7 +42,8 @@ class CouponController extends Controller
             'max_uses.min' => 'الحد الأقصى للاستخدام يجب أن يكون على الأقل 0',
             'is_active.boolean' => 'حقل الكوبون نشط يجب أن يكون صح أو خطأ',
             'applies_to_all_products.boolean' => 'حقل "يطبق على جميع المنتجات" يجب أن يكون صح أو خطأ',
-            'products.required_if' => 'يجب اختيار منتج واحد على الأقل عندما لا يطبق الكوبون على جميع المنتجات',
+            'products.required_without_all' => 'يجب اختيار منتجات أو تصنيفات عندما لا يطبق الكوبون على جميع المنتجات',
+            'categories.required_without_all' => 'يجب اختيار منتجات أو تصنيفات عندما لا يطبق الكوبون على جميع المنتجات',
             'starts_at.date' => 'تاريخ بدء الصلاحية يجب أن يكون تاريخ صحيح',
             'expires_at.date' => 'تاريخ انتهاء الصلاحية يجب أن يكون تاريخ صحيح',
             'expires_at.after_or_equal' => 'تاريخ انتهاء الصلاحية يجب أن يكون بعد تاريخ البدء أو مساوي له'
@@ -56,8 +59,10 @@ class CouponController extends Controller
             'max_uses' => 'nullable|integer|min:0',
             'is_active' => 'sometimes|boolean',
             'applies_to_all_products' => 'sometimes|boolean',
-            'products' => 'required_if:applies_to_all_products,0|array',
+            'products' => 'required_without_all:applies_to_all_products,categories|array',
             'products.*' => 'exists:products,id',
+            'categories' => 'required_without_all:applies_to_all_products,products|array',
+            'categories.*' => 'exists:categories,id',
             'starts_at' => 'nullable|date',
             'expires_at' => 'nullable|date|after_or_equal:starts_at',
         ], $messages);
@@ -73,9 +78,15 @@ class CouponController extends Controller
 
         $coupon = Coupon::create($validated);
 
-        // حفظ المنتجات المحددة إذا لم يكن الكوبون يطبق على جميع المنتجات
-        if (!$validated['applies_to_all_products'] && isset($validated['products'])) {
-            $coupon->products()->attach($validated['products']);
+        // حفظ المنتجات والتصنيفات المحددة إذا لم يكن الكوبون يطبق على جميع المنتجات
+        if (!$validated['applies_to_all_products']) {
+            if (isset($validated['products'])) {
+                $coupon->products()->attach($validated['products']);
+            }
+
+            if (isset($validated['categories'])) {
+                $coupon->categories()->attach($validated['categories']);
+            }
         }
 
         return redirect()
@@ -85,6 +96,7 @@ class CouponController extends Controller
 
     public function show(Coupon $coupon)
     {
+        $coupon->load('products', 'categories');
         return view('admin.coupons.show', compact('coupon'));
     }
 
@@ -92,7 +104,11 @@ class CouponController extends Controller
     {
         $products = \App\Models\Product::orderBy('name')->get();
         $selectedProducts = $coupon->products->pluck('id')->toArray();
-        return view('admin.coupons.edit', compact('coupon', 'products', 'selectedProducts'));
+
+        $categories = Category::orderBy('name')->get();
+        $selectedCategories = $coupon->categories->pluck('id')->toArray();
+
+        return view('admin.coupons.edit', compact('coupon', 'products', 'selectedProducts', 'categories', 'selectedCategories'));
     }
 
     public function update(Request $request, Coupon $coupon)
@@ -112,7 +128,8 @@ class CouponController extends Controller
             'max_uses.min' => 'الحد الأقصى للاستخدام يجب أن يكون على الأقل 0',
             'is_active.boolean' => 'حقل الكوبون نشط يجب أن يكون صح أو خطأ',
             'applies_to_all_products.boolean' => 'حقل "يطبق على جميع المنتجات" يجب أن يكون صح أو خطأ',
-            'products.required_if' => 'يجب اختيار منتج واحد على الأقل عندما لا يطبق الكوبون على جميع المنتجات',
+            'products.required_without_all' => 'يجب اختيار منتجات أو تصنيفات عندما لا يطبق الكوبون على جميع المنتجات',
+            'categories.required_without_all' => 'يجب اختيار منتجات أو تصنيفات عندما لا يطبق الكوبون على جميع المنتجات',
             'starts_at.date' => 'تاريخ بدء الصلاحية يجب أن يكون تاريخ صحيح',
             'expires_at.date' => 'تاريخ انتهاء الصلاحية يجب أن يكون تاريخ صحيح',
             'expires_at.after_or_equal' => 'تاريخ انتهاء الصلاحية يجب أن يكون بعد تاريخ البدء أو مساوي له'
@@ -128,8 +145,10 @@ class CouponController extends Controller
             'max_uses' => 'nullable|integer|min:0',
             'is_active' => 'sometimes|boolean',
             'applies_to_all_products' => 'sometimes|boolean',
-            'products' => 'required_if:applies_to_all_products,0|array',
+            'products' => 'required_without_all:applies_to_all_products,categories|array',
             'products.*' => 'exists:products,id',
+            'categories' => 'required_without_all:applies_to_all_products,products|array',
+            'categories.*' => 'exists:categories,id',
             'starts_at' => 'nullable|date',
             'expires_at' => 'nullable|date|after_or_equal:starts_at',
         ], $messages);
@@ -145,10 +164,18 @@ class CouponController extends Controller
 
         $coupon->update($validated);
 
-        // تحديث المنتجات المحددة
+        // تحديث المنتجات والتصنيفات المحددة
         $coupon->products()->detach();
-        if (!$validated['applies_to_all_products'] && isset($validated['products'])) {
-            $coupon->products()->attach($validated['products']);
+        $coupon->categories()->detach();
+
+        if (!$validated['applies_to_all_products']) {
+            if (isset($validated['products'])) {
+                $coupon->products()->attach($validated['products']);
+            }
+
+            if (isset($validated['categories'])) {
+                $coupon->categories()->attach($validated['categories']);
+            }
         }
 
         return redirect()

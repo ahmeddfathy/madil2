@@ -87,7 +87,7 @@ div[class*="alert-info"] i {
 .text-primary,
 .fa-info-circle,
 .modal-body .fa-user-lock {
-    color: var(--primary-color) !important;
+    color: white !important;
 }
 
 /* Fix specific blue elements in product page */

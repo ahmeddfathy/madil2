@@ -194,6 +194,104 @@
                 </div>
                 <!-- /.card-body -->
             </div>
+
+            <!-- Linked products section -->
+            @if(!$coupon->applies_to_all_products)
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4 d-flex align-items-center">
+                            <i class="fas fa-box text-primary me-2"></i>
+                            المنتجات المرتبطة
+                        </h5>
+
+                        @if($coupon->products->isNotEmpty())
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>اسم المنتج</th>
+                                            <th>السعر</th>
+                                            <th>التصنيف</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($coupon->products as $product)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>
+                                                <a href="{{ route('admin.products.show', $product) }}">
+                                                    {{ $product->name }}
+                                                </a>
+                                            </td>
+                                            <td>{{ $product->price }}</td>
+                                            <td>{{ $product->category->name ?? '-' }}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="alert alert-info">
+                                لا يوجد منتجات مرتبطة بهذا الكوبون
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Linked categories section -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4 d-flex align-items-center">
+                            <i class="fas fa-tags text-primary me-2"></i>
+                            التصنيفات المرتبطة
+                        </h5>
+
+                        @if($coupon->categories->isNotEmpty())
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>اسم التصنيف</th>
+                                            <th>الوصف</th>
+                                            <th>عدد المنتجات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($coupon->categories as $category)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>
+                                                <a href="{{ route('admin.categories.show', $category) }}">
+                                                    {{ $category->name }}
+                                                </a>
+                                            </td>
+                                            <td>{{ Str::limit($category->description, 50) ?? '-' }}</td>
+                                            <td>
+                                                <span class="badge bg-success rounded-pill">
+                                                    {{ $category->products_count ?? $category->products->count() }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="alert alert-info">
+                                لا يوجد تصنيفات مرتبطة بهذا الكوبون
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @else
+                <div class="alert alert-success">
+                    هذا الكوبون يطبق على جميع المنتجات
+                </div>
+            @endif
+        </div>
+    </div>
 </div>
 @endsection
 

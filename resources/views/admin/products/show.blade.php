@@ -84,10 +84,30 @@
                                         <div class="row g-4">
                                             <div class="col-6">
                                                 <div class="detail-item">
-                                                    <dt><i class="fas fa-tag text-primary"></i> التصنيف</dt>
+                                                    <dt><i class="fas fa-tag text-primary"></i> التصنيف الرئيسي</dt>
                                                     <dd>{{ $product->category->name }}</dd>
                                                 </div>
                                             </div>
+
+                                            @if($product->categories && $product->categories->count() > 0)
+                                            <div class="col-12 mt-2">
+                                                <div class="detail-item">
+                                                    <dt><i class="fas fa-tags text-primary"></i> التصنيفات الإضافية</dt>
+                                                    <dd>
+                                                        <div class="category-badges mt-2">
+                                                            @foreach($product->categories as $category)
+                                                                @if($category->id != $product->category_id)
+                                                                    <span class="category-badge">
+                                                                        <i class="fas fa-tag"></i>
+                                                                        {{ $category->name }}
+                                                                    </span>
+                                                                @endif
+                                                            @endforeach
+                                                        </div>
+                                                    </dd>
+                                                </div>
+                                            </div>
+                                            @endif
                                             <div class="col-6">
                                                 <div class="detail-item">
                                                     <dt><i class="fas fa-money-bill text-primary"></i> السعر</dt>
@@ -278,6 +298,31 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="card-title mb-0">معلومات التصنيف</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">التصنيف الرئيسي</label>
+                                        <div>{{ $product->category->name ?? 'غير محدد' }}</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">التصنيفات الإضافية</label>
+                                        @if($product->categories->count() > 0)
+                                            <div>
+                                                @foreach($product->categories as $category)
+                                                    <span class="badge bg-info me-1">{{ $category->name }}</span>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="text-muted">لا توجد تصنيفات إضافية</div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

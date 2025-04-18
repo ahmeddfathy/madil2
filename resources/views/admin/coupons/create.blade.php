@@ -118,6 +118,54 @@
                                     إذا كنت تريد تطبيق الكوبون فقط على الطلبات التي تتجاوز مبلغًا معينًا
                                 </small>
                             </div>
+
+                            <!-- Products Selection -->
+                            <div class="row mb-4" id="productsSection" style="{{ old('applies_to_all_products') ? 'display: none;' : '' }}">
+                                <label class="col-md-3 col-form-label">المنتجات</label>
+                                <div class="col-md-9">
+                                    <div class="product-checkbox-container border rounded p-3" style="max-height: 250px; overflow-y: auto;">
+                                        @foreach($products as $product)
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" name="products[]"
+                                                    id="product_{{ $product->id }}" value="{{ $product->id }}"
+                                                    {{ in_array($product->id, old('products', [])) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="product_{{ $product->id }}">
+                                                    {{ $product->name }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <small class="form-text text-muted">اختر المنتجات التي يمكن استخدام الكوبون عليها</small>
+
+                                    @error('products')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <!-- Categories Selection -->
+                            <div class="row mb-4" id="categoriesSection" style="{{ old('applies_to_all_products') ? 'display: none;' : '' }}">
+                                <label class="col-md-3 col-form-label">التصنيفات</label>
+                                <div class="col-md-9">
+                                    <div class="category-checkbox-container border rounded p-3" style="max-height: 250px; overflow-y: auto;">
+                                        @foreach($categories as $category)
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" name="categories[]"
+                                                    id="category_{{ $category->id }}" value="{{ $category->id }}"
+                                                    {{ in_array($category->id, old('categories', [])) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="category_{{ $category->id }}">
+                                                    {{ $category->name }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <small class="form-text text-muted">اختر التصنيفات التي يمكن استخدام الكوبون على منتجاتها</small>
+
+                                    @error('categories')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -172,17 +220,7 @@
                                 </small>
                             </div>
 
-                            <div class="form-group mb-4">
-                                <label for="max_uses_per_user" class="form-label">الحد الأقصى للاستخدام لكل عميل (اختياري)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user-times"></i></span>
-                                    <input type="number" class="form-control" id="max_uses_per_user" name="max_uses_per_user"
-                                        value="{{ old('max_uses_per_user') }}" min="0">
-                                </div>
-                                <small class="form-text text-muted">
-                                    أقصى عدد مرات يمكن لكل عميل استخدام هذا الكوبون. اتركه فارغًا للاستخدام غير المحدود
-                                </small>
-                            </div>
+                    
                         </div>
                     </div>
                 </div>
@@ -290,6 +328,28 @@
 
         // تنفيذ عند تحميل الصفحة
         updateValueField();
+
+        // إخفاء/إظهار قسم المنتجات حسب خيار التطبيق على جميع المنتجات
+        const appliesToAllCheckbox = document.getElementById('applies_to_all_products');
+        const productsSection = document.getElementById('productsSection');
+        const categoriesSection = document.getElementById('categoriesSection');
+
+        appliesToAllCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                productsSection.style.display = 'none';
+                categoriesSection.style.display = 'none';
+            } else {
+                productsSection.style.display = '';
+                categoriesSection.style.display = '';
+            }
+        });
+
+        // تهيئة Select2 للحقول الأخرى التي تحتاج إليها (إن وجدت)
+        $('.select2:not([name="products[]"]):not([name="categories[]"])').select2({
+            placeholder: 'اختر...',
+            width: '100%',
+            dir: 'rtl'
+        });
     });
 </script>
 @endsection

@@ -7,24 +7,17 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-lg border-0 rounded-lg">
-                <div class="card-header bg-primary text-white py-3">
+                <div class="card-header text-white py-3" style="background-color: #009245; border-color: #009245;">
                     <div class="d-flex justify-content-between align-items-center">
                         <h3 class="mb-0">
                             <i class="fas fa-edit me-2"></i>
                             تعديل خصم الكمية
                         </h3>
-                        <div class="btn-group">
-                            <a href="{{ route('admin.quantity-discounts.show', $quantityDiscount) }}"
-                               class="btn btn-info">
-                                <i class="fas fa-eye me-2"></i>
-                                عرض التفاصيل
-                            </a>
-                            <a href="{{ route('admin.quantity-discounts.index') }}"
-                               class="btn btn-light">
-                                <i class="fas fa-arrow-right me-2"></i>
-                                العودة للقائمة
-                            </a>
-                        </div>
+                        <a href="{{ route('admin.quantity-discounts.index') }}"
+                           class="btn btn-light">
+                            <i class="fas fa-arrow-right me-2"></i>
+                            العودة للقائمة
+                        </a>
                     </div>
                 </div>
 
@@ -122,14 +115,14 @@
                                 <div class="form-check form-switch">
                                     <input type="checkbox" name="is_active" id="is_active"
                                            value="1" {{ old('is_active', $quantityDiscount->is_active) ? 'checked' : '' }}
-                                           class="form-check-input">
+                                           class="form-check-input" style="background-color: #009245; border-color: #009245;">
                                     <label class="form-check-label" for="is_active">تفعيل الخصم</label>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-4 d-flex justify-content-between">
-                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                        <div class="mt-4 text-center">
+                            <button type="submit" class="btn btn-lg px-5" style="background-color: #009245; border-color: #009245; color: white;">
                                 <i class="fas fa-save me-2"></i>
                                 حفظ التغييرات
                             </button>
@@ -137,10 +130,11 @@
                     </form>
 
                     <!-- نموذج حذف الخصم -->
-                    <div class="mt-3 text-end">
+                    <div class="mt-4 text-center">
                         <form action="{{ route('admin.quantity-discounts.destroy', $quantityDiscount) }}"
                               method="POST"
-                              onsubmit="return confirm('هل أنت متأكد من حذف هذا الخصم؟');">
+                              onsubmit="return confirm('هل أنت متأكد من حذف هذا الخصم؟');"
+                              class="d-inline-block">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">
@@ -156,6 +150,7 @@
 </div>
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/admin/quantity-discounts.css') }}">
 <style>
     .form-floating {
         position: relative;
@@ -183,7 +178,7 @@
         transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
     }
     .form-floating > .form-control:focus ~ label {
-        color: #0d6efd;
+        color: #009245;
     }
     .form-floating > .form-control.is-invalid ~ label {
         color: #dc3545;
@@ -194,6 +189,30 @@
     .form-switch .form-check-input {
         width: 3em;
         margin-right: -2.5em;
+    }
+    .form-check-input:checked {
+        background-color: #009245 !important;
+        border-color: #009245 !important;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #009245 !important;
+        box-shadow: 0 0 0 0.25rem rgba(0, 146, 69, 0.25) !important;
+    }
+    .btn-info {
+        background-color: #009245 !important;
+        border-color: #009245 !important;
+        color: white !important;
+    }
+    .btn-info:hover {
+        background-color: #007a38 !important;
+        border-color: #007a38 !important;
+    }
+    a {
+        color: #009245;
+        text-decoration: none;
+    }
+    a:hover {
+        color: #007a38;
     }
 </style>
 @endpush

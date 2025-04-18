@@ -62,17 +62,44 @@
                                                 @enderror
                                             </div>
 
-                                            <div class="mb-3">
-                                                <label class="form-label">التصنيف</label>
-                                                <select name="category_id" class="form-select shadow-sm @error('category_id') is-invalid @enderror">
-                                                    <option value="">اختر التصنيف</option>
+                                            <div class="form-group mb-3">
+                                                <label for="category_id" class="form-label required">التصنيف الرئيسي</label>
+                                                <select id="category_id" name="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
+                                                    <option value="">اختر التصنيف الرئيسي</option>
                                                     @foreach($categories as $category)
-                                                        <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>
+                                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                                             {{ $category->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                                 @error('category_id')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">التصنيفات الإضافية (اختياري)</label>
+                                                <div class="card border shadow-sm p-3">
+                                                    <div class="row g-2">
+                                                        @foreach($categories as $category)
+                                                            <div class="col-md-4 col-sm-6">
+                                                                <div class="form-check">
+                                                                    <input type="checkbox"
+                                                                           class="form-check-input"
+                                                                           id="category-{{ $category->id }}"
+                                                                           name="categories[]"
+                                                                           value="{{ $category->id }}"
+                                                                           {{ in_array($category->id, old('categories', [])) ? 'checked' : '' }}>
+                                                                    <label class="form-check-label" for="category-{{ $category->id }}">
+                                                                        {{ $category->name }}
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <small class="form-text text-muted">اختر التصنيفات الإضافية التي تريد إضافة المنتج إليها</small>
+                                                @error('categories')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
@@ -173,7 +200,7 @@
                                                     <label class="form-check-label" for="hasColors">تفعيل الألوان</label>
                                                 </div>
                                             </div>
-                                            <div id="colorsSection" style="display: {{ old('has_colors') ? 'block' : 'none' }}">
+                                            <div id="colorsSection" class="{{ old('has_colors') ? 'section-expanded' : 'section-collapsed' }}">
                                                 @error('colors.*')
                                                     <div class="alert alert-danger">{{ $message }}</div>
                                                 @enderror
@@ -245,7 +272,7 @@
                                                     <label class="form-check-label" for="hasSizes">تفعيل المقاسات</label>
                                                 </div>
                                             </div>
-                                            <div id="sizesSection" style="display: {{ old('has_sizes') ? 'block' : 'none' }}">
+                                            <div id="sizesSection" class="{{ old('has_sizes') ? 'section-expanded' : 'section-collapsed' }}">
                                                 @error('sizes.*')
                                                     <div class="alert alert-danger">{{ $message }}</div>
                                                 @enderror
@@ -389,7 +416,7 @@
                                                 <label class="form-check-label" for="hasQuantities">تفعيل تسعير الكميات</label>
                                             </div>
                                         </div>
-                                        <div id="quantitiesSection" style="display: {{ old('enable_quantity_pricing') ? 'block' : 'none' }}">
+                                        <div id="quantitiesSection" class="{{ old('enable_quantity_pricing') ? 'section-expanded' : 'section-collapsed' }}">
                                             @error('quantities.*')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
@@ -552,39 +579,55 @@ function addSizeInput() {
 
 function toggleColorsSection(checkbox) {
     const section = document.getElementById('colorsSection');
-    section.style.display = checkbox.checked ? 'block' : 'none';
-    if (!checkbox.checked) {
+    if (checkbox.checked) {
+        section.classList.remove('section-collapsed');
+        section.classList.add('section-expanded');
+        if (document.querySelectorAll('#colorsContainer input[name="colors[]"]').length === 0) {
+            addColorInput();
+        }
+    } else {
         if (document.querySelectorAll('#colorsContainer input[name="colors[]"]').length > 0) {
             if (!confirm('هل أنت متأكد من إلغاء تفعيل الألوان؟ سيتم حذف جميع الألوان المدخلة.')) {
                 checkbox.checked = true;
                 return;
             }
         }
+        section.classList.remove('section-expanded');
+        section.classList.add('section-collapsed');
         document.getElementById('colorsContainer').innerHTML = '';
-    } else if (document.querySelectorAll('#colorsContainer input[name="colors[]"]').length === 0) {
-        addColorInput();
     }
 }
 
 function toggleSizesSection(checkbox) {
     const section = document.getElementById('sizesSection');
-    section.style.display = checkbox.checked ? 'block' : 'none';
-    if (!checkbox.checked) {
+    if (checkbox.checked) {
+        section.classList.remove('section-collapsed');
+        section.classList.add('section-expanded');
+        if (document.querySelectorAll('#sizesContainer input[name="sizes[]"]').length === 0) {
+            addSizeInput();
+        }
+    } else {
         if (document.querySelectorAll('#sizesContainer input[name="sizes[]"]').length > 0) {
             if (!confirm('هل أنت متأكد من إلغاء تفعيل المقاسات؟ سيتم حذف جميع المقاسات المدخلة.')) {
                 checkbox.checked = true;
                 return;
             }
         }
+        section.classList.remove('section-expanded');
+        section.classList.add('section-collapsed');
         document.getElementById('sizesContainer').innerHTML = '';
-    } else if (document.querySelectorAll('#sizesContainer input[name="sizes[]"]').length === 0) {
-        addSizeInput();
     }
 }
 
 function toggleQuantitiesSection(checkbox) {
     const section = document.getElementById('quantitiesSection');
-    section.style.display = checkbox.checked ? 'block' : 'none';
+    if (checkbox.checked) {
+        section.classList.remove('section-collapsed');
+        section.classList.add('section-expanded');
+    } else {
+        section.classList.remove('section-expanded');
+        section.classList.add('section-collapsed');
+    }
 }
 
 function addQuantityInput() {
@@ -619,8 +662,21 @@ document.addEventListener('DOMContentLoaded', function() {
     colorsCheckbox.checked = hasColors;
     sizesCheckbox.checked = hasSizes;
 
-    document.getElementById('colorsSection').style.display = hasColors ? 'block' : 'none';
-    document.getElementById('sizesSection').style.display = hasSizes ? 'block' : 'none';
+    if (hasColors) {
+        document.getElementById('colorsSection').classList.add('section-expanded');
+        document.getElementById('colorsSection').classList.remove('section-collapsed');
+    } else {
+        document.getElementById('colorsSection').classList.add('section-collapsed');
+        document.getElementById('colorsSection').classList.remove('section-expanded');
+    }
+
+    if (hasSizes) {
+        document.getElementById('sizesSection').classList.add('section-expanded');
+        document.getElementById('sizesSection').classList.remove('section-collapsed');
+    } else {
+        document.getElementById('sizesSection').classList.add('section-collapsed');
+        document.getElementById('sizesSection').classList.remove('section-expanded');
+    }
 });
 </script>
 @endsection

@@ -44,20 +44,52 @@ class Coupon extends Model
     }
 
     /**
+     * التصنيفات التي يمكن تطبيق الكوبون عليها
+     */
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'coupon_category');
+    }
+
+    /**
      * التحقق مما إذا كان الكوبون صالحًا للتطبيق على منتج معين
      *
-     * @param int $productId
+     * @param Product $product
      * @return bool
      */
-    public function isValidForProduct($productId)
+    public function isValidForProduct(Product $product)
     {
-        // إذا كان الكوبون يطبق على جميع المنتجات
+        // If coupon applies to all products, it's valid
         if ($this->applies_to_all_products) {
             return true;
         }
 
-        // التحقق مما إذا كان المنتج ضمن المنتجات المحددة للكوبون
-        return $this->products()->where('products.id', $productId)->exists();
+        // Check if the product is directly linked to the coupon
+        if ($this->products()->where('product_id', $product->id)->exists()) {
+            return true;
+        }
+
+        // Check if the product's category is linked to the coupon
+        $productCategoryIds = [];
+
+        // الحصول على معرف الفئة الرئيسية للمنتج
+        if ($product->category_id) {
+            $productCategoryIds[] = $product->category_id;
+        }
+
+        // الحصول على معرفات الفئات المرتبطة من خلال علاقة many-to-many
+        if (method_exists($product, 'categories')) {
+            $productCategoryIds = array_merge(
+                $productCategoryIds,
+                $product->categories()->pluck('categories.id')->toArray()
+            );
+        }
+
+        if (!empty($productCategoryIds) && $this->categories()->whereIn('categories.id', $productCategoryIds)->exists()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

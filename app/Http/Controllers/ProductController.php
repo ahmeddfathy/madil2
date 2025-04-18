@@ -62,20 +62,26 @@ class ProductController extends Controller
     public function filter(Request $request)
     {
         try {
-            // Ensure we get the maxPrice parameter from the request
             $validatedData = $request->validate([
                 'categories' => 'nullable|array',
+                'categories.*' => 'nullable|string',
                 'minPrice' => 'nullable|numeric|min:0',
                 'maxPrice' => 'nullable|numeric|min:0',
-                'sort' => 'nullable|string|in:newest,price-low,price-high'
+                'sort' => 'nullable|string|in:newest,price-low,price-high',
+                'has_discounts' => 'nullable|boolean'
             ]);
 
-            // Merge the validated data back to the request so it's accessible in the service
             $request->merge([
+                'min_price' => $validatedData['minPrice'] ?? null,
                 'max_price' => $validatedData['maxPrice'] ?? null,
-                'category' => !empty($validatedData['categories']) ? $validatedData['categories'][0] : null,
-                'sort' => $validatedData['sort'] ?? 'newest'
+                'sort' => $validatedData['sort'] ?? 'newest',
+                'has_discounts' => $validatedData['has_discounts'] ?? null,
+                'categories' => $validatedData['categories'] ?? []
             ]);
+
+            if (!empty($validatedData['categories'])) {
+                $request->merge(['category' => $validatedData['categories'][0]]);
+            }
 
             $products = $this->productService->getFilteredProducts($request);
 
@@ -92,7 +98,7 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'حدث خطأ أثناء تحديث المنتجات',
+                'message' => 'حدث خطأ أثناء تحديث المنتجات - ' . $e->getMessage(),
                 'error' => $e->getMessage()
             ], 500);
         }

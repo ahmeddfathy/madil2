@@ -97,17 +97,22 @@
                                             معلومات التصنيف
                                         </h5>
                                         <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="detail-item mb-4">
-                                                    <label class="text-muted mb-2">اسم التصنيف</label>
-                                                    <h5 class="mb-0">{{ $category->name }}</h5>
-                                                </div>
+                                            <div class="col-md-3 text-center mb-4">
+                                                <img src="{{ $category->image_url }}" alt="{{ $category->name }}" class="img-fluid rounded mb-3" style="max-height: 200px; max-width: 100%;">
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="detail-item mb-4">
-                                                    <label class="text-muted mb-2">الوصف</label>
-                                                    <h5 class="mb-0">{{ $category->description ?: 'لا يوجد وصف' }}</h5>
+                                            <div class="col-md-9">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <h3 class="card-title mb-0">{{ $category->name }}</h3>
                                                 </div>
+                                                <p class="text-muted mb-3">
+                                                    <strong>الرابط:</strong> {{ $category->slug }}
+                                                </p>
+                                                @if($category->description)
+                                                    <div class="mb-4">
+                                                        <h5 class="fw-bold">الوصف:</h5>
+                                                        <p>{{ $category->description }}</p>
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>

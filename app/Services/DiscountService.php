@@ -39,6 +39,15 @@ class DiscountService
             ];
         }
 
+        // التحقق من الحد الأدنى للطلب
+        if ($coupon->min_order_amount > 0 && $amount < $coupon->min_order_amount) {
+            return [
+                'success' => false,
+                'message' => "يجب أن يكون مجموع طلبك {$coupon->min_order_amount} ريال أو أكثر لاستخدام هذا الكوبون",
+                'discount' => 0
+            ];
+        }
+
         // التحقق مما إذا كان المستخدم قد استخدم الكوبون من قبل
         if (Auth::check() && $coupon->hasBeenUsedByUser(Auth::id())) {
             return [
@@ -55,7 +64,11 @@ class DiscountService
             $validSubtotal = 0;
 
             foreach ($cartItems as $item) {
-                if ($coupon->isValidForProduct($item['product_id'])) {
+                // الحصول على كائن المنتج أولاً بدلاً من استخدام المعرف مباشرة
+                $product = Product::find($item['product_id']);
+
+                // التأكد من أن المنتج موجود
+                if ($product && $coupon->isValidForProduct($product)) {
                     $validItems[] = $item;
                     $validSubtotal += $item['subtotal'];
                 } else {

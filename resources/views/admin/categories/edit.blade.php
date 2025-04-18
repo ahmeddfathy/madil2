@@ -35,7 +35,7 @@
                         </div>
 
                         <!-- Form -->
-                        <form action="{{ route('admin.categories.update', $category) }}" method="POST">
+                        <form method="POST" action="{{ route('admin.categories.update', $category) }}" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
 
@@ -60,12 +60,32 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-12">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">الوصف</label>
-                                                        <textarea name="description" class="form-control shadow-sm" rows="4">{{ old('description', $category->description) }}</textarea>
+                                                <div class="row mb-4">
+                                                    <label for="description" class="col-md-3 col-form-label">الوصف</label>
+                                                    <div class="col-md-9">
+                                                        <textarea id="description" name="description" class="form-control @error('description') is-invalid @enderror" rows="4">{{ old('description', $category->description) }}</textarea>
                                                         @error('description')
-                                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-4">
+                                                    <label for="image" class="col-md-3 col-form-label">صورة التصنيف</label>
+                                                    <div class="col-md-9">
+                                                        <input type="file" id="image" name="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
+                                                        <small class="form-text text-muted">اختر صورة بامتداد JPG، JPEG، PNG أو GIF (الحد الأقصى: 2 ميجابايت)</small>
+
+                                                        <div class="mt-2" id="image-preview-container" style="{{ $category->image ? '' : 'display: none;' }}">
+                                                            <img src="{{ $category->image ? $category->image_url : '' }}" id="image-preview" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                                        </div>
+
+                                                        @error('image')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
                                                         @enderror
                                                     </div>
                                                 </div>
@@ -145,4 +165,27 @@
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/admin/category.css') }}">
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageInput = document.getElementById('image');
+        const imagePreview = document.getElementById('image-preview');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+
+        imageInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreviewContainer.style.display = 'block';
+                }
+
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    });
+</script>
 @endsection

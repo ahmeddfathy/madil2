@@ -1722,6 +1722,7 @@ body.cart-open {
 .quantity-value {
     font-weight: bold;
     font-size: 16px;
+    color: var(--primary-color);
 }
 
 .quantity-price {
@@ -2281,3 +2282,298 @@ html, body {
 .section-title {
     margin-top: 1rem;
 }
+
+/* Available Coupons Section */
+.available-coupons {
+    border-radius: 12px;
+    background-color: #fff;
+    border: 2px solid #e0f5e9;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 146, 69, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+
+.available-coupons h5 {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    position: relative;
+    z-index: 1;
+}
+
+.available-coupons h5 i {
+    color: var(--primary-color);
+    margin-left: 0.75rem;
+    font-size: 1.5rem;
+    background-color: rgba(0, 146, 69, 0.1);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.coupon-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 1rem 0;
+    position: relative;
+    z-index: 1;
+}
+
+.coupon-item {
+    background: linear-gradient(to left, #ffffff 90%, #f0f9f4 100%);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    border-left: 1px dashed var(--primary-color);
+}
+
+.coupon-item:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border: 2px solid #e0f5e9;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.coupon-item:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 5px;
+    background-color: var(--primary-color);
+}
+
+.coupon-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 146, 69, 0.15);
+}
+
+.coupon-content {
+    display: flex;
+    align-items: center;
+    padding: 1.25rem;
+    flex: 1;
+    gap: 1rem;
+}
+
+.coupon-code {
+    font-family: 'Courier New', monospace;
+    background: #f0f9f4;
+    color: var(--primary-color);
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    border: 1px dashed var(--primary-color);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.coupon-code::selection {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.coupon-value {
+    display: flex;
+    align-items: center;
+}
+
+.coupon-value .badge {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0, 146, 69, 0.2);
+}
+
+.copy-btn-wrapper {
+    padding: 1.25rem;
+    background-color: #f8fefa;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    border-right: 1px dashed var(--primary-color);
+}
+
+.copy-btn {
+    font-size: 0.95rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+    background-color: #f0f9f4;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.copy-btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 100%;
+    background-color: var(--primary-color);
+    transition: all 0.25s ease;
+    z-index: -1;
+}
+
+.copy-btn:hover:before {
+    width: 100%;
+    right: auto;
+    left: 0;
+}
+
+.copy-btn:hover {
+    color: white;
+    transform: translateY(-2px);
+}
+
+.copy-btn i {
+    font-size: 1.1rem;
+    transition: all 0.25s ease;
+}
+
+.copy-btn:hover i {
+    transform: translateX(-3px);
+}
+
+.copy-btn.copied {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.copy-btn.copied i {
+    animation: checkmark 0.5s ease forwards;
+}
+
+@keyframes checkmark {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.available-coupons small {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.available-coupons small i {
+    color: var(--primary-color);
+    margin-left: 0.5rem;
+}
+
+/* Responsive design for coupons */
+@media (max-width: 768px) {
+    .coupon-item {
+        flex-direction: column;
+        border-left: none;
+        border-bottom: 1px dashed var(--primary-color);
+    }
+
+    .coupon-item:after {
+        top: auto;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, 50%);
+    }
+
+    .coupon-content {
+        width: 100%;
+        justify-content: space-between;
+        padding: 1rem;
+    }
+
+    .copy-btn-wrapper {
+        width: 100%;
+        padding: 1rem;
+        border-right: none;
+        border-top: 1px dashed var(--primary-color);
+        background-color: #f8fefa;
+    }
+
+    .copy-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .available-coupons {
+        padding: 1rem;
+    }
+
+    .available-coupons h5 {
+        font-size: 1.1rem;
+    }
+
+    .coupon-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .coupon-code, .coupon-value .badge {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Success message for copied coupon */
+.copy-success-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-align: center;
+}
+
+.copy-success-message.show {
+    opacity: 1;
+}
+

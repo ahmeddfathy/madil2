@@ -80,19 +80,44 @@
                                                 @enderror
                                             </div>
 
-                                            <div class="mb-3">
-                                                <label class="form-label">التصنيف</label>
-                                                <select name="category_id"
-                                                        class="form-select shadow-sm @error('category_id') is-invalid @enderror">
-                                                    <option value="">اختر التصنيف</option>
+                                            <div class="form-group mb-3">
+                                                <label for="category_id" class="form-label required">التصنيف الرئيسي</label>
+                                                <select id="category_id" name="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
+                                                    <option value="">اختر التصنيف الرئيسي</option>
                                                     @foreach($categories as $category)
-                                                        <option value="{{ $category->id }}"
-                                                                @selected(old('category_id', $product->category_id) == $category->id)>
+                                                        <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
                                                             {{ $category->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                                 @error('category_id')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">التصنيفات الإضافية (اختياري)</label>
+                                                <div class="card border shadow-sm p-3">
+                                                    <div class="row g-2">
+                                                        @foreach($categories as $category)
+                                                            <div class="col-md-4 col-sm-6">
+                                                                <div class="form-check">
+                                                                    <input type="checkbox"
+                                                                           class="form-check-input"
+                                                                           id="category-{{ $category->id }}"
+                                                                           name="categories[]"
+                                                                           value="{{ $category->id }}"
+                                                                           {{ in_array($category->id, old('categories', $selectedCategories)) ? 'checked' : '' }}>
+                                                                    <label class="form-check-label" for="category-{{ $category->id }}">
+                                                                        {{ $category->name }}
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <small class="form-text text-muted">اختر التصنيفات الإضافية التي تريد إضافة المنتج إليها</small>
+                                                @error('categories')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
@@ -229,7 +254,7 @@
                                                     <label class="form-check-label" for="hasColors">تفعيل الألوان</label>
                                                 </div>
                                             </div>
-                                            <div id="colorsSection" style="display: {{ $product->colors->count() > 0 ? 'block' : 'none' }}">
+                                            <div id="colorsSection" class="{{ $product->colors->count() > 0 ? 'section-expanded' : 'section-collapsed' }}">
                                                 @error('colors.*')
                                                     <div class="alert alert-danger">{{ $message }}</div>
                                                 @enderror
@@ -285,7 +310,7 @@
                                                     <label class="form-check-label" for="hasSizes">تفعيل المقاسات</label>
                                                 </div>
                                             </div>
-                                            <div id="sizesSection" style="display: {{ $product->sizes->count() > 0 ? 'block' : 'none' }}">
+                                            <div id="sizesSection" class="{{ $product->sizes->count() > 0 ? 'section-expanded' : 'section-collapsed' }}">
                                                 @error('sizes.*')
                                                     <div class="alert alert-danger">{{ $message }}</div>
                                                 @enderror
@@ -408,7 +433,7 @@
                                                 <label class="form-check-label" for="hasQuantities">تفعيل تسعير الكميات</label>
                                             </div>
                                         </div>
-                                        <div id="quantitiesSection" style="display: {{ $product->enable_quantity_pricing ? 'block' : 'none' }}">
+                                        <div id="quantitiesSection" class="{{ $product->enable_quantity_pricing ? 'section-expanded' : 'section-collapsed' }}">
                                             @error('quantities.*')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
@@ -473,23 +498,41 @@ let newImageCount = 1;
 
 function toggleColorsSection(checkbox) {
     const colorsSection = document.getElementById('colorsSection');
-    colorsSection.style.display = checkbox.checked ? 'block' : 'none';
-    if (checkbox.checked && !document.querySelector('#colorsContainer .input-group')) {
-        addColorInput();
+    if (checkbox.checked) {
+        colorsSection.classList.remove('section-collapsed');
+        colorsSection.classList.add('section-expanded');
+        if (!document.querySelector('#colorsContainer .input-group')) {
+            addColorInput();
+        }
+    } else {
+        colorsSection.classList.remove('section-expanded');
+        colorsSection.classList.add('section-collapsed');
     }
 }
 
 function toggleSizesSection(checkbox) {
     const sizesSection = document.getElementById('sizesSection');
-    sizesSection.style.display = checkbox.checked ? 'block' : 'none';
-    if (checkbox.checked && !document.querySelector('#sizesContainer .input-group')) {
-        addSizeInput();
+    if (checkbox.checked) {
+        sizesSection.classList.remove('section-collapsed');
+        sizesSection.classList.add('section-expanded');
+        if (!document.querySelector('#sizesContainer .input-group')) {
+            addSizeInput();
+        }
+    } else {
+        sizesSection.classList.remove('section-expanded');
+        sizesSection.classList.add('section-collapsed');
     }
 }
 
 function toggleQuantitiesSection(checkbox) {
     const section = document.getElementById('quantitiesSection');
-    section.style.display = checkbox.checked ? 'block' : 'none';
+    if (checkbox.checked) {
+        section.classList.remove('section-collapsed');
+        section.classList.add('section-expanded');
+    } else {
+        section.classList.remove('section-expanded');
+        section.classList.add('section-collapsed');
+    }
 }
 
 function addNewImageInput() {

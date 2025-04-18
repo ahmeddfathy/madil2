@@ -1,24 +1,20 @@
-// Filter and Sort Functions
 let activeFilters = {
     categories: [],
     minPrice: 0,
     maxPrice: 1000,
-    sort: 'newest'
+    sort: 'newest',
+    hasDiscounts: false
 };
 
-// Initialize when document is ready
 document.addEventListener('DOMContentLoaded', function() {
     initializeFilters();
 
-    // تحقق مما إذا كان المستخدم مسجل دخول قبل تحميل السلة
     if (document.body.classList.contains('user-logged-in')) {
         loadCartItems();
     }
 
-    // Setup event listeners for both cart buttons
     document.getElementById('closeCart').addEventListener('click', closeCart);
 
-    // Cart toggle in navbar
     document.getElementById('cartToggle')?.addEventListener('click', function() {
         if (!document.body.classList.contains('user-logged-in')) {
             showLoginPrompt('{{ route("login") }}');
@@ -33,7 +29,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Fixed cart button
     document.getElementById('fixedCartBtn')?.addEventListener('click', function() {
         if (!document.body.classList.contains('user-logged-in')) {
             showLoginPrompt('{{ route("login") }}');
@@ -50,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelector('.cart-overlay')?.addEventListener('click', closeCart);
 
-    // Setup quick add to cart buttons
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             quickAddToCart(this.dataset.productId);
@@ -58,19 +52,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Initialize Filters
 function initializeFilters() {
-    // Initialize price range slider with debounce
     const priceRange = document.getElementById('priceRange');
     const priceValue = document.getElementById('priceValue');
     let priceUpdateTimeout;
 
     if (priceRange) {
         priceRange.addEventListener('input', function() {
-            // Update display value immediately
             priceValue.textContent = Number(this.value).toLocaleString() + ' ر.س';
 
-            // Update filter with debounce
             clearTimeout(priceUpdateTimeout);
             priceUpdateTimeout = setTimeout(() => {
                 activeFilters.maxPrice = Number(this.value);
@@ -78,7 +68,6 @@ function initializeFilters() {
             }, 500);
         });
 
-        // Add touchend/mouseup event
         priceRange.addEventListener('change', function() {
             clearTimeout(priceUpdateTimeout);
             activeFilters.maxPrice = Number(this.value);
@@ -86,9 +75,14 @@ function initializeFilters() {
         });
     }
 
-    // Category filter handlers
     document.querySelectorAll('.form-check-input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', function() {
+            if (this.id === 'discountFilter') {
+                activeFilters.hasDiscounts = this.checked;
+                applyFilters();
+                return;
+            }
+
             const categorySlug = this.value;
             if (this.checked) {
                 if (!activeFilters.categories.includes(categorySlug)) {
@@ -101,54 +95,63 @@ function initializeFilters() {
         });
     });
 
-    // Sort handler
     document.getElementById('sortSelect').addEventListener('change', function() {
         activeFilters.sort = this.value;
         applyFilters();
     });
 }
 
-// Apply Filters
 function applyFilters() {
-    // Show loading state
     const productGrid = document.getElementById('productGrid');
     productGrid.style.opacity = '0.5';
 
-    // Create a copy of activeFilters
     const filterData = {
-        categories: activeFilters.categories,
-        minPrice: Number(activeFilters.minPrice),
-        maxPrice: Number(activeFilters.maxPrice),
-        sort: activeFilters.sort
+        categories: Array.isArray(activeFilters.categories) ? activeFilters.categories : [],
+        minPrice: isNaN(Number(activeFilters.minPrice)) ? 0 : Number(activeFilters.minPrice),
+        maxPrice: isNaN(Number(activeFilters.maxPrice)) ? 1000 : Number(activeFilters.maxPrice),
+        sort: activeFilters.sort || 'newest',
+        has_discounts: activeFilters.hasDiscounts ? 1 : 0
     };
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    const token = csrfToken ? csrfToken.content : '';
 
     fetch(window.appConfig.routes.products.filter, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'X-CSRF-TOKEN': token,
             'Accept': 'application/json'
         },
         body: JSON.stringify(filterData)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+        }
+        return response.text().then(text => {
+            try {
+                return text ? JSON.parse(text) : {};
+            } catch (e) {
+                throw new Error('Invalid JSON response from server');
+            }
+        });
+    })
     .then(data => {
         if (data.success === false) {
             throw new Error(data.message || 'حدث خطأ أثناء تحديث المنتجات');
         }
 
-        // تحديث شبكة المنتجات
         updateProductGrid(data.products || []);
 
-        // تحديث الترقيم الصفحي إذا كان موجوداً
-        if (data.links) {
+        if (data.pagination) {
+            updatePagination(data.pagination);
+        } else if (data.links) {
             updatePagination(data.links);
         }
     })
     .catch(error => {
-        console.error('Error:', error);
         showNotification(error.message || 'حدث خطأ أثناء تحديث المنتجات', 'error');
-        // Show empty state when error occurs
         updateProductGrid([]);
     })
     .finally(() => {
@@ -156,7 +159,6 @@ function applyFilters() {
     });
 }
 
-// Update Product Grid
 function updateProductGrid(products) {
     const productGrid = document.getElementById('productGrid');
     productGrid.innerHTML = '';
@@ -179,15 +181,31 @@ function updateProductGrid(products) {
     products.forEach(product => {
         const productElement = document.createElement('div');
         productElement.className = 'col-md-6 col-lg-4';
+
+        const couponBadgeHtml = product.coupon_badge
+            ? product.coupon_badge.badge_html
+            : '';
+
+        const imagePath = product.image_url ||
+                         (product.images && product.images.length > 0 && product.images[0]?.image_path
+                          ? '/storage/' + product.images[0].image_path
+                          : '/images/placeholder.jpg');
+
         productElement.innerHTML = `
             <div class="product-card">
-                <a href="/products/${product.slug}" class="product-image-wrapper">
-                    <img src="${product.image_url || '/storage/' + product.images[0]?.image_path}"
+                <a href="/products/${product.slug}" class="product-image-wrapper position-relative">
+                    <img src="${imagePath}"
                          alt="${product.name}"
                          class="product-image">
+                    ${couponBadgeHtml}
                 </a>
                 <div class="product-details">
-                    <div class="product-category">${product.category?.name || product.category}</div>
+                    <div class="product-category d-flex flex-wrap gap-1 align-items-center mb-2">
+                        <a href="?category=${getCategorySlug(product)}" class="text-decoration-none">
+                            <span class="badge rounded-pill bg-primary">${product.category?.name || product.category}</span>
+                        </a>
+                        ${renderAdditionalCategories(product)}
+                    </div>
                     <a href="/products/${product.slug}" class="product-title text-decoration-none">
                         <h3>${product.name}</h3>
                     </a>
@@ -215,26 +233,27 @@ function updateProductGrid(products) {
     });
 }
 
-// تحديث الترقيم الصفحي
-function updatePagination(links) {
+function updatePagination(pagination) {
     const paginationContainer = document.querySelector('.pagination');
     if (!paginationContainer) return;
 
     paginationContainer.innerHTML = '';
 
-    // إضافة زر السابق
-    if (links.prev) {
+    const links = pagination.links || pagination;
+    const prevLink = pagination.prev || (links.prev_page_url ? links.prev_page_url : null);
+    const nextLink = pagination.next || (links.next_page_url ? links.next_page_url : null);
+
+    if (prevLink) {
         paginationContainer.innerHTML += `
             <li class="page-item">
-                <a class="page-link" href="#" onclick="loadPage('${links.prev}'); return false;">
+                <a class="page-link" href="#" onclick="loadPage('${prevLink}'); return false;">
                     <i class="fas fa-chevron-right"></i>
                 </a>
             </li>
         `;
     }
 
-    // إضافة الأرقام
-    if (links.links) {
+    if (links.links && Array.isArray(links.links)) {
         links.links.forEach(link => {
             if (link.url === null) return;
 
@@ -246,13 +265,22 @@ function updatePagination(links) {
                 </li>
             `;
         });
+    } else if (pagination.current_page && pagination.last_page) {
+        for (let i = 1; i <= pagination.last_page; i++) {
+            paginationContainer.innerHTML += `
+                <li class="page-item ${i === pagination.current_page ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="loadPage('${window.location.pathname}?page=${i}'); return false;">
+                        ${i}
+                    </a>
+                </li>
+            `;
+        }
     }
 
-    // إضافة زر التالي
-    if (links.next) {
+    if (nextLink) {
         paginationContainer.innerHTML += `
             <li class="page-item">
-                <a class="page-link" href="#" onclick="loadPage('${links.next}'); return false;">
+                <a class="page-link" href="#" onclick="loadPage('${nextLink}'); return false;">
                     <i class="fas fa-chevron-left"></i>
                 </a>
             </li>
@@ -260,70 +288,76 @@ function updatePagination(links) {
     }
 }
 
-// تحميل صفحة معينة
 function loadPage(url) {
+    const productGrid = document.getElementById('productGrid');
+    productGrid.style.opacity = '0.5';
+
     fetch(url, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Accept': 'application/json'
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+        }
+        return response.text().then(text => {
+            try {
+                return text ? JSON.parse(text) : {};
+            } catch (e) {
+                throw new Error('Invalid JSON response from server');
+            }
+        });
+    })
     .then(data => {
         if (data.success === false) {
             throw new Error(data.message || 'حدث خطأ أثناء تحميل الصفحة');
         }
         updateProductGrid(data.products || []);
-        if (data.links) {
+        if (data.pagination) {
+            updatePagination(data.pagination);
+        } else if (data.links) {
             updatePagination(data.links);
         }
     })
     .catch(error => {
-        console.error('Error:', error);
         showNotification('حدث خطأ أثناء تحميل الصفحة', 'error');
+        updateProductGrid([]);
+    })
+    .finally(() => {
+        productGrid.style.opacity = '1';
     });
 }
 
-// Reset Filters
 function resetFilters() {
-    // Reset checkboxes
-    document.querySelectorAll('.form-check-input[type="checkbox"]').forEach(checkbox => {
+    document.querySelectorAll('input[name="categories[]"]').forEach(checkbox => {
         checkbox.checked = false;
     });
 
-    // Reset price range
+    const discountFilter = document.getElementById('discountFilter');
+    if (discountFilter) {
+        discountFilter.checked = false;
+    }
+
     const priceRangeInput = document.getElementById('priceRange');
     if (priceRangeInput) {
         priceRangeInput.value = priceRangeInput.max;
         document.getElementById('priceValue').textContent = Number(priceRangeInput.max).toLocaleString() + ' ر.س';
     }
 
-    // Reset sort
     document.getElementById('sortSelect').value = 'newest';
 
-    // Reset active filters
     activeFilters = {
         categories: [],
         minPrice: Number(priceRangeInput?.min || 0),
         maxPrice: Number(priceRangeInput?.max || 1000),
-        sort: 'newest'
+        sort: 'newest',
+        hasDiscounts: false
     };
 
-    // Clear URL parameters
-    const url = new URL(window.location.href);
-    url.searchParams.delete('category');
-    url.searchParams.delete('sort');
-    url.searchParams.delete('min_price');
-    url.searchParams.delete('max_price');
-    window.history.replaceState({}, '', url.toString());
-
-    // Show notification
-    showNotification('تم إعادة تعيين الفلتر بنجاح', 'success');
-
-    // Apply reset filters
     applyFilters();
 }
-
 
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
@@ -331,10 +365,8 @@ function showNotification(message, type = 'success') {
     notification.innerHTML = message;
     document.body.appendChild(notification);
 
-    // تأثير ظهور الإشعار
     setTimeout(() => notification.classList.add('show'), 100);
 
-    // إخفاء وإزالة الإشعار
     setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => notification.remove(), 300);
@@ -346,15 +378,12 @@ function updateCartDisplay(data) {
     const cartTotal = document.getElementById('cartTotal');
     const cartCountElements = document.querySelectorAll('.cart-count');
 
-    // تحديث عدد العناصر في كل أزرار السلة
     cartCountElements.forEach(element => {
         element.textContent = data.count || data.cart_count;
     });
 
-    // تحديث الإجمالي
     cartTotal.textContent = (data.total || data.cart_total) + ' ر.س';
 
-    // تحديث قائمة العناصر
     cartItems.innerHTML = '';
 
     if (!data.items || data.items.length === 0) {
@@ -373,7 +402,6 @@ function updateCartDisplay(data) {
         itemElement.className = 'cart-item';
         itemElement.dataset.itemId = item.id;
 
-        // تحضير معلومات إضافية
         const additionalInfo = [];
         if (item.color) additionalInfo.push(`اللون: ${item.color}`);
         if (item.size) additionalInfo.push(`المقاس: ${item.size}`);
@@ -434,12 +462,10 @@ function updateQuantity(itemId, change, newValue = null) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // تحديث الكمية والإجمالي الفرعي للعنصر فقط
             quantityInput.value = quantity;
             const subtotalElement = cartItem.querySelector('.cart-item-subtotal');
             subtotalElement.textContent = `الإجمالي: ${data.item_subtotal} ر.س`;
 
-            // تحديث إجمالي السلة وعدد العناصر
             const cartTotal = document.getElementById('cartTotal');
             const cartCountElements = document.querySelectorAll('.cart-count');
 
@@ -448,14 +474,11 @@ function updateQuantity(itemId, change, newValue = null) {
                 element.textContent = data.cart_count;
             });
         } else {
-            // إرجاع القيمة القديمة في حالة الخطأ
             quantityInput.value = currentValue;
             showNotification(data.message || 'فشل تحديث الكمية', 'error');
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        // إرجاع القيمة القديمة في حالة الخطأ
         quantityInput.value = currentValue;
         showNotification('حدث خطأ أثناء تحديث الكمية', 'error');
     })
@@ -487,10 +510,8 @@ function removeFromCart(button, cartItemId) {
             cartItem.style.opacity = '0';
             cartItem.style.transform = 'translateX(50px)';
 
-            // تحديث عرض السلة مباشرة
             updateCartDisplay(data);
 
-            // إضافة تأخير قصير قبل إعادة تحميل عناصر السلة
             setTimeout(() => {
                 loadCartItems();
             }, 300);
@@ -502,7 +523,6 @@ function removeFromCart(button, cartItemId) {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
         cartItem.style.opacity = '1';
         showNotification('حدث خطأ أثناء حذف المنتج', 'error');
     });
@@ -524,7 +544,7 @@ function loadCartItems() {
     fetch('/cart/items')
         .then(response => response.json())
         .then(data => updateCartDisplay(data))
-        .catch(error => console.error('Error:', error));
+        .catch(error => {});
 }
 
 function showLoginPrompt(loginUrl) {
@@ -532,4 +552,42 @@ function showLoginPrompt(loginUrl) {
     const modal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
     document.getElementById('loginButton').href = `${loginUrl}?redirect=${encodeURIComponent(currentUrl)}`;
     modal.show();
+}
+
+function renderAdditionalCategories(product) {
+    if (!product.categories || product.categories.length <= 1) {
+        return '';
+    }
+
+    // Get the primary category ID to exclude it
+    const primaryCategoryId = product.category_id;
+
+    // Filter out the primary category
+    const additionalCategoriesHtml = product.categories
+        .filter(category => category.id != primaryCategoryId)
+        .map(category => {
+            return `<a href="?category=${category.slug}" class="text-decoration-none">
+                <span class="badge rounded-pill bg-light text-dark border">${category.name}</span>
+            </a>`;
+        }).join('');
+
+    return additionalCategoriesHtml;
+}
+
+function getCategorySlug(product) {
+    // For backward compatibility - some products might have category as string
+    if (typeof product.category === 'string') {
+        // Try to find the category in the categories array
+        const mainCategory = product.categories?.find(cat => cat.name === product.category);
+        return mainCategory?.slug || '';
+    }
+
+    // If product has category_id, find that category's slug
+    if (product.category_id && product.categories?.length) {
+        const mainCategory = product.categories.find(cat => cat.id === product.category_id);
+        return mainCategory?.slug || '';
+    }
+
+    // Fallback to the first category
+    return product.categories?.[0]?.slug || '';
 }

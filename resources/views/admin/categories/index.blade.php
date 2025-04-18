@@ -118,76 +118,63 @@
 
                         <!-- Categories Grid -->
                         <div class="row g-4">
-                            @forelse($categories as $category)
-                            <div class="col-md-6">
-                                <div class="card border-0 shadow-hover category-card h-100">
-                                    <div class="card-body p-4">
-                                        <div class="d-flex justify-content-between align-items-start mb-3">
-                                            <div>
-                                                <h5 class="card-title h4 mb-2">{{ $category->name }}</h5>
-                                                <p class="text-muted description mb-0">
-                                                    {{ Str::limit($category->description, 100) ?: 'لا يوجد وصف' }}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div class="d-flex justify-content-between align-items-center mt-4">
-                                            <div class="d-flex align-items-center gap-3">
-                                                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
-                                                    <i class="fas fa-box-open me-1"></i>
-                                                    {{ $category->products_count }} منتج
-                                                </span>
-                                                <span class="text-muted small">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    {{ $category->created_at->diffForHumans() }}
-                                                </span>
-                                            </div>
-                                            <div class="action-buttons">
-                                                <a href="{{ route('admin.categories.show', $category) }}"
-                                                   class="btn btn-light-info btn-sm me-2"
-                                                   title="عرض التفاصيل">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <a href="{{ route('admin.categories.edit', $category) }}"
-                                                   class="btn btn-light-primary btn-sm me-2"
-                                                   title="تعديل">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <form action="{{ route('admin.categories.destroy', $category) }}"
-                                                      method="POST"
-                                                      class="d-inline"
-                                                      onsubmit="return confirm('هل أنت متأكد من حذف هذا التصنيف؟');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                            class="btn btn-light-danger btn-sm"
-                                                            title="حذف">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @empty
-                            <div class="col-12">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-body text-center py-5">
-                                        <div class="empty-state">
-                                            <div class="empty-icon bg-light rounded-circle mb-3">
-                                                <i class="fas fa-folder-open text-muted fa-2x"></i>
-                                            </div>
-                                            <h5 class="text-muted mb-3">لا توجد تصنيفات</h5>
-                                            <a href="{{ route('admin.categories.create') }}" class="btn btn-primary btn-wave">
-                                                <i class="fas fa-plus me-2"></i>
-                                                إضافة أول تصنيف
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @endforelse
+                            <table class="table table-centered table-hover text-nowrap mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="border-top-0">#</th>
+                                        <th class="border-top-0">الصورة</th>
+                                        <th class="border-top-0">اسم التصنيف</th>
+                                        <th class="border-top-0">عدد المنتجات</th>
+                                        <th class="border-top-0">تاريخ الإنشاء</th>
+                                        <th class="border-top-0">الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($categories as $category)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>
+                                                <img src="{{ $category->image_url }}" alt="{{ $category->name }}" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                                            </td>
+                                            <td>{{ $category->name }}</td>
+                                            <td>
+                                                <span class="badge bg-success rounded-pill">{{ $category->products_count }}</span>
+                                            </td>
+                                            <td>{{ $category->created_at->format('Y-m-d') }}</td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <a href="{{ route('admin.categories.show', $category) }}"
+                                                       class="btn btn-light-info btn-sm me-2"
+                                                       title="عرض التفاصيل">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{{ route('admin.categories.edit', $category) }}"
+                                                       class="btn btn-light-primary btn-sm me-2"
+                                                       title="تعديل">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <form action="{{ route('admin.categories.destroy', $category) }}"
+                                                          method="POST"
+                                                          class="d-inline"
+                                                          onsubmit="return confirm('هل أنت متأكد من حذف هذا التصنيف؟');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                                class="btn btn-light-danger btn-sm"
+                                                                title="حذف">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center">لا توجد تصنيفات</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
 
                         <!-- Pagination -->

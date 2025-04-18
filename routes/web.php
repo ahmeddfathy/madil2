@@ -53,7 +53,7 @@ Route::get('/shop', function () {
 // Products Routes (Public)
 Route::prefix('products')->name('products.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
-    Route::get('/filter', [ProductController::class, 'filter'])->name('filter');
+    Route::post('/filter', [ProductController::class, 'filter'])->name('filter');
     Route::get('/{product}/details', [ProductController::class, 'getProductDetails'])->name('details');
     Route::get('/{product}', [ProductController::class, 'show'])->name('show');
 });
@@ -180,11 +180,6 @@ Route::middleware('client')->group(function () {
 
 
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-
-    // Products
-    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-    Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
-    Route::post('/products/filter', [ProductController::class, 'filter'])->name('products.filter');
 
 // مسارات السلة
 Route::middleware(['auth'])->group(function () {

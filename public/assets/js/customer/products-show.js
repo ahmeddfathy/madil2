@@ -616,6 +616,33 @@ document.addEventListener('DOMContentLoaded', function() {
     if (firstQuantityOption) {
         selectQuantityOption(firstQuantityOption);
     }
+
+    // إضافة وظائف لأزرار نسخ الكوبونات
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const couponCode = this.getAttribute('data-code');
+            navigator.clipboard.writeText(couponCode).then(() => {
+                // تغيير شكل الزر مؤقتًا ليشير إلى نجاح النسخ
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check"></i> تم النسخ';
+                this.classList.remove('btn-outline-secondary');
+                this.classList.add('btn-success');
+
+                // عرض إشعار للمستخدم
+                showNotification(`تم نسخ كود الخصم "${couponCode}" بنجاح`, 'success');
+
+                // إعادة الزر إلى حالته الأصلية بعد ثانيتين
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-outline-secondary');
+                }, 2000);
+            }).catch(err => {
+                showNotification('حدث خطأ أثناء نسخ الكود', 'error');
+                console.error('Could not copy text: ', err);
+            });
+        });
+    });
 });
 
 function selectQuantityOption(option) {

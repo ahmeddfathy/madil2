@@ -138,8 +138,8 @@ function showAlert(message, type = 'success') {
     const alert = document.createElement('div');
     alert.className = `alert alert-${type} alert-dismissible fade show`;
     alert.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <span>${message}</span>
+        <button type="button" class="btn-close" onclick="this.parentElement.remove()">×</button>
     `;
     alertsContainer.appendChild(alert);
 

@@ -41,16 +41,18 @@ body {
 /* Alerts Container */
 #alerts-container {
     position: fixed;
-    top: 1rem;
-    right: 1rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1000;
     max-width: 100%;
     width: 350px;
+    text-align: center;
 }
 
 #alerts-container .alert {
     direction: rtl;
-    text-align: right;
+    text-align: center;
     background: var(--glass-background);
     backdrop-filter: blur(8px);
     border: 2px solid var(--primary-border-color);
@@ -59,6 +61,7 @@ body {
     margin-bottom: 0.75rem;
     padding: 0.75rem 1rem;
     animation: fadeIn 0.3s ease-out;
+    position: relative;
 }
 
 #alerts-container .alert-success {
@@ -71,14 +74,33 @@ body {
 
 #alerts-container .btn-close {
     position: absolute;
-    top: 0.75rem;
-    left: 1rem;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    width: 24px;
+    height: 24px;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+#alerts-container .btn-close:hover {
+    opacity: 1;
+    color: var(--danger-color);
 }
 
 @media (max-width: 576px) {
     #alerts-container {
-        width: calc(100% - 2rem);
-        right: 1rem;
+        width: 90%;
+        left: 50%;
+        right: auto;
     }
 }
 

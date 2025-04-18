@@ -17,7 +17,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with(['category', 'images', 'sizes', 'quantities'])
+        $query = Product::with(['category', 'images', 'sizes', 'quantities', 'categories'])
             ->withCount('orderItems');
 
         // Filter by specific product
@@ -92,6 +92,8 @@ class ProductController extends Controller
             'description' => 'required|string',
             'stock' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
+            'categories' => 'nullable|array',
+            'categories.*' => 'exists:categories,id',
             'images.*' => 'image|mimes:jpeg,png,jpg',
             'is_primary.*' => 'boolean',
             'is_available' => 'boolean',
@@ -132,6 +134,11 @@ class ProductController extends Controller
             $validatedData['is_available'] = $request->has('is_available');
 
             $product = Product::create($validatedData);
+
+            // إضافة التصنيفات الإضافية إذا تم توفيرها
+            if ($request->has('categories')) {
+                $product->categories()->attach($request->categories);
+            }
 
             // Store colors if enabled
             if ($request->has('has_colors') && $request->has('colors')) {
@@ -200,9 +207,10 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        $product->load(['images', 'colors', 'sizes']);
+        $product->load(['images', 'colors', 'sizes', 'categories']);
         $categories = Category::all();
-        return view('admin.products.edit', compact('product', 'categories'));
+        $selectedCategories = $product->categories->pluck('id')->toArray();
+        return view('admin.products.edit', compact('product', 'categories', 'selectedCategories'));
     }
 
     public function update(Request $request, Product $product)
@@ -220,6 +228,8 @@ class ProductController extends Controller
                 'description' => 'required|string',
                 'stock' => 'required|integer|min:0',
                 'category_id' => 'required|exists:categories,id',
+                'categories' => 'nullable|array',
+                'categories.*' => 'exists:categories,id',
                 'new_images.*' => 'nullable|image|mimes:jpeg,png,jpg',
                 'is_primary' => 'nullable|exists:product_images,id',
                 'is_primary_new.*' => 'nullable|boolean',
@@ -264,6 +274,9 @@ class ProductController extends Controller
                 'enable_quantity_pricing' => $request->has('enable_quantity_pricing'),
                 'is_available' => $request->has('is_available'),
             ]);
+
+            // تحديث التصنيفات الإضافية
+            $product->categories()->sync($request->categories ?? []);
 
             // Handle colors
             if ($request->has('has_colors')) {
@@ -419,8 +432,9 @@ class ProductController extends Controller
             $product->sizes()->delete();
             $product->orderItems()->delete();
             $product->quantities()->delete();
-            // Detach coupons instead of deleting them
+            // Detach relations
             $product->discounts()->detach();
+            $product->categories()->detach();
             $product->quantityDiscounts()->delete();
 
             // Delete all associated images and their files
@@ -443,7 +457,7 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        $product->load(['category', 'images', 'colors', 'sizes', 'quantities']);
+        $product->load(['category', 'images', 'colors', 'sizes', 'quantities', 'categories']);
         return view('admin.products.show', compact('product'));
     }
 

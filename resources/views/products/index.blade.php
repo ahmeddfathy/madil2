@@ -15,7 +15,7 @@
     <meta property="og:site_name" content="بر الليث">
     <meta property="og:title" content="متجر بر الليث | ملابس أطفال عالية الجودة في محافظة الليث">
     <meta property="og:description" content="تسوق منتجات بر الليث - ملابس أطفال عالية الجودة، تصاميم عصرية، وخامات ممتازة. منتجات متميزة بأسعار مناسبة في محافظة الليث التابعة لمكة المكرمة.">
-    <meta property="og:image" content="{{ asset('assets/images/logo.png') }}">
+    <meta property="og:image" content="/assets/images/logo.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:url" content="{{ url()->current() }}">
@@ -26,7 +26,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="متجر بر الليث | ملابس أطفال عالية الجودة في محافظة الليث">
     <meta name="twitter:description" content="تسوق منتجات بر الليث - ملابس أطفال عالية الجودة، تصاميم عصرية، وخامات ممتازة. منتجات متميزة بأسعار مناسبة في محافظة الليث التابعة لمكة المكرمة.">
-    <meta name="twitter:image" content="{{ asset('assets/images/logo.png') }}">
+    <meta name="twitter:image" content="/assets/images/logo.png">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ url()->current() }}">
@@ -35,14 +35,13 @@
     <title>متجر بر الليث | ملابس أطفال عالية الجودة في محافظة الليث</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('assets/css/customer/products.css') }}">
-    @include('parts.head')
+    <link rel="stylesheet" href="{{ asset('assets/css/customer/products.css') }}?t={{ time() }}">
+     <link rel="stylesheet" href="{{ asset('assets/kids/css/common.css') }}?t={{ time() }}">
 </head>
 <body class="{{ auth()->check() ? 'user-logged-in' : '' }}">
-    @include('parts.navbar')
     <!-- Fixed Buttons Group -->
     <div class="fixed-buttons-group">
-    <button class="fixed-cart-btn" id="fixedCartBtn">
+        <button class="fixed-cart-btn" id="fixedCartBtn">
             <i class="fas fa-shopping-cart fa-lg"></i>
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-count">
                 0
@@ -51,11 +50,11 @@
         @auth
         <a href="/dashboard" class="fixed-dashboard-btn">
             <i class="fas fa-tachometer-alt"></i>
-            لوحة التحكم
+            Dashboard
         </a>
         @endauth
     </div>
-
+  @include('parts.navbar')
     <!-- Toast Notification -->
     <div class="toast-container position-fixed top-0 end-0 p-3">
         <div id="cartToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -111,6 +110,22 @@
                                 value="{{ $priceRange['max'] }}">
                         </div>
                     </div>
+
+                    <div class="filter-section">
+                        <h4>الخصومات</h4>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                value="1"
+                                id="discountFilter"
+                                name="has_discounts"
+                                {{ request('has_discounts') ? 'checked' : '' }}>
+                            <label class="form-check-label d-flex justify-content-between align-items-center"
+                                for="discountFilter">
+                                المنتجات ذات الخصومات
+                                <i class="fas fa-tag text-danger ms-2"></i>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -144,9 +159,35 @@
                                          alt="{{ $product->name }}"
                                          class="product-image">
                                 @endif
+
+                                @php
+                                    $couponBadge = app(\App\Services\Customer\Products\ProductService::class)->getProductCouponBadge($product);
+                                @endphp
+
+                                @if($couponBadge)
+                                    <div class="coupon-badge position-absolute top-0 start-0 m-2">
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-tag me-1"></i>{{ $couponBadge['discount_text'] }}
+                                        </span>
+                                        <small class="d-block mt-1 text-white bg-dark px-1 rounded text-center">كود: {{ $couponBadge['code'] }}</small>
+                                    </div>
+                                @endif
                             </a>
                             <div class="product-details">
-                                <div class="product-category">{{ $product->category->name }}</div>
+                                <div class="product-category d-flex flex-wrap gap-1 align-items-center mb-2">
+                                    <a href="?category={{ $product->category->slug }}" class="text-decoration-none">
+                                        <span class="badge rounded-pill bg-primary">{{ $product->category->name }}</span>
+                                    </a>
+                                    @if($product->categories->isNotEmpty())
+                                        @foreach($product->categories as $additionalCategory)
+                                            @if($additionalCategory->id != $product->category_id)
+                                                <a href="?category={{ $additionalCategory->slug }}" class="text-decoration-none">
+                                                    <span class="badge rounded-pill bg-light text-dark border">{{ $additionalCategory->name }}</span>
+                                                </a>
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                </div>
                                 <a href="{{ route('products.show', $product->slug) }}" class="product-title text-decoration-none">
                                     <h3>{{ $product->name }}</h3>
                                 </a>
@@ -176,7 +217,6 @@
         </div>
     </div>
 
-
     <!-- Shopping Cart Sidebar -->
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
@@ -189,49 +229,7 @@
         <!-- Cart Items Container with Scroll -->
         <div class="cart-items-container">
             <div class="cart-items" id="cartItems">
-                <!-- سيتم إضافة عناصر السلة هنا ديناميكيًا -->
-
-                <!-- حالة السلة الفارغة -->
-                <div class="cart-empty" id="emptyCart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <p>سلة التسوق فارغة</p>
-                    <a href="/products" class="btn">
-                        <i class="fas fa-shopping-basket me-2"></i>
-                        تصفح المنتجات
-                    </a>
-                </div>
-
-                <!-- نموذج لعنصر في السلة (سيتم إنشاؤه من JavaScript) -->
-                <template id="cartItemTemplate">
-                    <div class="cart-item" data-id="">
-                        <button class="remove-btn">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <div class="cart-item-inner">
-                            <img src="" class="cart-item-image" alt="">
-                            <div class="cart-item-details">
-                                <h5 class="cart-item-title"></h5>
-                                <div class="cart-item-variants">
-                                    <span class="variant-tag color-tag">
-                                        <i class="fas fa-palette"></i>
-                                        <span class="color-name"></span>
-                                    </span>
-                                    <span class="variant-tag size-tag">
-                                        <i class="fas fa-ruler"></i>
-                                        <span class="size-name"></span>
-                                    </span>
-                                </div>
-                                <div class="cart-item-price"></div>
-                                <div class="quantity-controls">
-                                    <button class="btn decrease-btn">-</button>
-                                    <input type="number" class="quantity-input" min="1" value="1">
-                                    <button class="btn increase-btn">+</button>
-                                </div>
-                                <div class="cart-item-subtotal"></div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
+                <!-- Cart items will be dynamically added here -->
             </div>
         </div>
 
@@ -241,7 +239,7 @@
                 <span id="cartTotal">0 ر.س</span>
             </div>
             <a href="{{ route('checkout.index') }}" class="checkout-btn">
-                <i class="fas fa-shopping-cart"></i>
+                <i class="fas fa-shopping-cart ml-2"></i>
                 إتمام الشراء
             </a>
         </div>
@@ -333,6 +331,7 @@
             </div>
         </div>
     </div>
+
 @include('parts.footer')
 
     <!-- Scripts -->
@@ -349,6 +348,6 @@
             }
         };
     </script>
-    <script src="{{ asset('assets/js/customer/products.js') }}"></script>
+    <script src="/assets/js/customer/products.js"></script>
 </body>
 </html>
