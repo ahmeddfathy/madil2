@@ -1,12 +1,12 @@
-<div class="mb-8 bg-white overflow-hidden shadow-sm rounded-lg">
+<div class="mb-8 bg-white shadow-sm rounded-lg overflow-hidden">
     <div class="p-6">
-        <form action="{{ route('admin.reports.index') }}" method="GET" class="space-y-4">
+        <form action="{{ route('admin.reports.index') }}" method="GET">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <!-- اختيار نوع الفترة -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">نوع الفترة</label>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">نوع الفترة</label>
                     <select name="period" id="period-select"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            class="block w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
                         <option value="today" @selected(request('period') === 'today')>اليوم</option>
                         <option value="week" @selected(request('period') === 'week')>هذا الأسبوع</option>
                         <option value="month" @selected(request('period') === 'month' || !request('period'))>هذا الشهر</option>
@@ -18,25 +18,23 @@
                 <!-- فترة مخصصة -->
                 <div class="custom-date-inputs md:col-span-2 grid grid-cols-2 gap-4" style="display: none;">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">من تاريخ</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">من تاريخ</label>
                         <input type="date" name="start_date" value="{{ request('start_date') }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                               class="block w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">إلى تاريخ</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">إلى تاريخ</label>
                         <input type="date" name="end_date" value="{{ request('end_date') }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                               class="block w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
                     </div>
                 </div>
 
                 <!-- أزرار التحكم -->
                 <div class="flex items-end space-x-2 rtl:space-x-reverse">
-                    <button type="submit"
-                            class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <button type="submit" class="btn btn-primary">
                         تطبيق الفلتر
                     </button>
-                    <a href="{{ route('admin.reports.index') }}"
-                       class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                    <a href="{{ route('admin.reports.index') }}" class="btn btn-secondary">
                         إلغاء الفلتر
                     </a>
                 </div>
@@ -56,7 +54,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     periodSelect.addEventListener('change', toggleCustomDateInputs);
-    toggleCustomDateInputs(); // تشغيل الدالة عند تحميل الصفحة
+
+    // تشغيل الدالة عند تحميل الصفحة
+    toggleCustomDateInputs();
 });
 </script>
 @endpush

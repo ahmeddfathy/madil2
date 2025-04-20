@@ -10,6 +10,7 @@ class FirebaseNotificationService
 {
     private $credentials;
     private $accessToken;
+    private $projectId = 'clothes-shop-6f181';
 
     public function __construct()
     {
@@ -66,7 +67,7 @@ class FirebaseNotificationService
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->accessToken,
                 'Content-Type' => 'application/json'
-            ])->post('https://fcm.googleapis.com/v1/projects/madil-notifications/messages:send', $payload);
+            ])->post("https://fcm.googleapis.com/v1/projects/{$this->projectId}/messages:send", $payload);
 
             Log::info('FCM response received', [
                 'status' => $response->status(),
