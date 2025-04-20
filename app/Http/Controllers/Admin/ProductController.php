@@ -88,7 +88,7 @@ class ProductController extends Controller
         // Basic validation rules that are always required
         $rules = [
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:products,slug',
+            'slug' => 'required|string|max:255',
             'description' => 'required|string',
             'stock' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
@@ -124,6 +124,9 @@ class ProductController extends Controller
 
         try {
             DB::beginTransaction();
+
+            // Generate unique slug
+            $validatedData['slug'] = $this->generateUniqueSlug($validatedData['slug']);
 
             // Set default values for feature flags
             $validatedData['enable_custom_color'] = $request->has('enable_custom_color');
@@ -219,12 +222,7 @@ class ProductController extends Controller
             // Basic validation rules
             $rules = [
                 'name' => 'required|string|max:255',
-                'slug' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    Rule::unique('products')->ignore($product->id)
-                ],
+                'slug' => 'required|string|max:255',
                 'description' => 'required|string',
                 'stock' => 'required|integer|min:0',
                 'category_id' => 'required|exists:categories,id',
@@ -260,6 +258,11 @@ class ProductController extends Controller
             $validated = $request->validate($rules);
 
             DB::beginTransaction();
+
+            // Generate unique slug if it's different from the current one
+            if ($validated['slug'] !== $product->slug) {
+                $validated['slug'] = $this->generateUniqueSlug($validated['slug']);
+            }
 
             $product->update([
                 'name' => $validated['name'],
@@ -501,5 +504,15 @@ class ProductController extends Controller
         }
 
         return $data;
+    }
+
+    protected function generateUniqueSlug($slug, $counter = 1)
+    {
+        $originalSlug = $slug;
+        while (Product::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+        return $slug;
     }
 }

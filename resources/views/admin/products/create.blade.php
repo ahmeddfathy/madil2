@@ -370,7 +370,7 @@
                                                     <div class="form-check form-switch">
                                                         <input class="form-check-input" type="checkbox"
                                                                id="enable_size_selection" name="enable_size_selection"
-                                                               value="1">
+                                                               value="1" checked>
                                                         <label class="form-check-label" for="enable_size_selection">
                                                             <i class="fas fa-ruler me-2"></i>
                                                             السماح باختيار المقاسات المحددة
