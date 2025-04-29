@@ -98,17 +98,6 @@
                                                     <span>لا توجد صورة</span>
                                                 </div>
                                                 @endif
-
-                                                <span class="stock-badge {{ $product->stock > 10 ? 'in-stock' : ($product->stock > 0 ? 'low-stock' : 'out-of-stock') }}">
-                                                    @if($product->stock > 10)
-                                                        <i class="fas fa-check-circle"></i>
-                                                    @elseif($product->stock > 0)
-                                                        <i class="fas fa-exclamation-circle"></i>
-                                                    @else
-                                                        <i class="fas fa-times-circle"></i>
-                                                    @endif
-                                                    {{ $product->stock > 0 ? $product->stock . ' في المخزون' : 'نفذت الكمية' }}
-                                                </span>
                                             </div>
 
                                             <div class="product-details p-3">
@@ -139,7 +128,20 @@
                                                     @endif
                                                 </div>
 
-                                                <h5 class="product-title mt-2">{{ $product->name }}</h5>
+                                                <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap">
+                                                    <h6 class="product-name mb-0">
+                                                        <a href="{{ route('admin.products.show', $product) }}" class="text-dark text-decoration-none">
+                                                            {{ $product->name }}
+                                                        </a>
+                                                    </h6>
+                                                    <div class="product-status mt-2 d-flex flex-column">
+                                                        @if($product->is_available)
+                                                            <span class="badge bg-success">متاح للبيع</span>
+                                                        @else
+                                                            <span class="badge bg-danger">غير متاح</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
                                                 <p class="product-description text-muted">
                                                     {{ Str::limit($product->description, 100) }}
                                                 </p>
@@ -148,13 +150,6 @@
                                                         {{ number_format($product->min_price, 0) }} ريال
                                                     @else
                                                         {{ number_format($product->min_price, 0) }} - {{ number_format($product->max_price, 0) }} ريال
-                                                    @endif
-                                                </div>
-                                                <div class="product-status mt-2">
-                                                    @if($product->is_available)
-                                                        <span class="badge bg-success">متاح للبيع</span>
-                                                    @else
-                                                        <span class="badge bg-danger">غير متاح</span>
                                                     @endif
                                                 </div>
                                             </div>

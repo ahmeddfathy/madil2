@@ -97,10 +97,9 @@ class CartService
 
     public function findOrCreateCartItem($cart, $product, $request)
     {
-        // البحث عن العنصر في السلة مع مراعاة خيار الكمية
+        // البحث عن العنصر في السلة مع مراعاة اللون والمقاس
         $cartItem = CartItem::where('cart_id', $cart->id)
             ->where('product_id', $product->id)
-            ->where('quantity_option_id', $request->quantity_option_id)
             ->where(function($query) use ($request) {
                 $query->where('color', $request->color)->orWhereNull('color');
             })
@@ -109,40 +108,19 @@ class CartService
             })
             ->first();
 
-        // تحديد السعر بناءً على خيار الكمية أو المقاس
+        // تحديد السعر بناءً على المقاس
         $itemPrice = 0; // Default price is 0 if no price source is found
-        $sizePrice = 0;
-        $quantityPrice = 0;
-
-        // جمع سعر الكمية إذا تم اختيارها
-        if ($request->quantity_option_id) {
-            $quantityOption = $product->quantities()->find($request->quantity_option_id);
-            if ($quantityOption) {
-                $quantityPrice = $quantityOption->price;
-            }
-        }
 
         // جمع سعر المقاس إذا تم اختياره
         if ($request->size && $product->enable_size_selection) {
             $size = $product->sizes->where('size', $request->size)->first();
             if ($size && $size->price) {
-                $sizePrice = $size->price;
+                $itemPrice = $size->price;
             }
         }
 
-        // إذا تم اختيار كلاهما، نجمع السعرين معًا
-        if ($quantityPrice > 0 && $sizePrice > 0) {
-            $itemPrice = $quantityPrice + $sizePrice;
-        }
-        // إذا تم اختيار واحد فقط، نستخدم سعره
-        elseif ($quantityPrice > 0) {
-            $itemPrice = $quantityPrice;
-        }
-        elseif ($sizePrice > 0) {
-            $itemPrice = $sizePrice;
-        }
-        // إذا لم يتم اختيار أي منهما، نستخدم أقل سعر متاح
-        else {
+        // إذا لم يتم تحديد سعر من المقاس، نستخدم أقل سعر متاح
+        if ($itemPrice == 0) {
             $priceRange = $product->getPriceRange();
             $itemPrice = $priceRange['min'];
         }
@@ -160,8 +138,7 @@ class CartService
                 'unit_price' => $itemPrice,
                 'subtotal' => $request->quantity * $itemPrice,
                 'color' => $request->color,
-                'size' => $request->size,
-                'quantity_option_id' => $request->quantity_option_id
+                'size' => $request->size
             ]);
         }
 

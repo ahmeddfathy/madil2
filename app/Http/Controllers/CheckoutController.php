@@ -39,60 +39,21 @@ class CheckoutController extends Controller
         ->with('error', 'السلة فارغة');
     }
 
-    // الحصول على كود الكوبون من الجلسة
-    $couponCode = session('coupon_code');
+    $couponCode = null;
 
-    // تطبيق الخصومات وحساب القيمة النهائية
-    $discountResult = $this->applyDiscounts($cart, $couponCode);
+    $discountResult = $this->calculateDiscounts($cart, $couponCode);
 
-    // إعادة حساب خصومات الكمية في الوقت الفعلي للعرض
-    $quantityDiscounts = [];
-    $quantityDiscountsTotal = 0;
-
-    foreach ($cart->items as $item) {
-      $quantityDiscount = $this->discountService->getQuantityDiscount($item->product, $item->quantity);
-      if ($quantityDiscount) {
-        $discountAmount = $quantityDiscount->calculateDiscount($item->unit_price, $item->quantity);
-        $quantityDiscounts[] = [
-          'product_id' => $item->product_id,
-          'product_name' => $item->product->name,
-          'discount_amount' => $discountAmount,
-          'quantity' => $item->quantity,
-          'discount_type' => $quantityDiscount->type,
-          'discount_value' => $quantityDiscount->value
-        ];
-        $quantityDiscountsTotal += $discountAmount;
-      }
-    }
-
-    // التحقق من صلاحية الكوبون في الوقت الفعلي
-    $couponData = null;
-    if ($couponCode && isset($discountResult['coupon_applied']) && $discountResult['coupon_applied']) {
-      $couponData = [
-        'code' => $couponCode,
-        'name' => $discountResult['coupon_name'],
-        'discount_amount' => $discountResult['coupon_discount'],
-        'is_partial' => isset($discountResult['partial_discount']) && $discountResult['partial_discount'],
-        'valid_product_ids' => isset($discountResult['valid_items'])
-          ? collect($discountResult['valid_items'])->pluck('product_id')->toArray()
-          : [],
-        'partial_discount_message' => isset($discountResult['partial_discount']) && $discountResult['partial_discount']
-          ? "تم تطبيق الخصم على المنتجات التالية فقط: " . collect($discountResult['valid_items'])->pluck('name')->implode('، ')
-          : null
-      ];
-    }
-
-    return view('checkout.index', compact(
-      'cart',
-      'quantityDiscounts',
-      'quantityDiscountsTotal',
-      'couponData'
-    ));
+    return view('checkout.index', [
+      'cart' => $cart,
+      'quantityDiscounts' => $discountResult['quantity_discounts'],
+      'quantityDiscountsTotal' => $discountResult['quantity_discount_total'],
+      'couponData' => $discountResult['coupon_data'],
+      'finalAmount' => $discountResult['final_amount'],
+      'discountMessage' => $discountResult['message'],
+      'appliedDiscountType' => $discountResult['applied_discount_type']
+    ]);
   }
 
-  /**
-   * Apply a coupon code via AJAX
-   */
   public function applyCoupon(Request $request)
   {
     $request->validate([
@@ -119,46 +80,52 @@ class CheckoutController extends Controller
       ]);
     }
 
-    $result = $this->applyDiscounts($cart, $couponCode);
+    $discountResult = $this->calculateDiscounts($cart, $couponCode);
 
-    if ($result['coupon_applied']) {
+    if ($discountResult['coupon_applied']) {
       $response = [
         'success' => true,
-        'message' => 'تم تطبيق كود الخصم بنجاح',
-        'discount_amount' => number_format($result['coupon_discount'], 2),
-        'final_amount' => number_format($result['final_amount'], 2)
+        'message' => $discountResult['message'] ?? 'تم تطبيق كود الخصم بنجاح',
+        'discount_amount' => number_format($discountResult['coupon_discount'], 2),
+        'final_amount' => number_format($discountResult['final_amount'], 2),
+        'applied_discount_type' => $discountResult['applied_discount_type'],
+        'coupon_code' => $couponCode
       ];
 
-      // إضافة معلومات الخصم الجزئي إذا كان ينطبق على منتجات محددة فقط
-      if (session()->has('partial_discount') && session('partial_discount')) {
+      if ($discountResult['coupon_data'] && isset($discountResult['coupon_data']['is_partial']) && $discountResult['coupon_data']['is_partial']) {
         $response['partial_discount'] = true;
-        $response['partial_discount_message'] = session('partial_discount_message');
-        $response['valid_product_ids'] = session('valid_product_ids');
+        $response['partial_discount_message'] = $discountResult['coupon_data']['partial_discount_message'];
+        $response['valid_product_ids'] = $discountResult['coupon_data']['valid_product_ids'];
       }
 
       return response()->json($response);
     } else {
       return response()->json([
         'success' => false,
-        'message' => $result['messages'][count($result['messages']) - 1] ?? 'فشل تطبيق كود الخصم'
+        'message' => $discountResult['message'] ?? 'فشل تطبيق كود الخصم'
       ]);
     }
   }
 
-  /**
-   * Apply both bulk discounts and coupon discounts
-   */
-  private function applyDiscounts($cart, $couponCode = null)
+  private function calculateDiscounts($cart, $couponCode = null)
   {
-    $result = $this->discountService->calculateFinalAmount($cart, $couponCode);
+    $result = [
+      'original_amount' => $cart->total_amount,
+      'final_amount' => $cart->total_amount,
+      'coupon_applied' => false,
+      'coupon_discount' => 0,
+      'quantity_discounts' => [],
+      'quantity_discount_total' => 0,
+      'coupon_data' => null,
+      'message' => '',
+      'applied_discount_type' => null
+    ];
 
-    // تطبيق خصم الكمية
-    $quantityDiscounts = [];
     foreach ($cart->items as $item) {
       $quantityDiscount = $this->discountService->getQuantityDiscount($item->product, $item->quantity);
       if ($quantityDiscount) {
         $discountAmount = $quantityDiscount->calculateDiscount($item->unit_price, $item->quantity);
-        $quantityDiscounts[] = [
+        $result['quantity_discounts'][] = [
           'product_id' => $item->product_id,
           'product_name' => $item->product->name,
           'discount_amount' => $discountAmount,
@@ -166,44 +133,62 @@ class CheckoutController extends Controller
           'discount_type' => $quantityDiscount->type,
           'discount_value' => $quantityDiscount->value
         ];
-        $result['final_amount'] -= $discountAmount;
+        $result['quantity_discount_total'] += $discountAmount;
       }
     }
 
-    // Store discount information in session
-    if ($result['coupon_applied']) {
-      $sessionData = [
-        'coupon_code' => $couponCode,
-        'coupon_applied' => true,
-        'coupon_name' => $result['coupon_name'],
-        'coupon_discount_amount' => number_format($result['coupon_discount'], 2),
-      ];
+    $couponDiscountAmount = 0;
+    $couponResult = null;
+    if ($couponCode) {
+      $couponResult = $this->discountService->applyCoupon($couponCode, $result['original_amount']);
 
-      // إذا كان الخصم جزئي (على منتجات محددة فقط)
-      if (isset($result['partial_discount']) && $result['partial_discount']) {
-        $sessionData['partial_discount'] = true;
-        $sessionData['valid_product_ids'] = collect($result['valid_items'])->pluck('product_id')->toArray();
+      if ($couponResult['success']) {
+        $couponDiscountAmount = $couponResult['discount'];
 
-        // إضافة رسالة توضيحية للمستخدم
-        $validProductNames = collect($result['valid_items'])->pluck('name')->implode('، ');
-        $sessionData['partial_discount_message'] = "تم تطبيق الخصم على المنتجات التالية فقط: " . $validProductNames;
+        $result['coupon_data'] = [
+          'code' => $couponCode,
+          'name' => $couponResult['coupon']->name,
+          'discount_amount' => $couponResult['discount'],
+          'is_partial' => isset($couponResult['partial_discount']) && $couponResult['partial_discount'],
+          'valid_product_ids' => isset($couponResult['valid_items'])
+            ? collect($couponResult['valid_items'])->pluck('product_id')->toArray()
+            : [],
+          'partial_discount_message' => isset($couponResult['partial_discount']) && $couponResult['partial_discount']
+            ? "تم تطبيق الخصم على المنتجات التالية فقط: " . collect($couponResult['valid_items'])->pluck('name')->implode('، ')
+            : null
+        ];
+      } else {
+        $result['message'] = $couponResult['message'];
       }
-
-      session($sessionData);
-    } else if (isset($result['messages']) && !empty($result['messages'])) {
-      // If coupon wasn't applied but we have an error message, remove any existing coupon
-      session()->forget(['coupon_code', 'coupon_applied', 'coupon_name', 'coupon_discount_amount', 'partial_discount', 'valid_product_ids', 'partial_discount_message']);
     }
 
-    // تخزين معلومات خصم الكمية في الجلسة
-    if (!empty($quantityDiscounts)) {
-      session([
-        'quantity_discounts' => $quantityDiscounts,
-        'quantity_discounts_total' => collect($quantityDiscounts)->sum('discount_amount')
-      ]);
+    if ($result['quantity_discount_total'] > 0 && $couponDiscountAmount > 0) {
+      if ($couponDiscountAmount >= $result['quantity_discount_total']) {
+        $result['coupon_applied'] = true;
+        $result['coupon_discount'] = $couponDiscountAmount;
+        $result['final_amount'] = $result['original_amount'] - $couponDiscountAmount;
+        $result['applied_discount_type'] = 'coupon';
+        $result['message'] = 'تم تطبيق خصم الكوبون لأنه أكبر من خصم الكمية';
+      } else {
+        $result['final_amount'] = $result['original_amount'] - $result['quantity_discount_total'];
+        $result['applied_discount_type'] = 'quantity';
+        $result['message'] = 'تم تطبيق خصم الكمية لأنه أكبر من خصم الكوبون';
+      }
+    } else if ($couponDiscountAmount > 0) {
+      $result['coupon_applied'] = true;
+      $result['coupon_discount'] = $couponDiscountAmount;
+      $result['final_amount'] = $result['original_amount'] - $couponDiscountAmount;
+      $result['applied_discount_type'] = 'coupon';
+      if (empty($result['message'])) {
+        $result['message'] = 'تم تطبيق خصم الكوبون';
+      }
+    } else if ($result['quantity_discount_total'] > 0) {
+      $result['final_amount'] = $result['original_amount'] - $result['quantity_discount_total'];
+      $result['applied_discount_type'] = 'quantity';
+      $result['message'] = 'تم تطبيق خصم الكمية';
     }
 
-    session(['final_amount' => $result['final_amount']]);
+    $result['final_amount'] = max(0, $result['final_amount']);
 
     return $result;
   }
@@ -233,34 +218,17 @@ class CheckoutController extends Controller
       ]);
 
       return DB::transaction(function () use ($request, $validated, $cart) {
-        // Check stock for all items
-        foreach ($cart->items as $item) {
-          if ($item->product->stock < $item->quantity) {
-            throw new CheckoutException("الكمية المطلوبة غير متوفرة من {$item->product->name}");
-          }
-        }
+        $couponCode = $request->input('coupon_code');
 
-        // Get original and final amounts
-        $totalAmount = $cart->total_amount;
-        $finalAmount = session('final_amount', $totalAmount);
-        $couponCode = session('coupon_code') ?? $request->input('coupon_code');
-
-        // Apply discounts if not already applied
-        if ($couponCode && !session('coupon_applied')) {
-          $discountResult = $this->applyDiscounts($cart, $couponCode);
-          $finalAmount = $discountResult['final_amount'];
-        }
-
-        // Calculate discounts
-        $couponDiscount = session('coupon_applied') ?
-          (float) str_replace(',', '', session('coupon_discount_amount')) : 0;
+        $discountResult = $this->calculateDiscounts($cart, $couponCode);
 
         $orderData = [
           'user_id' => Auth::id(),
-          'total_amount' => $finalAmount,
-          'original_amount' => $totalAmount,
-          'coupon_discount' => $couponDiscount,
-          'coupon_code' => session('coupon_code'),
+          'total_amount' => $discountResult['final_amount'],
+          'original_amount' => $discountResult['original_amount'],
+          'coupon_discount' => $discountResult['coupon_discount'],
+          'quantity_discount' => $discountResult['quantity_discount_total'],
+          'coupon_code' => $discountResult['coupon_applied'] ? $couponCode : null,
           'shipping_address' => $validated['shipping_address'],
           'phone' => $validated['phone'],
           'payment_method' => $validated['payment_method'],
@@ -273,7 +241,6 @@ class CheckoutController extends Controller
 
         $order = Order::create($orderData);
 
-        // Create order items
         foreach ($cart->items as $item) {
           $orderItemData = [
             'product_id' => $item->product_id,
@@ -287,13 +254,10 @@ class CheckoutController extends Controller
           $order->items()->create($orderItemData);
         }
 
-        // If coupon was applied, increment the usage count
-        if (session('coupon_applied') && session('coupon_code')) {
-          $coupon = Coupon::where('code', session('coupon_code'))->first();
+        if ($discountResult['coupon_applied'] && $couponCode) {
+          $coupon = Coupon::where('code', $couponCode)->first();
           if ($coupon) {
             $coupon->incrementUsage();
-
-            // تسجيل استخدام الكوبون من قبل المستخدم
             $coupon->markAsUsedByUser(Auth::id(), $order->id);
           }
         }
@@ -301,20 +265,9 @@ class CheckoutController extends Controller
         $cart->items()->delete();
         $cart->delete();
 
-        // Clear discount session data
-        session()->forget([
-          'coupon_code',
-          'coupon_applied',
-          'coupon_name',
-          'coupon_discount_amount',
-          'final_amount'
-        ]);
-
-        // Send order confirmation notification
         try {
           $order->user->notify(new OrderCreated($order));
         } catch (\Exception $e) {
-          // Silently continue if notification fails
         }
 
         return redirect()->route('orders.show', $order)

@@ -193,6 +193,9 @@
                                                             <th class="text-center">#</th>
                                                             <th>العميل</th>
                                                             <th>المنتجات</th>
+                                                            <th>السعر الأصلي</th>
+                                                            <th>خصم الكمية</th>
+                                                            <th>خصم الكوبون</th>
                                                             <th>الإجمالي</th>
                                                             <th>حالة الطلب</th>
                                                             <th>حالة الدفع</th>
@@ -225,6 +228,9 @@
                                                                     @endforeach
                                                                 </div>
                                                             </td>
+                                                            <td>{{ number_format($order['original_amount'], 2) }} ريال</td>
+                                                            <td>{{ number_format($order['quantity_discount'], 2) }} ريال</td>
+                                                            <td>{{ number_format($order['coupon_discount'], 2) }} ريال</td>
                                                             <td>{{ number_format($order['total'], 2) }} ريال</td>
                                                             <td>
                                                                 <span class="badge bg-{{ $order['status_color'] }}-subtle text-{{ $order['status_color'] }} rounded-pill">
@@ -249,7 +255,7 @@
                                                         </tr>
                                                         @empty
                                                         <tr>
-                                                            <td colspan="8" class="text-center py-5">
+                                                            <td colspan="11" class="text-center py-5">
                                                                 <div class="empty-state">
                                                                     <div class="empty-icon bg-light rounded-circle mb-3">
                                                                         <i class="fas fa-shopping-cart text-muted fa-2x"></i>

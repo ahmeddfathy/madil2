@@ -12,6 +12,49 @@
     <link rel="stylesheet" href="{{ asset('assets/css/customer/custom-green-theme.css') }}?t={{ time() }}">
 
     <link rel="stylesheet" href="{{ asset('assets/kids/css/common.css') }}?t={{ time() }}">
+    <style>
+        .quantity-discounts {
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            padding: 16px;
+            background-color: #f9f9f9;
+        }
+        .quantity-discounts h5 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .quantity-discounts table {
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .quantity-discounts th, .quantity-discounts td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .quantity-discounts .badge {
+            font-size: 0.9rem;
+            padding: 5px 8px;
+        }
+        .table-success {
+            background-color: rgba(25, 135, 84, 0.1) !important;
+        }
+        .thumbnail-wrapper {
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        .thumbnail-wrapper.active {
+            border-color: #198754;
+        }
+        .color-preview {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
     <!-- Fixed Buttons Group -->
@@ -159,6 +202,47 @@
                         </div>
                     @endif
 
+                    <!-- Quantity Discounts Section -->
+                    @if(isset($quantityDiscounts) && $quantityDiscounts->isNotEmpty())
+                        <div class="quantity-discounts mb-4">
+                            <h5><i class="fas fa-percent"></i> خصومات الكميات</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>الكمية</th>
+                                            <th>الخصم</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($quantityDiscounts as $discount)
+                                            <tr>
+                                                <td>
+                                                    @if($discount->max_quantity)
+                                                        {{ $discount->min_quantity }} - {{ $discount->max_quantity }}
+                                                    @else
+                                                        {{ $discount->min_quantity }}+
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($discount->type === 'percentage')
+                                                        <span class="badge bg-success">{{ $discount->value }}%</span>
+                                                    @else
+                                                        <span class="badge bg-success">{{ $discount->value }} ر.س</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            <small>
+                                <i class="fas fa-info-circle"></i>
+                                يتم تطبيق خصم الكمية تلقائياً عند إضافة الكمية المطلوبة للسلة
+                            </small>
+                        </div>
+                    @endif
+
                     <!-- Product Price -->
                     <div class="price-container">
                         <div class="product-price">
@@ -173,13 +257,10 @@
                     </div>
 
                     <div class="stock-info mb-4">
-                        <span class="stock-badge {{ $product->stock > 0 ? 'in-stock' : 'out-of-stock' }}">
-                            <i class="fas {{ $product->stock > 0 ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
-                            {{ $product->stock > 0 ? 'متوفر' : 'غير متوفر' }}
+                        <span class="stock-badge {{ $product->is_available ? 'in-stock' : 'out-of-stock' }}">
+                            <i class="fas {{ $product->is_available ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
+                            {{ $product->is_available ? 'متوفر' : 'غير متوفر' }}
                         </span>
-                        @if($product->stock > 0)
-                            <span class="stock-count">({{ $product->stock }} قطعة متوفرة)</span>
-                        @endif
                     </div>
 
                     <div class="product-description mb-4">
@@ -199,12 +280,40 @@
                                 ميزات الطلب المتاحة
                             </h6>
                             <ul class="features-list mb-0">
-                                @foreach($availableFeatures as $feature)
-                                    <li class="mb-2">
-                                        <i class="fas fa-{{ $feature['icon'] }} me-2"></i>
-                                        {{ $feature['text'] }}
-                                    </li>
-                                @endforeach
+                                @if($availableFeatures['allow_custom_color'])
+                                <li class="mb-2">
+                                    <i class="fas fa-palette me-2"></i>
+                                    يمكنك تحديد لون مخصص
+                                </li>
+                                @endif
+
+                                @if($availableFeatures['allow_custom_size'])
+                                <li class="mb-2">
+                                    <i class="fas fa-ruler me-2"></i>
+                                    يمكنك تحديد مقاس مخصص
+                                </li>
+                                @endif
+
+                                @if(isset($availableFeatures['colors']) && !empty($availableFeatures['colors']))
+                                <li class="mb-2">
+                                    <i class="fas fa-palette me-2"></i>
+                                    {{ count($availableFeatures['colors']) }} لون متاح للاختيار
+                                </li>
+                                @endif
+
+                                @if(isset($availableFeatures['sizes']) && !empty($availableFeatures['sizes']))
+                                <li class="mb-2">
+                                    <i class="fas fa-ruler-combined me-2"></i>
+                                    {{ count($availableFeatures['sizes']) }} مقاس متاح للاختيار
+                                </li>
+                                @endif
+
+                                @if($availableFeatures['has_discount'])
+                                <li class="mb-2">
+                                    <i class="fas fa-tags me-2"></i>
+                                    خصومات متاحة على هذا المنتج
+                                </li>
+                                @endif
                             </ul>
                         </div>
                     </div>
@@ -279,44 +388,6 @@
                         </div>
                     @endif
 
-                    <!-- Quantity Pricing Section -->
-                    @if($product->enable_quantity_pricing && $product->quantities->isNotEmpty())
-                        <div class="quantity-pricing mb-4">
-                            <h4>
-                                <i class="fas fa-cubes"></i>
-                                خيارات الكمية
-                                <span class="badge bg-primary ms-2">مطلوب</span>
-                            </h4>
-                            <div class="alert alert-info mb-3">
-                                <i class="fas fa-info-circle me-2"></i>
-                                يرجى اختيار أحد خيارات الكمية المتاحة
-                            </div>
-                            <div id="quantity-error-alert" class="alert alert-danger d-none">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                <strong>تنبيه:</strong> يجب عليك اختيار إحدى خيارات الكمية المتاحة قبل إضافة المنتج إلى السلة
-                                <button type="button" class="btn-close float-end" onclick="this.parentElement.classList.add('d-none')"></button>
-                            </div>
-                            <div class="quantity-options">
-                                @foreach($product->quantities as $quantity)
-                                    <div class="quantity-option {{ $quantity->is_available ? 'available' : 'disabled' }}"
-                                        onclick="{{ $quantity->is_available ? 'selectQuantityOption(this)' : 'return false' }}"
-                                        data-quantity-id="{{ $quantity->id }}"
-                                        data-quantity-value="{{ $quantity->quantity_value }}"
-                                        data-price="{{ $quantity->price }}">
-                                        <i class="fas fa-check"></i>
-                                        <div class="quantity-details">
-                                            <span class="quantity-value">{{ $quantity->quantity_value }} قطعة</span>
-                                            <span class="quantity-price">{{ number_format($quantity->price, 2) }} ر.س</span>
-                                            @if($quantity->description)
-                                                <small class="quantity-description">{{ $quantity->description }}</small>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-
                     <!-- Custom Size Input -->
                     @if($product->allow_custom_size)
                         <div class="custom-size-input mb-4">
@@ -331,19 +402,23 @@
                     @endif
 
                     <!-- Quantity Selector -->
-                    @auth
                     <div class="quantity-selector mb-4">
                         <h5 class="section-title">
-                            <i class="fas fa-shopping-basket me-2"></i>
+                            <i class="fas fa-cubes me-2"></i>
                             الكمية
                         </h5>
-                        <div class="input-group" style="width: 150px;">
-                            <button class="btn btn-outline-primary" type="button" onclick="updatePageQuantity(-1)">-</button>
-                            <input type="number" class="form-control text-center" id="quantity" value="1" min="1" max="{{ $product->stock }}" readonly>
-                            <button class="btn btn-outline-primary" type="button" onclick="updatePageQuantity(1)">+</button>
+                        <div class="input-group">
+                            <button class="btn btn-outline-secondary" type="button" id="decreaseQuantity">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="form-control text-center" id="productQuantity" value="1" min="1">
+                            <button class="btn btn-outline-secondary" type="button" id="increaseQuantity">
+                                <i class="fas fa-plus"></i>
+                            </button>
                         </div>
                     </div>
 
+                    @auth
                     <!-- Add to Cart Button -->
                     <button class="btn btn-primary btn-lg w-100 mb-4" onclick="addToCart()">
                         <i class="fas fa-shopping-cart me-2"></i>

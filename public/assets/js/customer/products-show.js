@@ -1,8 +1,5 @@
 let selectedColor = null;
 let selectedSize = null;
-let selectedQuantityId = null;
-let selectedQuantityValue = null;
-let selectedQuantityPrice = null;
 
 function updateMainImage(src, thumbnail) {
     document.getElementById('mainImage').src = src;
@@ -68,22 +65,11 @@ function selectSize(element) {
     updatePrice();
 }
 
-function updatePageQuantity(change) {
-    const quantityInput = document.getElementById('quantity');
-    let newQuantity = parseInt(quantityInput.value) + change;
-    const maxStock = parseInt(quantityInput.getAttribute('max'));
-
-    if (newQuantity >= 1 && newQuantity <= maxStock) {
-        quantityInput.value = newQuantity;
-    }
-}
-
 function updatePrice() {
     const priceElement = document.getElementById('product-price');
     const originalPrice = parseFloat(document.getElementById('original-price').value);
     let currentPrice = originalPrice;
     let sizePrice = 0;
-    let quantityPrice = 0;
 
     // حساب سعر المقاس إذا تم اختياره
     if (selectedSize) {
@@ -93,21 +79,9 @@ function updatePrice() {
         }
     }
 
-    // حساب سعر الكمية إذا تم اختيارها
-    if (selectedQuantityPrice) {
-        quantityPrice = parseFloat(selectedQuantityPrice);
-    }
-
-    // إذا تم اختيار كلاهما، نجمع السعرين معًا
-    if (selectedSize && selectedQuantityId) {
-        currentPrice = sizePrice + quantityPrice;
-    }
-    // إذا تم اختيار واحد فقط، نستخدم سعره
-    else if (selectedSize) {
+    // إذا تم اختيار مقاس محدد، نستخدم سعره
+    if (selectedSize) {
         currentPrice = sizePrice;
-    }
-    else if (selectedQuantityId) {
-        currentPrice = quantityPrice;
     }
     // وإلا نستخدم السعر الأصلي
     else {
@@ -128,7 +102,7 @@ document.querySelectorAll('.size-option').forEach(el => {
 
 function addToCart() {
     const productId = document.getElementById('product-id').value;
-    const quantity = document.getElementById('quantity')?.value || 1;
+    const quantity = parseInt(document.getElementById('productQuantity').value) || 1;
     const errorMessage = document.getElementById('errorMessage');
     errorMessage.classList.add('d-none');
 
@@ -136,32 +110,6 @@ function addToCart() {
     const hasCustomColorEnabled = document.getElementById('customColor') !== null;
     const hasSizeSelectionEnabled = document.querySelector('.available-sizes') !== null;
     const hasCustomSizeEnabled = document.getElementById('customSize') !== null;
-
-    const quantityOptions = document.querySelectorAll('.quantity-option');
-    const quantityErrorAlert = document.getElementById('quantity-error-alert');
-
-    if (quantityOptions.length > 0 && !selectedQuantityId) {
-        showNotification('يرجى اختيار إحدى خيارات الكمية المتاحة', 'error');
-
-        if (quantityErrorAlert) {
-            quantityErrorAlert.classList.remove('d-none');
-        }
-
-        document.querySelector('.quantity-pricing').scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        const firstAvailableOption = document.querySelector('.quantity-option.available');
-        if (firstAvailableOption) {
-            firstAvailableOption.classList.add('highlight');
-            setTimeout(() => {
-                firstAvailableOption.classList.remove('highlight');
-            }, 2000);
-        }
-        return;
-    }
-
-    if (quantityErrorAlert) {
-        quantityErrorAlert.classList.add('d-none');
-    }
 
     let colorValue = null;
     if (hasColorSelectionEnabled && selectedColor) {
@@ -222,7 +170,6 @@ function addToCart() {
         quantity: quantity,
         color: colorValue,
         size: sizeValue,
-        quantity_option_id: selectedQuantityId
     };
 
     fetch('/cart/add', {
@@ -267,8 +214,6 @@ function addToCart() {
             if (document.getElementById('customSize')) {
                 document.getElementById('customSize').value = '';
             }
-
-            document.getElementById('quantity').value = 1;
         } else {
             showNotification(data.message || 'حدث خطأ أثناء إضافة المنتج للسلة', 'error');
         }
@@ -548,6 +493,32 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('cartToggle').addEventListener('click', toggleCart);
     document.getElementById('fixedCartBtn').addEventListener('click', toggleCart);
 
+    // Quantity selector event listeners
+    const decreaseQuantityBtn = document.getElementById('decreaseQuantity');
+    const increaseQuantityBtn = document.getElementById('increaseQuantity');
+    const quantityInput = document.getElementById('productQuantity');
+
+    if (decreaseQuantityBtn && increaseQuantityBtn && quantityInput) {
+        decreaseQuantityBtn.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        });
+
+        increaseQuantityBtn.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value);
+            quantityInput.value = currentValue + 1;
+        });
+
+        quantityInput.addEventListener('change', function() {
+            let value = parseInt(this.value);
+            if (isNaN(value) || value < 1) {
+                this.value = 1;
+            }
+        });
+    }
+
     const useCustomColorCheckbox = document.getElementById('useCustomColor');
     const customColorGroup = document.getElementById('customColorGroup');
 
@@ -612,11 +583,6 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Error:', error));
 
-    const firstQuantityOption = document.querySelector('.quantity-option.available');
-    if (firstQuantityOption) {
-        selectQuantityOption(firstQuantityOption);
-    }
-
     // إضافة وظائف لأزرار نسخ الكوبونات
     document.querySelectorAll('.copy-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -644,35 +610,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
-function selectQuantityOption(option) {
-    if (option.classList.contains('active')) {
-        option.classList.remove('active');
-        selectedQuantityId = null;
-        selectedQuantityValue = null;
-        selectedQuantityPrice = null;
-
-        updatePrice();
-        return;
-    }
-
-    document.querySelectorAll('.quantity-option').forEach(opt => {
-        opt.classList.remove('active');
-    });
-
-    option.classList.add('active');
-
-    selectedQuantityId = option.dataset.quantityId;
-    selectedQuantityValue = option.dataset.quantityValue;
-    selectedQuantityPrice = option.dataset.price;
-
-    updatePrice();
-
-    const quantityErrorAlert = document.getElementById('quantity-error-alert');
-    if (quantityErrorAlert) {
-        quantityErrorAlert.classList.add('d-none');
-    }
-}
 
 function toggleCustomSize(checkbox) {
     const customSizeGroup = document.getElementById('customSizeGroup');

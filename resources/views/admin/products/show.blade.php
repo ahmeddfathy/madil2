@@ -71,11 +71,9 @@
                                             معلومات المنتج
                                         </h5>
                                         <div class="mb-4">
-                                            <span class="status-badge {{ $product->stock > 10 ? 'in-stock' : ($product->stock > 0 ? 'low-stock' : 'out-of-stock') }}">
-                                                @if($product->stock > 10)
-                                                    متوفر ({{ $product->stock }})
-                                                @elseif($product->stock > 0)
-                                                    مخزون منخفض ({{ $product->stock }})
+                                            <span class="status-badge {{ $product->is_available ? 'in-stock' : 'out-of-stock' }}">
+                                                @if($product->is_available)
+                                                    متوفر للبيع
                                                 @else
                                                     غير متوفر
                                                 @endif
@@ -144,7 +142,8 @@
                                             @foreach($product->colors as $color)
                                             <div class="col-md-6">
                                                 <div class="color-item d-flex align-items-center p-3 rounded border">
-                                                    <span class="color-preview me-2" style="width: 20px; height: 20px; border-radius: 50%; background-color: {{ $color->color }}"></span>
+                                                    <span class="color-preview me-2"
+                                                          style="width: 20px; height: 20px; border-radius: 50%; background-color: {{ $color->color }};"></span>
                                                     <span>{{ $color->color }}</span>
                                                     <span class="ms-auto">
                                                         @if($color->is_available)
@@ -183,42 +182,6 @@
                                                     </div>
                                                     <span>
                                                         @if($size->is_available)
-                                                            <i class="fas fa-check text-success"></i>
-                                                        @else
-                                                            <i class="fas fa-times text-danger"></i>
-                                                        @endif
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @endif
-
-                            <!-- Quantities -->
-                            @if($product->enable_quantity_pricing && $product->quantities && $product->quantities->isNotEmpty())
-                            <div class="col-md-6">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-body">
-                                        <h5 class="card-title mb-4">
-                                            <i class="fas fa-cubes text-primary me-2"></i>
-                                            خيارات الكميات والأسعار
-                                        </h5>
-                                        <div class="row g-3">
-                                            @foreach($product->quantities as $quantity)
-                                            <div class="col-md-6">
-                                                <div class="quantity-item d-flex align-items-center justify-content-between p-3 rounded border">
-                                                    <div>
-                                                        <span class="fw-semibold">{{ $quantity->quantity_value }} قطعة</span>
-                                                        @if($quantity->description)
-                                                            <div class="small text-muted">{{ $quantity->description }}</div>
-                                                        @endif
-                                                        <div class="mt-1 text-primary fw-bold">{{ number_format($quantity->price, 0) }} ريال</div>
-                                                    </div>
-                                                    <span>
-                                                        @if($quantity->is_available)
                                                             <i class="fas fa-check text-success"></i>
                                                         @else
                                                             <i class="fas fa-times text-danger"></i>

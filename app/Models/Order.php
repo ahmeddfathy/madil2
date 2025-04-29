@@ -38,6 +38,7 @@ class Order extends Model
         'total_amount',
         'original_amount',
         'coupon_discount',
+        'quantity_discount',
         'coupon_code',
         'shipping_address',
         'phone',
@@ -55,6 +56,7 @@ class Order extends Model
         'total_amount' => 'decimal:2',
         'original_amount' => 'decimal:2',
         'coupon_discount' => 'decimal:2',
+        'quantity_discount' => 'decimal:2',
         'amount_paid' => 'decimal:2',
     ];
 

@@ -170,7 +170,7 @@
                                     <h4>كود الخصم</h4>
                                     <div class="coupon-input-group d-flex">
                                         <input type="text" name="coupon_code" id="coupon_code" class="form-input"
-                                            placeholder="أدخل كود الخصم" value="{{ old('coupon_code', session('coupon_code')) }}">
+                                            placeholder="أدخل كود الخصم" value="{{ old('coupon_code', (isset($couponData) ? $couponData['code'] : '')) }}">
                                         <button type="button" id="apply-coupon" class="btn-apply-coupon">تطبيق</button>
                                     </div>
                                     <div id="coupon-message" class="mt-2"></div>
@@ -195,9 +195,15 @@
                                     <div class="d-flex justify-content-between mt-3">
                                         <h4>المبلغ النهائي:</h4>
                                         <span class="final-amount">
-                                            {{ session('final_amount', $cart->total_amount) }} ريال
+                                            {{ $finalAmount }} ريال
                                         </span>
                                     </div>
+
+                                    @if(isset($discountMessage) && !empty($discountMessage))
+                                    <div class="discount-message mt-3">
+                                        <p class="info-message">{{ $discountMessage }}</p>
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -280,7 +286,9 @@
                     </div>
 
                     <!-- Hidden Appointment ID field -->
+                    @if(session('appointment_id'))
                     <input type="hidden" name="appointment_id" value="{{ session('appointment_id') }}">
+                    @endif
 
                     <div class="checkout-actions">
                         <button type="submit" class="place-order-btn">
@@ -293,12 +301,6 @@
     </div>
 
     <script>
-        // Remove loading effect
-        // document.getElementById('checkout-form').addEventListener('submit', function(e) {
-        //     this.classList.add('loading');
-        // });
-
-        // Coupon code handling
         document.getElementById('apply-coupon').addEventListener('click', function() {
             const couponCode = document.getElementById('coupon_code').value;
             const couponMessage = document.getElementById('coupon-message');
@@ -308,7 +310,6 @@
                 return;
             }
 
-            // Send AJAX request to validate coupon
             fetch('/checkout/apply-coupon', {
                 method: 'POST',
                 headers: {
@@ -322,34 +323,47 @@
                 if (data.success) {
                     couponMessage.innerHTML = '<p class="success-message">' + data.message + '</p>';
 
-                    // إذا كان الكوبون يطبق على منتجات محددة فقط
+                    document.getElementById('coupon_code').value = data.coupon_code;
+
+                    // تحديث السعر النهائي مباشرة في الواجهة
+                    const finalAmountElement = document.querySelector('.final-amount');
+                    if (finalAmountElement) {
+                        finalAmountElement.textContent = data.final_amount + ' ريال';
+                    }
+
+                    // إضافة أو تحديث رسالة الخصم
+                    const discountMessageDiv = document.querySelector('.discount-message');
+                    if (discountMessageDiv) {
+                        discountMessageDiv.innerHTML = '<p class="info-message">' + data.message + '</p>';
+                    } else {
+                        const newDiscountMessageDiv = document.createElement('div');
+                        newDiscountMessageDiv.className = 'discount-message mt-3';
+                        newDiscountMessageDiv.innerHTML = '<p class="info-message">' + data.message + '</p>';
+
+                        // إضافة العنصر الجديد بعد عنصر المبلغ النهائي
+                        const finalAmountContainer = document.querySelector('.d-flex.justify-content-between.mt-3');
+                        if (finalAmountContainer) {
+                            finalAmountContainer.parentNode.insertBefore(newDiscountMessageDiv, finalAmountContainer.nextSibling);
+                        }
+                    }
+
                     if (data.partial_discount) {
-                        // عرض رسالة توضيحية
                         couponMessage.innerHTML += '<p class="info-message">' + data.partial_discount_message + '</p>';
 
-                        // تطبيق تأثير بصري على المنتجات المشمولة بالخصم
                         const orderItems = document.querySelectorAll('.order-item');
                         const validProductIds = data.valid_product_ids;
 
                         orderItems.forEach(item => {
-                            // الحصول على معرف المنتج من البيانات المخزنة في عنصر المنتج
                             const productId = parseInt(item.getAttribute('data-product-id'));
 
                             if (validProductIds.includes(productId)) {
-                                // المنتج مشمول بالخصم
                                 item.classList.add('discount-applied');
                                 item.querySelector('.product-details').innerHTML += '<span class="discount-badge">مشمول بالخصم</span>';
                             } else {
-                                // المنتج غير مشمول بالخصم
                                 item.classList.add('no-discount');
                             }
                         });
                     }
-
-                    // إعادة تحميل الصفحة بعد ثانيتين لتحديث الإجماليات
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
                 } else {
                     couponMessage.innerHTML = '<p class="error-message">' + data.message + '</p>';
                 }

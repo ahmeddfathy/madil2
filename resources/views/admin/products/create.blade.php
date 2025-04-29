@@ -105,14 +105,6 @@
                                             </div>
 
                                             <div class="mb-3">
-                                                <label class="form-label">المخزون</label>
-                                                <input type="number" name="stock" class="form-control shadow-sm @error('stock') is-invalid @enderror" value="{{ old('stock') }}">
-                                                @error('stock')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-
-                                            <div class="mb-3">
                                                 <div class="form-check form-switch">
                                                     <input class="form-check-input" type="checkbox" id="isAvailable"
                                                            name="is_available" value="1" {{ old('is_available', true) ? 'checked' : '' }}>
@@ -330,159 +322,64 @@
                                     </div>
                                 </div>
 
-                                <!-- Product Options -->
-                                <div class="col-12">
-                                    <div class="card border-0 shadow-sm">
-                                        <div class="card-body">
-                                            <h5 class="card-title mb-4">
-                                                <i class="fas fa-cog text-primary me-2"></i>
-                                                خيارات المنتج
-                                            </h5>
-                                            <div class="row g-3">
-                                                <!-- Color Selection Option -->
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="checkbox"
-                                                               id="enable_color_selection" name="enable_color_selection"
-                                                               value="1" checked>
-                                                        <label class="form-check-label" for="enable_color_selection">
-                                                            <i class="fas fa-palette me-2"></i>
-                                                            السماح باختيار اللون
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Custom Color Option -->
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="checkbox"
-                                                               id="enable_custom_color" name="enable_custom_color"
-                                                               value="1">
-                                                        <label class="form-check-label" for="enable_custom_color">
-                                                            <i class="fas fa-paint-brush me-2"></i>
-                                                            السماح بإضافة لون مخصص
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Size Selection Option -->
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="checkbox"
-                                                               id="enable_size_selection" name="enable_size_selection"
-                                                               value="1" checked>
-                                                        <label class="form-check-label" for="enable_size_selection">
-                                                            <i class="fas fa-ruler me-2"></i>
-                                                            السماح باختيار المقاسات المحددة
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Custom Size Option -->
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="checkbox"
-                                                               id="enable_custom_size" name="enable_custom_size"
-                                                               value="1">
-                                                        <label class="form-check-label" for="enable_custom_size">
-                                                            <i class="fas fa-ruler-combined me-2"></i>
-                                                            السماح بإضافة مقاس مخصص
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="alert alert-info mt-3">
-                                                <i class="fas fa-info-circle me-2"></i>
-                                                <strong>ملاحظة:</strong> هذه الإعدادات تتحكم في الخيارات المتاحة للعملاء عند طلب هذا المنتج.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- إضافة قسم تسعير الكميات بعد قسم المقاسات -->
+                                <!-- خصائص المنتج -->
                                 <div class="col-12 mt-4">
                                     <div class="card card-body shadow-sm border-0">
                                         <div class="card-title d-flex align-items-center justify-content-between">
-                                            <h5>خيارات الكمية والتسعير</h5>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input"
-                                                       type="checkbox"
-                                                       id="hasQuantities"
-                                                       name="enable_quantity_pricing"
-                                                       value="1"
-                                                       {{ old('enable_quantity_pricing') ? 'checked' : '' }}
-                                                       onchange="toggleQuantitiesSection(this)">
-                                                <label class="form-check-label" for="hasQuantities">تفعيل تسعير الكميات</label>
-                                            </div>
+                                            <h5>خصائص المنتج</h5>
                                         </div>
-                                        <div id="quantitiesSection" class="{{ old('enable_quantity_pricing') ? 'section-expanded' : 'section-collapsed' }}">
-                                            @error('quantities.*')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                            @error('quantity_prices.*')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                            @error('quantity_descriptions.*')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                            <div id="quantitiesContainer">
-                                                @if(old('quantities'))
-                                                    @foreach(old('quantities') as $index => $quantity)
-                                                        <div class="input-group mb-2 shadow-sm">
-                                                            <input type="number"
-                                                                   name="quantities[]"
-                                                                   class="form-control @error('quantities.'.$index) is-invalid @enderror"
-                                                                   placeholder="الكمية"
-                                                                   value="{{ $quantity }}">
-                                                            <input type="number"
-                                                                   name="quantity_prices[]"
-                                                                   class="form-control @error('quantity_prices.'.$index) is-invalid @enderror"
-                                                                   placeholder="السعر"
-                                                                   step="0.01"
-                                                                   value="{{ old('quantity_prices')[$index] ?? '' }}">
-                                                            <input type="text"
-                                                                   name="quantity_descriptions[]"
-                                                                   class="form-control"
-                                                                   placeholder="وصف (اختياري)"
-                                                                   value="{{ old('quantity_descriptions')[$index] ?? '' }}">
-                                                            <div class="input-group-text">
-                                                                <label class="mb-0">
-                                                                    <input type="checkbox"
-                                                                           name="quantity_available[]"
-                                                                           value="{{ $index }}"
-                                                                           {{ isset(old('quantity_available')[$index]) ? 'checked' : '' }}
-                                                                           class="me-1">
-                                                                    متوفر
-                                                                </label>
-                                                            </div>
-                                                            <button type="button" class="btn btn-light-danger" onclick="this.closest('.input-group').remove()">
-                                                                <i class="fas fa-times"></i>
-                                                            </button>
-                                                        </div>
-                                                    @endforeach
-                                                @else
-                                                    <!-- صف افتراضي إذا لم يكن هناك بيانات سابقة -->
-                                                    <div class="input-group mb-2 shadow-sm">
-                                                        <input type="number" name="quantities[]" class="form-control" placeholder="الكمية">
-                                                        <input type="number" name="quantity_prices[]" class="form-control" placeholder="السعر" step="0.01">
-                                                        <input type="text" name="quantity_descriptions[]" class="form-control" placeholder="وصف (اختياري)">
-                                                        <div class="input-group-text">
-                                                            <label class="mb-0">
-                                                                <input type="checkbox" name="quantity_available[]" value="0" checked class="me-1">
-                                                                متوفر
-                                                            </label>
-                                                        </div>
-                                                        <button type="button" class="btn btn-light-danger" onclick="this.closest('.input-group').remove()">
-                                                            <i class="fas fa-times"></i>
-                                                        </button>
-                                                    </div>
-                                                @endif
+                                        <div class="row g-3">
+                                            <!-- Color Selection Option -->
+                                            <div class="col-md-6">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox"
+                                                           id="enableColorSelection" name="enable_color_selection"
+                                                           value="1" checked>
+                                                    <label class="form-check-label" for="enableColorSelection">
+                                                        <i class="fas fa-palette me-2"></i>
+                                                        تمكين اختيار اللون
+                                                    </label>
+                                                </div>
                                             </div>
-                                            <button type="button" class="btn btn-light-secondary btn-sm" onclick="addQuantityInput()">
-                                                <i class="fas fa-plus"></i>
-                                                إضافة خيار كمية
-                                            </button>
+
+                                            <!-- Custom Color Option -->
+                                            <div class="col-md-6">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox"
+                                                           id="enableCustomColor" name="enable_custom_color"
+                                                           value="1">
+                                                    <label class="form-check-label" for="enableCustomColor">
+                                                        <i class="fas fa-paint-brush me-2"></i>
+                                                        تمكين اللون المخصص
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Size Selection Option -->
+                                            <div class="col-md-6">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox"
+                                                           id="enableSizeSelection" name="enable_size_selection"
+                                                           value="1" checked>
+                                                    <label class="form-check-label" for="enableSizeSelection">
+                                                        <i class="fas fa-ruler me-2"></i>
+                                                        تمكين اختيار المقاس
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Custom Size Option -->
+                                            <div class="col-md-6">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox"
+                                                           id="enableCustomSize" name="enable_custom_size"
+                                                           value="1">
+                                                    <label class="form-check-label" for="enableCustomSize">
+                                                        <i class="fas fa-ruler-combined me-2"></i>
+                                                        تمكين المقاس المخصص
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -619,63 +516,29 @@ function toggleSizesSection(checkbox) {
     }
 }
 
-function toggleQuantitiesSection(checkbox) {
-    const section = document.getElementById('quantitiesSection');
-    if (checkbox.checked) {
-        section.classList.remove('section-collapsed');
-        section.classList.add('section-expanded');
-    } else {
-        section.classList.remove('section-expanded');
-        section.classList.add('section-collapsed');
-    }
-}
-
-function addQuantityInput() {
-    const container = document.getElementById('quantitiesContainer');
-    const index = container.children.length;
-    const div = document.createElement('div');
-    div.className = 'input-group mb-2 shadow-sm';
-    div.innerHTML = `
-        <input type="number" name="quantities[]" class="form-control" placeholder="الكمية">
-        <input type="number" name="quantity_prices[]" class="form-control" placeholder="السعر" step="0.01">
-        <input type="text" name="quantity_descriptions[]" class="form-control" placeholder="وصف (اختياري)">
-        <div class="input-group-text">
-            <label class="mb-0">
-                <input type="checkbox" name="quantity_available[]" value="${index}" checked class="me-1">
-                متوفر
-            </label>
-        </div>
-        <button type="button" class="btn btn-light-danger" onclick="this.closest('.input-group').remove()">
-            <i class="fas fa-times"></i>
-        </button>
-    `;
-    container.appendChild(div);
-}
-
 document.addEventListener('DOMContentLoaded', function() {
-    const hasColors = {{ old('has_colors') || !empty(old('colors')) ? 'true' : 'false' }};
-    const hasSizes = {{ old('has_sizes') || !empty(old('sizes')) ? 'true' : 'false' }};
+    // تهيئة الأقسام المختلفة في الصفحة
+    const colorSelectionCheck = document.getElementById('enableColorSelection');
+    const sizeSelectionCheck = document.getElementById('enableSizeSelection');
 
-    const colorsCheckbox = document.getElementById('hasColors');
-    const sizesCheckbox = document.getElementById('hasSizes');
-
-    colorsCheckbox.checked = hasColors;
-    sizesCheckbox.checked = hasSizes;
-
-    if (hasColors) {
-        document.getElementById('colorsSection').classList.add('section-expanded');
-        document.getElementById('colorsSection').classList.remove('section-collapsed');
-    } else {
-        document.getElementById('colorsSection').classList.add('section-collapsed');
-        document.getElementById('colorsSection').classList.remove('section-expanded');
+    if (colorSelectionCheck) {
+        colorSelectionCheck.addEventListener('change', function() {
+            const colorsSection = document.getElementById('colorsSection');
+            if (colorsSection) {
+                colorsSection.classList.toggle('section-collapsed', !this.checked);
+                colorsSection.classList.toggle('section-expanded', this.checked);
+            }
+        });
     }
 
-    if (hasSizes) {
-        document.getElementById('sizesSection').classList.add('section-expanded');
-        document.getElementById('sizesSection').classList.remove('section-collapsed');
-    } else {
-        document.getElementById('sizesSection').classList.add('section-collapsed');
-        document.getElementById('sizesSection').classList.remove('section-expanded');
+    if (sizeSelectionCheck) {
+        sizeSelectionCheck.addEventListener('change', function() {
+            const sizesSection = document.getElementById('sizesSection');
+            if (sizesSection) {
+                sizesSection.classList.toggle('section-collapsed', !this.checked);
+                sizesSection.classList.toggle('section-expanded', this.checked);
+            }
+        });
     }
 });
 </script>

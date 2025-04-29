@@ -119,6 +119,10 @@ class DashboardController extends Controller
                         'order_number' => $order->order_number,
                         'user_name' => $order->user->name,
                         'total' => $order->total_amount,
+                        'original_amount' => $order->original_amount,
+                        'coupon_discount' => $order->coupon_discount,
+                        'quantity_discount' => $order->quantity_discount ?? 0,
+                        'total_amount' => $order->total_amount,
                         'payment_status' => $order->payment_status,
                         'order_status' => $order->order_status,
                         'created_at' => $order->created_at->format('Y-m-d H:i'),
@@ -127,8 +131,8 @@ class DashboardController extends Controller
                             return [
                                 'product_name' => $item->product->name,
                                 'quantity' => $item->quantity,
-                                'unit_price' => $item->product->price,
-                                'total_price' => $item->quantity * $item->product->price
+                                'unit_price' => $item->unit_price,
+                                'total_price' => $item->subtotal
                             ];
                         }),
                         'status_color' => match($order->order_status) {

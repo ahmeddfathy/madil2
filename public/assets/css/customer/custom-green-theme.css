@@ -210,3 +210,212 @@ button.btn-primary.btn-lg.w-100 {
         font-size: 0.75rem;
     }
 }
+
+/* تحسين مظهر خصومات الكميات */
+.quantity-discounts {
+    border-color: rgba(0, 146, 69, 0.2) !important;
+    background-color: rgba(0, 146, 69, 0.05) !important;
+}
+
+.quantity-discounts h5 {
+    color: var(--primary-color) !important;
+}
+
+.quantity-discounts h5 i {
+    color: var(--primary-color) !important;
+}
+
+.quantity-discounts .table-light {
+    background-color: rgba(0, 146, 69, 0.1) !important;
+}
+
+.quantity-discounts .badge.bg-success {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.quantity-discounts small {
+    color: #0c5f36 !important;
+}
+
+.quantity-discounts small i {
+    color: var(--primary-color) !important;
+}
+
+.quantity-discounts .table-bordered {
+    border-color: rgba(0, 146, 69, 0.2) !important;
+}
+
+.quantity-discounts th,
+.quantity-discounts td {
+    border-color: rgba(0, 146, 69, 0.2) !important;
+}
+
+/* تحسينات لعناصر الألوان المتاحة */
+.colors-section .section-title {
+    color: var(--primary-color) !important;
+}
+
+.colors-section .section-title i {
+    color: var(--primary-color) !important;
+}
+
+.color-item.available {
+    border-color: rgba(0, 146, 69, 0.3) !important;
+}
+
+.color-item.available:hover {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.25rem rgba(0, 146, 69, 0.15) !important;
+}
+
+.color-item.available .color-status i {
+    color: var(--primary-color) !important;
+}
+
+/* تحسينات لعناصر المقاسات المتاحة */
+.available-sizes h5 {
+    color: var(--primary-color) !important;
+}
+
+.size-option {
+    border-color: rgba(0, 146, 69, 0.3) !important;
+}
+
+.size-option:not(.disabled):hover {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.25rem rgba(0, 146, 69, 0.15) !important;
+}
+
+.size-option.active {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.size-option .badge.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+/* إصلاح عنوان وصف المنتج */
+.product-description h5 {
+    color: var(--primary-color) !important;
+}
+
+.product-description h5 i {
+    color: var(--primary-color) !important;
+}
+
+/* تحسين مظهر زر الكمية */
+.quantity-selector .input-group button {
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+.quantity-selector .input-group button:hover {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.quantity-selector .input-group input {
+    border-color: var(--primary-color) !important;
+}
+
+/* إصلاح لجميع العناوين في صفحة المنتج */
+.section-title,
+.section-title i {
+    color: var(--primary-color) !important;
+}
+
+/* تحسين مظهر شارة المخزون */
+.stock-info .stock-badge {
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+
+.stock-info .stock-badge.in-stock {
+    background-color: rgba(0, 146, 69, 0.1) !important;
+    color: var(--primary-color) !important;
+    border: 1px solid rgba(0, 146, 69, 0.2) !important;
+}
+
+.stock-info .stock-badge.in-stock i {
+    color: var(--primary-color) !important;
+}
+
+.stock-info .stock-badge.out-of-stock {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+    border: 1px solid rgba(220, 53, 69, 0.2) !important;
+}
+
+/* تحسين دليل الميزات */
+.features-guide .alert-info {
+    border-color: rgba(0, 146, 69, 0.2) !important;
+    background-color: rgba(0, 146, 69, 0.05) !important;
+}
+
+.features-guide .alert-heading {
+    color: var(--primary-color) !important;
+}
+
+.features-guide .alert-heading i {
+    color: var(--primary-color) !important;
+}
+
+.features-guide .features-list li i {
+    color: var(--primary-color) !important;
+}
+
+/* تحسين اللون الأسود في نص الكوبونات */
+.coupon-code, .coupon-value {
+    color: #0c5f36 !important;
+}
+
+/* تحسين لون الكوبون */
+.coupon-item {
+    border-color: rgba(0, 146, 69, 0.3) !important;
+    background-color: rgba(0, 146, 69, 0.05) !important;
+}
+
+.coupon-item:hover {
+    border-color: var(--primary-color) !important;
+}
+
+.coupon-item .copy-btn {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.coupon-item .copy-btn i {
+    color: white !important;
+}
+
+.coupon-item .copy-btn:hover {
+    background-color: #007d3b !important;
+}
+
+/* تحسين لون النص بالإشعارات والمكونات الأخرى */
+.alert-info,
+.features-guide,
+.quantity-discounts,
+.product-category,
+.product-description,
+.available-sizes,
+.colors-section,
+.custom-color-section,
+.custom-size-input,
+.quantity-selector {
+    color: #333 !important;
+}
+
+/* تحسين لون الأيقونات في جميع الأماكن */
+.section-title i,
+.alert-heading i,
+.features-list i,
+.available-coupons h5 i,
+.available-coupons small i,
+.quantity-discounts h5 i,
+.quantity-discounts small i {
+    color: var(--primary-color) !important;
+}

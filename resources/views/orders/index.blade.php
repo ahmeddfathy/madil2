@@ -59,8 +59,14 @@
                     <i class="bi bi-calendar"></i>
                     {{ $order->created_at->format('Y/m/d') }}
                 </div>
+                @if($order->original_amount > $order->total_amount)
+                <div class="order-discount">
+                    <i class="bi bi-tag"></i>
+                    <span>الخصم: {{ number_format($order->original_amount - $order->total_amount, 2) }} ريال</span>
+                </div>
+                @endif
                 <div class="order-total">
-                    {{ $order->total_amount }} ريال
+                    {{ number_format($order->total_amount, 2) }} ريال
                 </div>
                 <a href="{{ route('orders.show', $order->uuid) }}" class="btn btn-primary">
                     <i class="bi bi-eye"></i>

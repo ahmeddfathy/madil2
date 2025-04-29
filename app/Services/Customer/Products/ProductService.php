@@ -48,24 +48,14 @@ class ProductService
         }
 
         if ($request->has('min_price')) {
-            $query->where(function($q) use ($request) {
-                $q->whereHas('sizes', function($query) use ($request) {
+            $query->whereHas('sizes', function($query) use ($request) {
                     $query->where('price', '>=', $request->min_price);
-                })
-                ->orWhereHas('quantities', function($query) use ($request) {
-                    $query->where('price', '>=', $request->min_price);
-                });
             });
         }
 
         if ($request->has('max_price')) {
-            $query->where(function($q) use ($request) {
-                $q->whereHas('sizes', function($query) use ($request) {
+            $query->whereHas('sizes', function($query) use ($request) {
                     $query->where('price', '<=', $request->max_price);
-                })
-                ->orWhereHas('quantities', function($query) use ($request) {
-                    $query->where('price', '<=', $request->max_price);
-                });
             });
         }
 
@@ -122,15 +112,13 @@ class ProductService
 
         switch ($request->input('sort', 'newest')) {
             case 'price-low':
-                $query->orderByRaw('(SELECT MIN(COALESCE(ps.price, pq.price, 999999))
+                $query->orderByRaw('(SELECT MIN(COALESCE(ps.price, 999999))
                                    FROM product_sizes ps
-                                   LEFT JOIN product_quantities pq ON pq.product_id = products.id
                                    WHERE ps.product_id = products.id) ASC');
                 break;
             case 'price-high':
-                $query->orderByRaw('(SELECT MAX(COALESCE(ps.price, pq.price, 0))
+                $query->orderByRaw('(SELECT MAX(COALESCE(ps.price, 0))
                                    FROM product_sizes ps
-                                   LEFT JOIN product_quantities pq ON pq.product_id = products.id
                                    WHERE ps.product_id = products.id) DESC');
                 break;
             case 'newest':
@@ -175,15 +163,13 @@ class ProductService
     {
         $minPrice = DB::table('products as p')
             ->leftJoin('product_sizes as ps', 'p.id', '=', 'ps.product_id')
-            ->leftJoin('product_quantities as pq', 'p.id', '=', 'pq.product_id')
             ->where('p.is_available', true)
-            ->min(DB::raw('LEAST(COALESCE(ps.price, 999999), COALESCE(pq.price, 999999))'));
+            ->min(DB::raw('COALESCE(ps.price, 0)'));
 
         $maxPrice = DB::table('products as p')
             ->leftJoin('product_sizes as ps', 'p.id', '=', 'ps.product_id')
-            ->leftJoin('product_quantities as pq', 'p.id', '=', 'pq.product_id')
             ->where('p.is_available', true)
-            ->max(DB::raw('GREATEST(COALESCE(ps.price, 0), COALESCE(pq.price, 0))'));
+            ->max(DB::raw('COALESCE(ps.price, 0)'));
 
         return [
             'min' => $minPrice ?: 0,
@@ -366,22 +352,12 @@ class ProductService
                     'price' => $size->price
                 ];
             })->toArray() : [],
-            'quantities' => $product->enable_quantity_pricing ? collect($product->quantities)->map(function($quantity) {
-                return [
-                    'id' => $quantity->id,
-                    'value' => $quantity->quantity_value,
-                    'price' => $quantity->price,
-                    'description' => $quantity->description,
-                    'is_available' => $quantity->is_available
-                ];
-            })->toArray() : [],
             'is_available' => $product->stock > 0,
             'features' => [
                 'allow_custom_color' => $product->allow_custom_color,
                 'allow_custom_size' => $product->allow_custom_size,
                 'allow_color_selection' => $product->allow_color_selection,
                 'allow_size_selection' => $product->allow_size_selection,
-                'enable_quantity_pricing' => $product->enable_quantity_pricing
             ]
         ];
     }
@@ -398,43 +374,35 @@ class ProductService
 
     public function getAvailableFeatures(Product $product)
     {
-        $availableFeatures = [];
+        $features = [];
 
-        if ($product->allow_color_selection && $product->colors->isNotEmpty()) {
-            $availableFeatures[] = [
-                'icon' => 'palette',
-                'text' => 'يمكنك اختيار لون من الألوان المتاحة'
-            ];
+        // الألوان
+        if ($product->enable_color_selection && $product->colors->isNotEmpty()) {
+            $features['colors'] = $product->colors->where('is_available', true)->pluck('color')->toArray();
         }
 
-        if ($product->allow_custom_color) {
-            $availableFeatures[] = [
-                'icon' => 'format_color_fill',
-                'text' => 'يمكنك تحديد لون مخصص'
+        // المقاسات
+        if ($product->enable_size_selection && $product->sizes->isNotEmpty()) {
+            $sizes = $product->sizes->where('is_available', true)->map(function($size) {
+                $sizeData = [
+                    'size' => $size->size
             ];
+
+                if ($size->price) {
+                    $sizeData['price'] = $size->price;
+                }
+
+                return $sizeData;
+            })->toArray();
+
+            $features['sizes'] = $sizes;
         }
 
-        if ($product->allow_size_selection && $product->sizes->isNotEmpty()) {
-            $availableFeatures[] = [
-                'icon' => 'straighten',
-                'text' => 'يمكنك اختيار مقاس من المقاسات المتاحة'
-            ];
-        }
+        // إضافة الخيارات الأخرى
+        $features['allow_custom_color'] = $product->enable_custom_color;
+        $features['allow_custom_size'] = $product->enable_custom_size;
+        $features['has_discount'] = $product->hasDiscounts();
 
-        if ($product->allow_custom_size) {
-            $availableFeatures[] = [
-                'icon' => 'square_foot',
-                'text' => 'يمكنك تحديد مقاس مخصص'
-            ];
-        }
-
-        if ($product->enable_quantity_pricing && $product->quantities->isNotEmpty()) {
-            $availableFeatures[] = [
-                'icon' => 'inventory_2',
-                'text' => 'يوجد أسعار خاصة للكميات'
-            ];
-        }
-
-        return $availableFeatures;
+        return $features;
     }
 }

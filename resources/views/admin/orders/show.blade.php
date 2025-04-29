@@ -360,6 +360,73 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Order Summary -->
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-4">
+                                        <span class="icon-circle bg-primary text-white me-2">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                        </span>
+                                        ملخص الطلب
+                                    </h5>
+                                    <div class="order-summary">
+                                        <table class="table table-borderless mb-0">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-muted">رقم الطلب:</td>
+                                                    <td class="text-end fw-bold">#{{ $order->order_number }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted">تاريخ الطلب:</td>
+                                                    <td class="text-end">{{ $order->created_at->format('Y-m-d H:i') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted">السعر الأصلي:</td>
+                                                    <td class="text-end">{{ number_format($order->original_amount, 2) }} ريال</td>
+                                                </tr>
+                                                @if($order->quantity_discount > 0)
+                                                <tr>
+                                                    <td class="text-muted">خصم الكمية:</td>
+                                                    <td class="text-end text-success">- {{ number_format($order->quantity_discount, 2) }} ريال</td>
+                                                </tr>
+                                                @endif
+                                                @if($order->coupon_discount > 0)
+                                                <tr>
+                                                    <td class="text-muted">خصم الكوبون:</td>
+                                                    <td class="text-end text-success">- {{ number_format($order->coupon_discount, 2) }} ريال</td>
+                                                </tr>
+                                                @if($order->coupon_code)
+                                                <tr>
+                                                    <td class="text-muted">كود الخصم:</td>
+                                                    <td class="text-end"><span class="badge bg-primary">{{ $order->coupon_code }}</span></td>
+                                                </tr>
+                                                @endif
+                                                @endif
+                                                <tr class="fw-bold">
+                                                    <td>إجمالي الطلب:</td>
+                                                    <td class="text-end">{{ number_format($order->total_amount, 2) }} ريال</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <hr>
+                                    @if($order->quantity_discount > 0 || $order->coupon_discount > 0)
+                                    <div class="alert alert-info mt-3 mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        @if($order->quantity_discount > $order->coupon_discount)
+                                            <span>تم تطبيق خصم الكمية ({{ number_format($order->quantity_discount, 2) }} ريال) لأنه أكبر من خصم الكوبون.</span>
+                                        @elseif($order->coupon_discount > $order->quantity_discount)
+                                            <span>تم تطبيق خصم الكوبون ({{ number_format($order->coupon_discount, 2) }} ريال) لأنه أكبر من خصم الكمية.</span>
+                                        @elseif($order->coupon_discount == $order->quantity_discount && $order->coupon_discount > 0)
+                                            <span>تم تطبيق خصم متساوٍ ({{ number_format($order->coupon_discount, 2) }} ريال) من كلا النوعين.</span>
+                                        @endif
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

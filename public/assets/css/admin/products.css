@@ -153,67 +153,6 @@
     margin-bottom: 1rem;
 }
 
-/* Stock Badge */
-.stock-badge {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    padding: 0.5rem 1rem;
-    border-radius: 1rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    box-shadow: var(--shadow-md);
-    backdrop-filter: blur(8px);
-    z-index: 10;
-}
-
-.stock-badge i {
-    font-size: 1rem;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.stock-badge.in-stock {
-    background: linear-gradient(135deg, var(--success) 0%, var(--success-hover) 100%);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.stock-badge.in-stock i {
-    color: var(--success);
-    background: white;
-}
-
-.stock-badge.low-stock {
-    background: linear-gradient(135deg, var(--warning) 0%, var(--warning-hover) 100%);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.stock-badge.low-stock i {
-    color: var(--warning);
-    background: white;
-}
-
-.stock-badge.out-of-stock {
-    background: linear-gradient(135deg, var(--danger) 0%, var(--danger-hover) 100%);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.stock-badge.out-of-stock i {
-    color: var(--danger);
-    background: white;
-}
-
 /* Category Badges Container */
 .category-badges {
     display: flex;

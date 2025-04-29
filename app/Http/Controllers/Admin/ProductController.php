@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\ProductQuantity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +16,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with(['category', 'images', 'sizes', 'quantities', 'categories'])
+        $query = Product::with(['category', 'images', 'sizes', 'categories'])
             ->withCount('orderItems');
 
         // Filter by specific product
@@ -44,23 +43,21 @@ class ProductController extends Controller
                 $query->oldest();
                 break;
             case 'price_high':
-                // Order by the maximum price of sizes or quantities
+                // Order by the maximum price of sizes
                 $query->orderBy(function($q) {
-                    return $q->select(DB::raw('MAX(COALESCE(ps.price, pq.price, 0))'))
+                    return $q->select(DB::raw('MAX(COALESCE(ps.price, 0))'))
                         ->from('products as p')
                         ->leftJoin('product_sizes as ps', 'p.id', '=', 'ps.product_id')
-                        ->leftJoin('product_quantities as pq', 'p.id', '=', 'pq.product_id')
                         ->whereColumn('p.id', 'products.id')
                         ->limit(1);
                 }, 'desc');
                 break;
             case 'price_low':
-                // Order by the minimum price of sizes or quantities
+                // Order by the minimum price of sizes
                 $query->orderBy(function($q) {
-                    return $q->select(DB::raw('MIN(COALESCE(ps.price, pq.price, 0))'))
+                    return $q->select(DB::raw('MIN(COALESCE(ps.price, 0))'))
                         ->from('products as p')
                         ->leftJoin('product_sizes as ps', 'p.id', '=', 'ps.product_id')
-                        ->leftJoin('product_quantities as pq', 'p.id', '=', 'pq.product_id')
                         ->whereColumn('p.id', 'products.id')
                         ->limit(1);
                 });
@@ -90,7 +87,6 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255',
             'description' => 'required|string',
-            'stock' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
@@ -133,7 +129,6 @@ class ProductController extends Controller
             $validatedData['enable_custom_size'] = $request->has('enable_custom_size');
             $validatedData['enable_color_selection'] = $request->has('enable_color_selection');
             $validatedData['enable_size_selection'] = $request->has('enable_size_selection');
-            $validatedData['enable_quantity_pricing'] = $request->has('enable_quantity_pricing');
             $validatedData['is_available'] = $request->has('is_available');
 
             $product = Product::create($validatedData);
@@ -184,20 +179,6 @@ class ProductController extends Controller
                 }
             }
 
-            // Store quantities if enabled
-            if ($request->has('enable_quantity_pricing') && $request->has('quantities')) {
-                foreach ($request->quantities as $index => $quantity) {
-                    if (!empty($quantity) && isset($request->quantity_prices[$index])) {
-                        $product->quantities()->create([
-                            'quantity_value' => $quantity,
-                            'price' => $request->quantity_prices[$index],
-                            'description' => $request->quantity_descriptions[$index] ?? null,
-                            'is_available' => in_array($index, $request->quantity_available ?? [])
-                        ]);
-                    }
-                }
-            }
-
             DB::commit();
             return redirect()->route('admin.products.index')
                 ->with('success', 'تم إضافة المنتج بنجاح');
@@ -224,7 +205,6 @@ class ProductController extends Controller
                 'name' => 'required|string|max:255',
                 'slug' => 'required|string|max:255',
                 'description' => 'required|string',
-                'stock' => 'required|integer|min:0',
                 'category_id' => 'required|exists:categories,id',
                 'categories' => 'nullable|array',
                 'categories.*' => 'exists:categories,id',
@@ -268,13 +248,11 @@ class ProductController extends Controller
                 'name' => $validated['name'],
                 'slug' => $validated['slug'],
                 'description' => $validated['description'],
-                'stock' => $validated['stock'],
                 'category_id' => $validated['category_id'],
                 'enable_custom_color' => $request->has('enable_custom_color'),
                 'enable_custom_size' => $request->has('enable_custom_size'),
                 'enable_color_selection' => $request->has('enable_color_selection'),
                 'enable_size_selection' => $request->has('enable_size_selection'),
-                'enable_quantity_pricing' => $request->has('enable_quantity_pricing'),
                 'is_available' => $request->has('is_available'),
             ]);
 
@@ -376,39 +354,6 @@ class ProductController extends Controller
                 $product->images()->where('id', $request->is_primary)->update(['is_primary' => true]);
             }
 
-            // Handle quantities
-            if ($request->has('enable_quantity_pricing')) {
-                // Update existing quantities
-                if ($request->has('quantities')) {
-                    foreach ($request->quantities as $index => $quantityValue) {
-                        if (!empty($quantityValue) && isset($request->quantity_prices[$index])) {
-                            $quantityId = $request->quantity_ids[$index] ?? null;
-
-                            if ($quantityId) {
-                                $quantity = ProductQuantity::find($quantityId);
-                                if ($quantity) {
-                                    $quantity->update([
-                                        'quantity_value' => $quantityValue,
-                                        'price' => $request->quantity_prices[$index],
-                                        'description' => $request->quantity_descriptions[$index] ?? null,
-                                        'is_available' => in_array($index, $request->quantity_available ?? [])
-                                    ]);
-                                }
-                            } else {
-                                $product->quantities()->create([
-                                    'quantity_value' => $quantityValue,
-                                    'price' => $request->quantity_prices[$index],
-                                    'description' => $request->quantity_descriptions[$index] ?? null,
-                                    'is_available' => in_array($index, $request->quantity_available ?? [])
-                                ]);
-                            }
-                        }
-                    }
-                }
-            } else {
-                $product->quantities()->delete();
-            }
-
             DB::commit();
             return redirect()->route('admin.products.index')
                 ->with('success', 'تم تحديث المنتج بنجاح');
@@ -434,11 +379,9 @@ class ProductController extends Controller
             $product->colors()->delete();
             $product->sizes()->delete();
             $product->orderItems()->delete();
-            $product->quantities()->delete();
             // Detach relations
             $product->discounts()->detach();
             $product->categories()->detach();
-            $product->quantityDiscounts()->delete();
 
             // Delete all associated images and their files
             foreach ($product->images as $image) {
@@ -460,7 +403,7 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        $product->load(['category', 'images', 'colors', 'sizes', 'quantities', 'categories']);
+        $product->load(['category', 'images', 'colors', 'sizes', 'categories']);
         return view('admin.products.show', compact('product'));
     }
 

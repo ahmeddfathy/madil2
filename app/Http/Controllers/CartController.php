@@ -29,7 +29,7 @@ class CartController extends Controller
         }
 
         $cart_items = $cart->items()
-            ->with(['product.images', 'product.category', 'product.sizes', 'product.quantities'])
+            ->with(['product.images', 'product.category', 'product.sizes'])
             ->get();
 
         $subtotal = $cart_items->sum('subtotal');
@@ -167,8 +167,7 @@ class CartController extends Controller
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
             'size' => 'nullable|string',
-            'color' => 'nullable|string',
-            'quantity_option_id' => 'nullable|exists:product_quantity_options,id'
+            'color' => 'nullable|string'
         ]);
 
         try {
@@ -193,7 +192,6 @@ class CartController extends Controller
                 ->where('product_id', $product->id)
                 ->where('size', $request->size)
                 ->where('color', $request->color)
-                ->where('quantity_option_id', $request->quantity_option_id)
                 ->first();
 
             if ($cartItem) {
@@ -210,8 +208,7 @@ class CartController extends Controller
                     'size' => $request->size,
                     'color' => $request->color,
                     'unit_price' => $finalPrice,
-                    'subtotal' => $finalPrice * $request->quantity,
-                    'quantity_option_id' => $request->quantity_option_id
+                    'subtotal' => $finalPrice * $request->quantity
                 ]);
             }
 
@@ -239,17 +236,6 @@ class CartController extends Controller
     protected function calculateFinalPrice($product, $request)
     {
         $basePrice = $product->price;
-
-        // إذا كان هناك خيار كمية محدد
-        if ($request->quantity_option_id) {
-            $quantityOption = $product->quantities()
-                ->where('id', $request->quantity_option_id)
-                ->first();
-
-            if ($quantityOption) {
-                return $quantityOption->price;
-            }
-        }
 
         // إذا كان هناك مقاس محدد
         if ($request->size) {

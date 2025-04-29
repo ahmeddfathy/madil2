@@ -212,7 +212,10 @@
                             <th style="min-width: 250px">المنتجات</th>
                             <th style="min-width: 120px">حالة الطلب</th>
                             <th style="min-width: 120px">حالة الدفع</th>
-                            <th style="min-width: 100px">المبلغ</th>
+                            <th style="min-width: 100px">السعر الأصلي</th>
+                            <th style="min-width: 100px">خصم الكوبون</th>
+                            <th style="min-width: 100px">خصم الكمية</th>
+                            <th style="min-width: 100px">المبلغ الإجمالي</th>
                             <th style="min-width: 120px">التاريخ</th>
                             <th style="min-width: 80px">الإجراءات</th>
                         </tr>
@@ -228,7 +231,11 @@
                                         <div class="mb-1">
                                             {{ $item['product_name'] }}
                                             <span class="text-muted d-block d-md-inline">
-                                                ({{ $item['quantity'] }} × {{ $item['unit_price'] }} ريال = {{ $item['total_price'] }} ريال)
+                                                @if(isset($item['unit_price']) && isset($item['total_price']))
+                                                    ({{ $item['quantity'] }} × {{ number_format($item['unit_price']) }} ريال = {{ number_format($item['total_price']) }} ريال)
+                                                @else
+                                                    ({{ $item['quantity'] }} قطعة)
+                                                @endif
                                             </span>
                                         </div>
                                     @endforeach
@@ -244,7 +251,10 @@
                                     {{ $order['payment_status_text'] }}
                                 </span>
                             </td>
-                            <td data-label="المبلغ">{{ $order['total'] }} ريال</td>
+                            <td data-label="السعر الأصلي">{{ number_format($order['original_amount'] ?? $order['total']) }} ريال</td>
+                            <td data-label="خصم الكوبون">{{ number_format($order['coupon_discount'] ?? 0) }} ريال</td>
+                            <td data-label="خصم الكمية">{{ number_format($order['quantity_discount'] ?? 0) }} ريال</td>
+                            <td data-label="المبلغ الإجمالي">{{ number_format($order['total_amount'] ?? $order['total']) }} ريال</td>
                             <td data-label="التاريخ">{{ $order['created_at'] }}</td>
                             <td data-label="الإجراءات">
                                 <a href="{{ route('admin.orders.show', $order['uuid']) }}"
@@ -256,7 +266,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center py-3">لا توجد طلبات حديثة</td>
+                            <td colspan="11" class="text-center py-3">لا توجد طلبات حديثة</td>
                         </tr>
                         @endforelse
                     </tbody>

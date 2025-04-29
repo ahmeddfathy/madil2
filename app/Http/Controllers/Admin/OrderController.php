@@ -78,6 +78,9 @@ class OrderController extends Controller
                         'total' => $item->quantity * $item->product->price
                     ];
                 }),
+                'original_amount' => $order->original_amount,
+                'quantity_discount' => $order->quantity_discount,
+                'coupon_discount' => $order->coupon_discount,
                 'total' => $order->total_amount,
                 'status' => $order->order_status,
                 'status_text' => match($order->order_status) {
@@ -268,6 +271,9 @@ class OrderController extends Controller
                 'total' => $item->price * $item->quantity,
             ];
         }),
+        'original_amount' => $order->original_amount,
+        'quantity_discount' => $order->quantity_discount,
+        'coupon_discount' => $order->coupon_discount,
         'total_amount' => $order->total_amount,
         'status' => [
             'code' => $order->order_status,

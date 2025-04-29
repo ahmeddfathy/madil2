@@ -47,15 +47,17 @@ class ProductController extends Controller
             abort(404, 'المنتج غير متوفر حالياً');
         }
 
-        $product->load(['category', 'images', 'colors', 'sizes']);
+        $product->load(['category', 'images', 'colors', 'sizes', 'quantityDiscounts']);
 
         $availableFeatures = $this->productService->getAvailableFeatures($product);
         $relatedProducts = $this->productService->getRelatedProducts($product);
+        $quantityDiscounts = $product->quantityDiscounts()->where('is_active', true)->orderBy('min_quantity')->get();
 
         return view('products.show', compact(
             'product',
             'relatedProducts',
-            'availableFeatures'
+            'availableFeatures',
+            'quantityDiscounts'
         ));
     }
 

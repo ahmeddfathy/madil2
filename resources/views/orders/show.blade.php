@@ -104,10 +104,56 @@
                             @endforeach
                         </div>
 
-                        <div class="order-total mt-4">
-                            <div class="d-flex justify-content-between">
-                                <h4>الإجمالي الكلي:</h4>
-                                <span class="total-amount">{{ $order->total_amount }} ريال</span>
+                        <div class="order-summary mt-4">
+                            <h5 class="mb-3 fw-bold">ملخص الطلب</h5>
+                            <div class="card">
+                                <div class="card-body p-4">
+                                    <div class="summary-items">
+                                        <div class="summary-item d-flex justify-content-between mb-3">
+                                            <span>السعر الأصلي:</span>
+                                            <span class="fw-bold">{{ number_format($order->original_amount, 2) }} ريال</span>
+                                        </div>
+
+                                        @if($order->quantity_discount > 0)
+                                        <div class="summary-item d-flex justify-content-between mb-3 text-success">
+                                            <span>خصم الكمية:</span>
+                                            <span class="fw-bold">- {{ number_format($order->quantity_discount, 2) }} ريال</span>
+                                        </div>
+                                        @endif
+
+                                        @if($order->coupon_discount > 0)
+                                        <div class="summary-item d-flex justify-content-between mb-3 text-success">
+                                            <span>خصم الكوبون:</span>
+                                            <span class="fw-bold">- {{ number_format($order->coupon_discount, 2) }} ريال</span>
+                                        </div>
+
+                                        @if($order->coupon_code)
+                                        <div class="summary-item d-flex justify-content-between mb-3">
+                                            <span>كود الخصم:</span>
+                                            <span class="badge badge-primary">{{ $order->coupon_code }}</span>
+                                        </div>
+                                        @endif
+                                        @endif
+
+                                        <div class="summary-item d-flex justify-content-between fw-bold total-row">
+                                            <span>الإجمالي:</span>
+                                            <span>{{ number_format($order->total_amount, 2) }} ريال</span>
+                                        </div>
+                                    </div>
+
+                                    @if($order->quantity_discount > 0 || $order->coupon_discount > 0)
+                                    <div class="alert alert-info mt-3 mb-0">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        @if($order->quantity_discount > $order->coupon_discount)
+                                            <span>تم تطبيق خصم الكمية ({{ number_format($order->quantity_discount, 2) }} ريال) لأنه أكبر من خصم الكوبون.</span>
+                                        @elseif($order->coupon_discount > $order->quantity_discount)
+                                            <span>تم تطبيق خصم الكوبون ({{ number_format($order->coupon_discount, 2) }} ريال) لأنه أكبر من خصم الكمية.</span>
+                                        @elseif($order->coupon_discount == $order->quantity_discount && $order->coupon_discount > 0)
+                                            <span>تم تطبيق خصم متساوٍ ({{ number_format($order->coupon_discount, 2) }} ريال) من كلا النوعين.</span>
+                                        @endif
+                                    </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
