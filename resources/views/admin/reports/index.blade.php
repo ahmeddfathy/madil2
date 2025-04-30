@@ -122,42 +122,6 @@
         </div>
     </div>
 
-    <!-- Stock Distribution -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="card-title">توزيع المخزون</h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="chart-container" style="height: 300px;">
-                        <canvas id="stockChart"></canvas>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <tbody>
-                                <tr>
-                                    <td><span class="badge bg-success me-2">متوفر</span></td>
-                                    <td class="text-end">{{ $inventoryReport['stock_distribution']['متوفر'] ?? 0 }}</td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge bg-warning me-2">منخفض</span></td>
-                                    <td class="text-end">{{ $inventoryReport['stock_distribution']['منخفض'] ?? 0 }}</td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge bg-danger me-2">نفذ</span></td>
-                                    <td class="text-end">{{ $inventoryReport['stock_distribution']['نفذ'] ?? 0 }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Top Products -->
     <div class="card mb-4">
         <div class="card-header">
@@ -200,41 +164,6 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Inventory Status -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="card-title">حالة المخزون</h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="p-3 bg-light rounded text-center">
-                        <h6 class="text-muted">إجمالي المنتجات</h6>
-                        <h3 class="mb-0">{{ $inventoryReport['total_products'] }}</h3>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="p-3 bg-light rounded text-center">
-                        <h6 class="text-muted">منخفضة المخزون</h6>
-                        <h3 class="mb-0">{{ $inventoryReport['low_stock_count'] }}</h3>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="p-3 bg-light rounded text-center">
-                        <h6 class="text-muted">منتهية</h6>
-                        <h3 class="mb-0">{{ $inventoryReport['out_of_stock_count'] }}</h3>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="p-3 bg-light rounded text-center">
-                        <h6 class="text-muted">متوسط المخزون</h6>
-                        <h3 class="mb-0">{{ $inventoryReport['average_stock'] }}</h3>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -287,146 +216,115 @@
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Sales Chart
-    const salesCtx = document.getElementById('salesChart').getContext('2d');
-    const salesData = @json($salesReport['daily_data']);
-    
-    new Chart(salesCtx, {
-        type: 'line',
-        data: {
-            labels: Object.keys(salesData),
-            datasets: [{
-                label: 'المبيعات',
-                data: Object.values(salesData).map(d => d.sales),
-                borderColor: '#28a745',
-                backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                fill: true,
-                tension: 0.3,
-                borderWidth: 3
-            }, {
-                label: 'الطلبات',
-                data: Object.values(salesData).map(d => d.orders),
-                borderColor: '#17a2b8',
-                backgroundColor: 'rgba(23, 162, 184, 0.1)',
-                fill: true,
-                tension: 0.3,
-                borderWidth: 3
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                    rtl: true
-                },
-                tooltip: {
-                    rtl: true,
-                    callbacks: {
-                        label: function(context) {
-                            if (context.dataset.label === 'المبيعات') {
-                                return `المبيعات: ${context.raw.toLocaleString('ar-SA')} ر.س`;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sales Chart
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        const salesData = @json($salesReport['daily_data']);
+
+        new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: Object.keys(salesData),
+                datasets: [{
+                    label: 'المبيعات',
+                    data: Object.values(salesData).map(d => d.sales),
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    borderWidth: 3
+                }, {
+                    label: 'الطلبات',
+                    data: Object.values(salesData).map(d => d.orders),
+                    borderColor: '#17a2b8',
+                    backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        rtl: true
+                    },
+                    tooltip: {
+                        rtl: true,
+                        callbacks: {
+                            label: function(context) {
+                                if (context.dataset.label === 'المبيعات') {
+                                    return `المبيعات: ${context.raw.toLocaleString('ar-SA')} ر.س`;
+                                }
+                                return `الطلبات: ${context.raw}`;
                             }
-                            return `الطلبات: ${context.raw}`;
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('ar-SA');
+                            }
                         }
                     }
                 }
+            }
+        });
+
+        // Peak Hours Chart
+        const peakCtx = document.getElementById('peakHoursChart').getContext('2d');
+        const peakData = @json($salesReport['peak_hours']);
+
+        new Chart(peakCtx, {
+            type: 'bar',
+            data: {
+                labels: peakData.map(d => `${d.hour}:00`),
+                datasets: [{
+                    label: 'عدد الطلبات',
+                    data: peakData.map(d => d.count),
+                    backgroundColor: '#007bff'
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return value.toLocaleString('ar-SA');
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
                         }
                     }
                 }
             }
-        }
+        });
     });
-
-    // Stock Chart
-    const stockCtx = document.getElementById('stockChart').getContext('2d');
-    const stockData = @json($inventoryReport['stock_distribution']);
-    
-    new Chart(stockCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['متوفر', 'منخفض', 'نفذ'],
-            datasets: [{
-                data: [
-                    stockData['متوفر'] || 0,
-                    stockData['منخفض'] || 0,
-                    stockData['نفذ'] || 0
-                ],
-                backgroundColor: [
-                    '#28a745',
-                    '#ffc107',
-                    '#dc3545'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right',
-                    rtl: true
-                }
-            }
-        }
-    });
-
-    // Peak Hours Chart
-    const peakCtx = document.getElementById('peakHoursChart').getContext('2d');
-    const peakData = @json($salesReport['peak_hours']);
-    
-    new Chart(peakCtx, {
-        type: 'bar',
-        data: {
-            labels: peakData.map(d => `${d.hour}:00`),
-            datasets: [{
-                label: 'عدد الطلبات',
-                data: peakData.map(d => d.count),
-                backgroundColor: '#007bff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
-    });
-});
 </script>
 @endsection
 
 @section('styles')
 <style>
-.chart-container {
-    position: relative;
-    margin: auto;
-}
-.card-header {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-}
-.bg-light {
-    background-color: #f8f9fa !important;
-}
+    .chart-container {
+        position: relative;
+        margin: auto;
+    }
+
+    .card-header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
+
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
 </style>
 @endsection

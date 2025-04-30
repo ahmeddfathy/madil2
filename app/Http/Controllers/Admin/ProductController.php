@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 
 class ProductController extends Controller
@@ -44,7 +45,7 @@ class ProductController extends Controller
                 break;
             case 'price_high':
                 // Order by the maximum price of sizes
-                $query->orderBy(function($q) {
+                $query->orderBy(function ($q) {
                     return $q->select(DB::raw('MAX(COALESCE(ps.price, 0))'))
                         ->from('products as p')
                         ->leftJoin('product_sizes as ps', 'p.id', '=', 'ps.product_id')
@@ -54,7 +55,7 @@ class ProductController extends Controller
                 break;
             case 'price_low':
                 // Order by the minimum price of sizes
-                $query->orderBy(function($q) {
+                $query->orderBy(function ($q) {
                     return $q->select(DB::raw('MIN(COALESCE(ps.price, 0))'))
                         ->from('products as p')
                         ->leftJoin('product_sizes as ps', 'p.id', '=', 'ps.product_id')
@@ -85,7 +86,6 @@ class ProductController extends Controller
         // Basic validation rules that are always required
         $rules = [
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
             'categories' => 'nullable|array',
@@ -121,8 +121,12 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
 
-            // Generate unique slug
-            $validatedData['slug'] = $this->generateUniqueSlug($validatedData['slug']);
+            // Auto-generate slug from name if not provided
+            if (empty($request->slug)) {
+                $validatedData['slug'] = $this->generateSlugFromName($request->name);
+            } else {
+                $validatedData['slug'] = $this->generateUniqueSlug($request->slug);
+            }
 
             // Set default values for feature flags
             $validatedData['enable_custom_color'] = $request->has('enable_custom_color');
@@ -203,7 +207,6 @@ class ProductController extends Controller
             // Basic validation rules
             $rules = [
                 'name' => 'required|string|max:255',
-                'slug' => 'required|string|max:255',
                 'description' => 'required|string',
                 'category_id' => 'required|exists:categories,id',
                 'categories' => 'nullable|array',
@@ -239,9 +242,11 @@ class ProductController extends Controller
 
             DB::beginTransaction();
 
-            // Generate unique slug if it's different from the current one
-            if ($validated['slug'] !== $product->slug) {
-                $validated['slug'] = $this->generateUniqueSlug($validated['slug']);
+            // Auto-generate slug from name if not provided
+            if (empty($request->slug)) {
+                $validated['slug'] = $this->generateSlugFromName($request->name, $product->id);
+            } else if ($validated['slug'] !== $product->slug) {
+                $validated['slug'] = $this->generateUniqueSlug($validated['slug'], 1, $product->id);
             }
 
             $product->update([
@@ -449,13 +454,55 @@ class ProductController extends Controller
         return $data;
     }
 
-    protected function generateUniqueSlug($slug, $counter = 1)
+    /**
+     * Generate a slug from the product name
+     *
+     * @param string $name
+     * @param int|null $excludeId
+     * @return string
+     */
+    protected function generateSlugFromName($name, $excludeId = null)
+    {
+        $slug = Str::slug($name, '-');
+
+        // Check for Arabic text that won't be properly handled by Str::slug
+        if (empty($slug)) {
+            // Create a custom slug for Arabic text
+            $slug = preg_replace('/\s+/', '-', $name);
+            $slug = preg_replace('/[^\p{L}\p{N}\-]/u', '', $slug);
+            $slug = mb_strtolower($slug, 'UTF-8');
+        }
+
+        return $this->generateUniqueSlug($slug, 1, $excludeId);
+    }
+
+    /**
+     * Generate a unique slug that doesn't exist in the database
+     *
+     * @param string $slug
+     * @param int $counter
+     * @param int|null $excludeId
+     * @return string
+     */
+    protected function generateUniqueSlug($slug, $counter = 1, $excludeId = null)
     {
         $originalSlug = $slug;
-        while (Product::where('slug', $slug)->exists()) {
+        $query = Product::where('slug', $slug);
+
+        // Exclude the current product when updating
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        while ($query->exists()) {
             $slug = $originalSlug . '-' . $counter;
             $counter++;
+            $query = Product::where('slug', $slug);
+            if ($excludeId) {
+                $query->where('id', '!=', $excludeId);
+            }
         }
+
         return $slug;
     }
 }

@@ -22,18 +22,16 @@ class ReportController extends Controller
     $endDate = null;
 
     if ($period === 'custom') {
-        $startDate = $request->get('start_date');
-        $endDate = $request->get('end_date');
+      $startDate = $request->get('start_date');
+      $endDate = $request->get('end_date');
     }
 
     $salesReport = $this->reportService->getSalesReport($period, $startDate, $endDate);
     $topProducts = $this->reportService->getTopProducts($period, $startDate, $endDate);
-    $inventoryReport = $this->reportService->getInventoryReport();
 
     return view('admin.reports.index', compact(
       'salesReport',
       'topProducts',
-      'inventoryReport',
       'period'
     ));
   }
