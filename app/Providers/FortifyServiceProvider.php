@@ -42,9 +42,28 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.login');
         });
 
+        // تكوين RateLimiter الخاص بـ Fortify
         RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
-            return Limit::perMinute(5)->by($throttleKey);
+            $emailKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
+            $ipKey = 'ip_only|' . $request->ip();
+
+            if (RateLimiter::tooManyAttempts($ipKey, 3)) {
+                $seconds = RateLimiter::availableIn($ipKey);
+                $message = 'لقد تجاوزت الحد المسموح من المحاولات. الرجاء المحاولة بعد ' . ceil($seconds / 60) . ' دقيقة.';
+
+                return response()->view('errors.429', ['exception' => new \Exception($message)], 429);
+            }
+
+            RateLimiter::hit($ipKey, 60 * 2);
+
+            return Limit::perMinute(5)
+                ->by($emailKey)
+                ->response(function () {
+                    $seconds = RateLimiter::availableIn('login.' . request()->ip());
+                    return back()->withErrors([
+                        'email' => 'لقد تجاوزت الحد المسموح من المحاولات. الرجاء المحاولة بعد ' . ceil($seconds / 60) . ' دقيقة.'
+                    ]);
+                });
         });
 
         RateLimiter::for('two-factor', function (Request $request) {
