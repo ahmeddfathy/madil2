@@ -103,7 +103,6 @@ Route::middleware([
             Route::patch('/update/{cartItem}', [CartController::class, 'updateQuantity'])->name('update');
             Route::delete('/remove/{cartItem}', [CartController::class, 'removeItem'])->name('remove');
             Route::post('/clear', [CartController::class, 'clear'])->name('clear');
-
         });
 
         // Checkout
@@ -121,7 +120,7 @@ Route::middleware([
     });
 
     // Admin Routes
-    Route::middleware(['role:admin'])
+    Route::middleware(['role:admin', \App\Http\Middleware\AdminPopupAuthMiddleware::class])
         ->prefix('admin')
         ->name('admin.')
         ->group(function () {
@@ -164,7 +163,7 @@ Route::middleware([
 
 
 // Protected Cart Routes
-Route::middleware(['auth:sanctum'])->group(function() {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/cart/add', [ProductController::class, 'addToCart'])->name('cart.add');
     Route::get('/cart/items', [ProductController::class, 'getCartItems'])->name('cart.items');
     Route::patch('/cart/items/{cartItem}', [ProductController::class, 'updateCartItem'])->name('cart.update-item');
