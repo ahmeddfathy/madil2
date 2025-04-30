@@ -139,6 +139,22 @@ body {
     border: 1px solid rgba(108, 92, 231, 0.15);
 }
 
+.order-discount {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255, 193, 7, 0.15);
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    color: #e67e22;
+    font-weight: 600;
+}
+
+.order-discount i {
+    font-size: 1.1rem;
+}
+
 .order-total {
     font-weight: 600;
     color: var(--primary-color);

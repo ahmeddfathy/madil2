@@ -334,9 +334,6 @@
                             <div class="product-image-wrapper">
                                 <a href="{{ route('products.show', $product->slug) }}" class="product-link">
                                     <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="product-image" loading="lazy">
-                                    @if($product->stock <= 0)
-                                    <div class="out-of-stock-badge">نفذت الكمية</div>
-                                    @endif
                                     @if($product->discount_percentage > 0)
                                     <div class="discount-badge">-{{ $product->discount_percentage }}%</div>
                                     @endif

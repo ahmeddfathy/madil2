@@ -28,16 +28,16 @@
                                             <a href="{{ route('admin.orders.index') }}" class="btn btn-light-secondary">
                                                 <i class="fas fa-arrow-right me-2"></i>
                                                 عودة للطلبات
-                </a>
+                                            </a>
                                             <button onclick="window.print()" class="btn btn-light-primary">
                                                 <i class="fas fa-print me-2"></i>
-                    طباعة الطلب
-                </button>
-            </div>
+                                                طباعة الطلب
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
                         <!-- Order Stats -->
                         <div class="row g-4 mb-4">
@@ -47,23 +47,23 @@
                                         <div class="d-flex align-items-center">
                                             <div class="icon-circle bg-white text-primary me-3">
                                                 <i class="fas fa-shopping-cart fa-lg"></i>
-                        </div>
+                                            </div>
                                             <div>
                                                 <h6 class="text-white mb-1">رقم الطلب</h6>
                                                 <h3 class="text-white mb-0">#{{ $order->order_number }}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
                             <div class="col-md-3">
                                 <div class="card border-0 shadow-sm stat-card bg-gradient-success h-100">
-                <div class="card-body">
+                                    <div class="card-body">
                                         <div class="d-flex align-items-center">
                                             <div class="icon-circle bg-white text-success me-3">
                                                 <i class="fas fa-box-open fa-lg"></i>
-                                    </div>
-                                    <div>
+                                            </div>
+                                            <div>
                                                 <h6 class="text-white mb-1">عدد المنتجات</h6>
                                                 <h3 class="text-white mb-0">{{ $order->items->count() }}</h3>
                                             </div>
@@ -85,15 +85,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                    </div>
+                            </div>
                             <div class="col-md-3">
                                 <div class="card border-0 shadow-sm stat-card bg-gradient-warning h-100">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center">
                                             <div class="icon-circle bg-white text-warning me-3">
                                                 <i class="fas fa-clock fa-lg"></i>
-                                    </div>
-                                    <div>
+                                            </div>
+                                            <div>
                                                 <h6 class="text-white mb-1">تاريخ الطلب</h6>
                                                 <h3 class="text-white mb-0">{{ $order->created_at->format('Y/m/d') }}</h3>
                                             </div>
@@ -120,7 +120,7 @@
                                                 <span class="text-muted">حالة الطلب</span>
                                                 <div>
                                                     <select name="order_status" class="form-select form-select-sm d-inline-block w-auto me-2"
-                                                            onchange="this.form.submit()" form="update-status-form">
+                                                        onchange="this.form.submit()" form="update-status-form">
                                                         <option value="pending" {{ $order->order_status === 'pending' ? 'selected' : '' }}>قيد الانتظار</option>
                                                         <option value="processing" {{ $order->order_status === 'processing' ? 'selected' : '' }}>قيد المعالجة</option>
                                                         <option value="out_for_delivery" {{ $order->order_status === 'out_for_delivery' ? 'selected' : '' }}>جاري التوصيل</option>
@@ -143,7 +143,7 @@
                                                 <span class="text-muted">حالة الدفع</span>
                                                 <div>
                                                     <select name="payment_status" class="form-select form-select-sm d-inline-block w-auto me-2"
-                                                            onchange="this.form.submit()" form="update-payment-status-form">
+                                                        onchange="this.form.submit()" form="update-payment-status-form">
                                                         <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>قيد الانتظار</option>
                                                         <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>تم الدفع</option>
                                                         <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>فشل الدفع</option>
@@ -155,8 +155,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                    </div>
-                </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Customer Info -->
@@ -192,13 +192,13 @@
                                                 <div class="info-item d-flex align-items-center py-2">
                                                     <i class="fas fa-sticky-note text-primary me-3"></i>
                                                     <span>{{ $order->notes }}</span>
-            </div>
-            @endif
+                                                </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                </div>
+                            </div>
 
                             <!-- Products List -->
                             <div class="col-12">
@@ -231,22 +231,22 @@
                                                             <div class="d-flex align-items-center">
                                                                 <div class="flex-shrink-0">
                                                                     @if($item->product->image)
-                                                                        <img src="{{ asset($item->product->image) }}"
-                                                                             class="product-image border"
-                                                                             width="60" height="60"
-                                                                             alt="{{ $item->product->name }}">
+                                                                    <img src="{{ asset($item->product->image) }}"
+                                                                        class="product-image border"
+                                                                        width="60" height="60"
+                                                                        alt="{{ $item->product->name }}">
                                                                     @else
-                                                                        <div class="product-image border d-flex align-items-center justify-content-center bg-light">
-                                                                            <i class="fas fa-box text-muted fa-lg"></i>
-                                                                        </div>
+                                                                    <div class="product-image border d-flex align-items-center justify-content-center bg-light">
+                                                                        <i class="fas fa-box text-muted fa-lg"></i>
+                                                                    </div>
                                                                     @endif
                                                                 </div>
                                                                 <div class="flex-grow-1 ms-3">
                                                                     <h6 class="mb-1 fw-bold">{{ $item->product->name }}</h6>
                                                                     @if($item->product->category)
-                                                                        <span class="badge bg-primary-subtle text-primary">
-                                                                            {{ $item->product->category->name }}
-                                                                        </span>
+                                                                    <span class="badge bg-primary-subtle text-primary">
+                                                                        {{ $item->product->category->name }}
+                                                                    </span>
                                                                     @endif
                                                                 </div>
                                                             </div>
@@ -363,64 +363,62 @@
 
                         <!-- Order Summary -->
                         <div class="col-md-6">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-4">
+                            <div class="card bg-white border-0 shadow-sm order-summary-clean">
+                                <div class="card-header bg-white border-0 py-3">
+                                    <h5 class="card-title mb-0 d-flex align-items-center">
                                         <span class="icon-circle bg-primary text-white me-2">
                                             <i class="fas fa-file-invoice-dollar"></i>
                                         </span>
                                         ملخص الطلب
                                     </h5>
-                                    <div class="order-summary">
-                                        <table class="table table-borderless mb-0">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="text-muted">رقم الطلب:</td>
-                                                    <td class="text-end fw-bold">#{{ $order->order_number }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted">تاريخ الطلب:</td>
-                                                    <td class="text-end">{{ $order->created_at->format('Y-m-d H:i') }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted">السعر الأصلي:</td>
-                                                    <td class="text-end">{{ number_format($order->original_amount, 2) }} ريال</td>
-                                                </tr>
-                                                @if($order->quantity_discount > 0)
-                                                <tr>
-                                                    <td class="text-muted">خصم الكمية:</td>
-                                                    <td class="text-end text-success">- {{ number_format($order->quantity_discount, 2) }} ريال</td>
-                                                </tr>
-                                                @endif
-                                                @if($order->coupon_discount > 0)
-                                                <tr>
-                                                    <td class="text-muted">خصم الكوبون:</td>
-                                                    <td class="text-end text-success">- {{ number_format($order->coupon_discount, 2) }} ريال</td>
-                                                </tr>
-                                                @if($order->coupon_code)
-                                                <tr>
-                                                    <td class="text-muted">كود الخصم:</td>
-                                                    <td class="text-end"><span class="badge bg-primary">{{ $order->coupon_code }}</span></td>
-                                                </tr>
-                                                @endif
-                                                @endif
-                                                <tr class="fw-bold">
-                                                    <td>إجمالي الطلب:</td>
-                                                    <td class="text-end">{{ number_format($order->total_amount, 2) }} ريال</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                </div>
+                                <div class="card-body py-0">
+                                    <div class="order-summary-list">
+                                        <div class="summary-item d-flex justify-content-between py-3 border-bottom">
+                                            <span class="text-muted">رقم الطلب:</span>
+                                            <strong class="text-dark">#{{ $order->order_number }}</strong>
+                                        </div>
+                                        <div class="summary-item d-flex justify-content-between py-3 border-bottom">
+                                            <span class="text-muted">تاريخ الطلب:</span>
+                                            <span>{{ $order->created_at->format('Y-m-d H:i') }}</span>
+                                        </div>
+                                        <div class="summary-item d-flex justify-content-between py-3 border-bottom">
+                                            <span class="text-muted">السعر الأصلي:</span>
+                                            <span>{{ number_format($order->original_amount, 2) }} ريال</span>
+                                        </div>
+                                        @if($order->quantity_discount > 0)
+                                        <div class="summary-item d-flex justify-content-between py-3 border-bottom">
+                                            <span class="text-muted">خصم الكمية:</span>
+                                            <span class="text-success">- {{ number_format($order->quantity_discount, 2) }} ريال</span>
+                                        </div>
+                                        @endif
+                                        @if($order->coupon_discount > 0)
+                                        <div class="summary-item d-flex justify-content-between py-3 border-bottom">
+                                            <span class="text-muted">خصم الكوبون:</span>
+                                            <span class="text-success">- {{ number_format($order->coupon_discount, 2) }} ريال</span>
+                                        </div>
+                                        @if($order->coupon_code)
+                                        <div class="summary-item d-flex justify-content-between py-3 border-bottom">
+                                            <span class="text-muted">كود الخصم:</span>
+                                            <span><span class="badge bg-primary">{{ $order->coupon_code }}</span></span>
+                                        </div>
+                                        @endif
+                                        @endif
+                                        <div class="summary-item d-flex justify-content-between py-3 bg-light rounded-3 mt-2 mb-2">
+                                            <strong class="text-primary fs-5">إجمالي الطلب:</strong>
+                                            <strong class="text-primary fs-5">{{ number_format($order->total_amount, 2) }} ريال</strong>
+                                        </div>
                                     </div>
-                                    <hr>
+
                                     @if($order->quantity_discount > 0 || $order->coupon_discount > 0)
-                                    <div class="alert alert-info mt-3 mb-0">
+                                    <div class="alert alert-info mt-3 mb-3">
                                         <i class="fas fa-info-circle me-2"></i>
                                         @if($order->quantity_discount > $order->coupon_discount)
-                                            <span>تم تطبيق خصم الكمية ({{ number_format($order->quantity_discount, 2) }} ريال) لأنه أكبر من خصم الكوبون.</span>
+                                        <span>تم تطبيق خصم الكمية ({{ number_format($order->quantity_discount, 2) }} ريال) لأنه أكبر من خصم الكوبون.</span>
                                         @elseif($order->coupon_discount > $order->quantity_discount)
-                                            <span>تم تطبيق خصم الكوبون ({{ number_format($order->coupon_discount, 2) }} ريال) لأنه أكبر من خصم الكمية.</span>
+                                        <span>تم تطبيق خصم الكوبون ({{ number_format($order->coupon_discount, 2) }} ريال) لأنه أكبر من خصم الكمية.</span>
                                         @elseif($order->coupon_discount == $order->quantity_discount && $order->coupon_discount > 0)
-                                            <span>تم تطبيق خصم متساوٍ ({{ number_format($order->coupon_discount, 2) }} ريال) من كلا النوعين.</span>
+                                        <span>تم تطبيق خصم متساوٍ ({{ number_format($order->coupon_discount, 2) }} ريال) من كلا النوعين.</span>
                                         @endif
                                     </div>
                                     @endif

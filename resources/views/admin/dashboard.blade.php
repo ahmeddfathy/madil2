@@ -203,7 +203,7 @@
                 <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-primary">عرض الكل</a>
                 @endcan
             </div>
-            <div class="table-responsive-xl">
+            <div class="table-responsive">
                 <table class="table table-hover mb-0 recent-orders-table">
                     <thead>
                         <tr>
@@ -666,7 +666,7 @@
             min-height: 300px;
         }
 
-        .table-responsive-xl {
+        .table-responsive {
             border: 0;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
